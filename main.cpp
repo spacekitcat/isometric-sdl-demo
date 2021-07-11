@@ -22,12 +22,16 @@ float calculateVerticalVectorComponent(float vectorMagnitude) {
   return vectorMagnitude * sin(26.6 * PI / 180.0) * 2;
 }
 
-SDL_Texture *loadGameTextureAsset(std::string path, SDL_Renderer *renderer) {
+SDL_Surface *loadGameImageAsset(std::string path) {
   SDL_Surface *imageAsset = IMG_Load(path.c_str());
   if (imageAsset == NULL) {
     throw std::runtime_error("unable to load image");
   }
 
+  return imageAsset;
+}
+
+SDL_Texture *loadGameTextureAsset(SDL_Surface *imageAsset, SDL_Renderer *renderer) {
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, imageAsset);
   SDL_SetColorKey(imageAsset, SDL_TRUE,
                   SDL_MapRGB(imageAsset->format, 255, 255, 255));
@@ -53,20 +57,24 @@ int main() {
   SDL_Renderer *gameRenderer =
       SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED);
 
+  SDL_Surface *playerSpriteSheetSurface = NULL;
   SDL_Texture *playerSpriteSheetTexture = NULL;
   SDL_Texture *isometricBackgroundTexture = NULL;
   try {
-    playerSpriteSheetTexture = loadGameTextureAsset(
-        "./assets/isometric_box_sprite_sheet.png", gameRenderer);
+    playerSpriteSheetSurface = loadGameImageAsset("./assets/lion-cat-idle-1.png");
+    playerSpriteSheetTexture = loadGameTextureAsset(playerSpriteSheetSurface, gameRenderer);
     isometricBackgroundTexture =
-        loadGameTextureAsset("./assets/iso_metric_grid.png", gameRenderer);
+        loadGameTextureAsset(loadGameImageAsset("./assets/iso_metric_grid.png"), gameRenderer);
   } catch (const std::runtime_error &ex) {
     throw;
   }
 
+  float spriteSheetFrameW = playerSpriteSheetSurface->w / 4;
+  float spriteSheetFrameH = playerSpriteSheetSurface->h;
+
   SDL_FRect playerPositioningRect = {
-      .x = 0.0, .y = 0.0, .w = 198.0, .h = 132.0};
-  SDL_Rect playerSpriteSheetClippingRect = {.x = 0, .y = 0, .w = 200, .h = 132};
+      .x = 0.0, .y = 0.0, .w = spriteSheetFrameW, .h = spriteSheetFrameH};
+  SDL_Rect playerSpriteSheetClippingRect = {.x = 0, .y = 0, .w = spriteSheetFrameW, .h = spriteSheetFrameH};
 
   KEY_STATE keyState = {
       .up = false, .down = false, .left = false, .right = false};
@@ -133,22 +141,24 @@ int main() {
     if (keyState.left) {
       playerPositioningRect.x += calculateHorizontalVectorComponent(-velocity);
       playerPositioningRect.y += calculateVerticalVectorComponent(-velocity);
-      playerSpriteSheetClippingRect.x = 600;
+      playerSpriteSheetClippingRect.x = spriteSheetFrameW * 3;
       playerSpriteSheetClippingRect.y = 0;
     } else if (keyState.right) {
       playerPositioningRect.x += calculateHorizontalVectorComponent(velocity);
       playerPositioningRect.y += calculateVerticalVectorComponent(velocity);
-      playerSpriteSheetClippingRect.x = 200;
+      playerSpriteSheetClippingRect.x = spriteSheetFrameW;
       playerSpriteSheetClippingRect.y = 0;
     } else if (keyState.up) {
-      playerPositioningRect.x += calculateHorizontalVectorComponent(velocity);
+                  playerPositioningRect.x += calculateHorizontalVectorComponent(velocity);
       playerPositioningRect.y += calculateVerticalVectorComponent(-velocity);
-      playerSpriteSheetClippingRect.x = 0;
+     
+      playerSpriteSheetClippingRect.x = spriteSheetFrameW * 2;
       playerSpriteSheetClippingRect.y = 0;
     } else if (keyState.down) {
-      playerPositioningRect.x += calculateHorizontalVectorComponent(-velocity);
+ playerPositioningRect.x += calculateHorizontalVectorComponent(-velocity);
       playerPositioningRect.y += calculateVerticalVectorComponent(velocity);
-      playerSpriteSheetClippingRect.x = 400;
+
+      playerSpriteSheetClippingRect.x = 0;
       playerSpriteSheetClippingRect.y = 0;
     }
 
