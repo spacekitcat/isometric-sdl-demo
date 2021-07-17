@@ -39,6 +39,30 @@ SDL_Texture *loadGameTextureAsset(SDL_Surface *imageAsset, SDL_Renderer *rendere
   return texture;
 }
 
+void updateSpriteSheetFrame(int index, SDL_Surface *spriteSheet, SDL_Rect *clippingFrame) {
+  const int framesPerSpriteSheet = 4;
+  const int spritesPerAxis = framesPerSpriteSheet / 2;
+
+  float frameWidth = spriteSheet->w / spritesPerAxis;
+  float frameHeight = spriteSheet->h / spritesPerAxis;
+
+  clippingFrame->w = frameWidth;
+  clippingFrame->h = frameHeight;
+  if (index == 0) {
+    clippingFrame->x = 0;
+    clippingFrame->y = 0;
+  } else if (index == 1) {
+    clippingFrame->x = frameWidth;
+    clippingFrame->y = 0;
+  } else if (index == 2) {
+    clippingFrame->x = 0;
+    clippingFrame->y = frameHeight;
+  } else if (index == 3) {
+    clippingFrame->x = frameWidth;
+    clippingFrame->y = frameHeight;
+  }
+}
+
 int main() {
   const int screenWidth = 800;
   const int screenHeight = 600;
@@ -61,7 +85,7 @@ int main() {
   SDL_Texture *playerSpriteSheetTexture = NULL;
   SDL_Texture *isometricBackgroundTexture = NULL;
   try {
-    playerSpriteSheetSurface = loadGameImageAsset("./assets/lion-cat-idle-1.png");
+    playerSpriteSheetSurface = loadGameImageAsset("./assets/Rendered\ spritesheets/boat_iso.png");
     playerSpriteSheetTexture = loadGameTextureAsset(playerSpriteSheetSurface, gameRenderer);
     isometricBackgroundTexture =
         loadGameTextureAsset(loadGameImageAsset("./assets/iso_metric_grid.png"), gameRenderer);
@@ -69,12 +93,10 @@ int main() {
     throw;
   }
 
-  float spriteSheetFrameW = playerSpriteSheetSurface->w / 4;
-  float spriteSheetFrameH = playerSpriteSheetSurface->h;
-
   SDL_FRect playerPositioningRect = {
-      .x = 0.0, .y = 0.0, .w = spriteSheetFrameW, .h = spriteSheetFrameH};
-  SDL_Rect playerSpriteSheetClippingRect = {.x = 0, .y = 0, .w = spriteSheetFrameW, .h = spriteSheetFrameH};
+      .x = 0.0, .y = 0.0, .w = playerSpriteSheetSurface->w / 2, .h = playerSpriteSheetSurface->h / 2};
+  SDL_Rect playerSpriteSheetClippingRect;
+  updateSpriteSheetFrame(1, playerSpriteSheetSurface, &playerSpriteSheetClippingRect);
 
   KEY_STATE keyState = {
       .up = false, .down = false, .left = false, .right = false};
@@ -141,25 +163,24 @@ int main() {
     if (keyState.left) {
       playerPositioningRect.x += calculateHorizontalVectorComponent(-velocity);
       playerPositioningRect.y += calculateVerticalVectorComponent(-velocity);
-      playerSpriteSheetClippingRect.x = spriteSheetFrameW * 3;
-      playerSpriteSheetClippingRect.y = 0;
+
+      updateSpriteSheetFrame(3, playerSpriteSheetSurface, &playerSpriteSheetClippingRect);
     } else if (keyState.right) {
       playerPositioningRect.x += calculateHorizontalVectorComponent(velocity);
       playerPositioningRect.y += calculateVerticalVectorComponent(velocity);
-      playerSpriteSheetClippingRect.x = spriteSheetFrameW;
-      playerSpriteSheetClippingRect.y = 0;
+      
+      updateSpriteSheetFrame(1, playerSpriteSheetSurface, &playerSpriteSheetClippingRect);
     } else if (keyState.up) {
                   playerPositioningRect.x += calculateHorizontalVectorComponent(velocity);
       playerPositioningRect.y += calculateVerticalVectorComponent(-velocity);
      
-      playerSpriteSheetClippingRect.x = spriteSheetFrameW * 2;
-      playerSpriteSheetClippingRect.y = 0;
+      updateSpriteSheetFrame(2, playerSpriteSheetSurface, &playerSpriteSheetClippingRect);
+
     } else if (keyState.down) {
- playerPositioningRect.x += calculateHorizontalVectorComponent(-velocity);
+      playerPositioningRect.x += calculateHorizontalVectorComponent(-velocity);
       playerPositioningRect.y += calculateVerticalVectorComponent(velocity);
 
-      playerSpriteSheetClippingRect.x = 0;
-      playerSpriteSheetClippingRect.y = 0;
+      updateSpriteSheetFrame(0, playerSpriteSheetSurface, &playerSpriteSheetClippingRect);
     }
 
     SDL_RenderClear(gameRenderer);

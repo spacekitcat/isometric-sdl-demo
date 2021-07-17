@@ -1,0 +1,28 @@
+{
+	"baseObjectName": "boat_iso",
+	"spriteWidth": 128,
+	"spriteHeight": 128,
+	"paddingWidth": 0,
+	"paddingHeight": 0,
+	"numColumns": 2,
+	"numRows": 2,
+	"imageFile": "boat_iso.png",
+	"stills": [
+		{
+			"frame": 0,
+			"rotation": 0
+		},
+		{
+			"frame": 1,
+			"rotation": 90
+		},
+		{
+			"frame": 2,
+			"rotation": 180
+		},
+		{
+			"frame": 3,
+			"rotation": 270
+		}
+	]
+}
