@@ -68,6 +68,9 @@ int main() {
   const int screenHeight = 600;
   const float velocity = 1;
 
+  float tileXOffsetConstant = 125.0;
+  float tileYOffsetConstant = 62.0;
+
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
     return 1;
@@ -83,15 +86,17 @@ int main() {
 
   SDL_Surface *playerSpriteSheetSurface = NULL;
   SDL_Texture *playerSpriteSheetTexture = NULL;
+  SDL_Surface *isometricBackgroundSurface = NULL;
   SDL_Texture *isometricBackgroundTexture = NULL;
   try {
     playerSpriteSheetSurface = loadGameImageAsset("./assets/Rendered\ spritesheets/boat_iso.png");
     playerSpriteSheetTexture = loadGameTextureAsset(playerSpriteSheetSurface, gameRenderer);
-    isometricBackgroundTexture =
-        loadGameTextureAsset(loadGameImageAsset("./assets/iso_metric_grid.png"), gameRenderer);
+    isometricBackgroundSurface = loadGameImageAsset("./assets/tile0.png");
+    isometricBackgroundTexture = loadGameTextureAsset(isometricBackgroundSurface, gameRenderer);
   } catch (const std::runtime_error &ex) {
     throw;
   }
+
 
   SDL_FRect playerPositioningRect = {
       .x = 0.0, .y = 0.0, .w = playerSpriteSheetSurface->w / 2, .h = playerSpriteSheetSurface->h / 2};
@@ -100,6 +105,9 @@ int main() {
 
   KEY_STATE keyState = {
       .up = false, .down = false, .left = false, .right = false};
+
+  SDL_FRect tilePositionRect = {.x = 0.0, .y = 0.0, .w = isometricBackgroundSurface->w, .h = isometricBackgroundSurface->h };
+
   while (true) {
     SDL_Event event;
 
@@ -184,10 +192,25 @@ int main() {
     }
 
     SDL_RenderClear(gameRenderer);
-    SDL_RenderCopyF(gameRenderer, isometricBackgroundTexture, NULL, NULL);
+
+    tilePositionRect.y = -tileYOffsetConstant;
+    for (int i=0; i<11; ++i) {
+      tilePositionRect.x = -tileXOffsetConstant;
+      SDL_RenderCopyF(gameRenderer, isometricBackgroundTexture, NULL, &tilePositionRect);
+      for (int j=0; j<6; ++j) {
+        tilePositionRect.x += tileXOffsetConstant;
+        SDL_RenderCopyF(gameRenderer, isometricBackgroundTexture, NULL, &tilePositionRect);
+      }
+      tilePositionRect.y += tileYOffsetConstant;
+    }
+
+    SDL_RenderCopyF(gameRenderer, playerSpriteSheetTexture,
+                    &playerSpriteSheetClippingRect, &playerPositioningRect);
     SDL_RenderCopyF(gameRenderer, playerSpriteSheetTexture,
                     &playerSpriteSheetClippingRect, &playerPositioningRect);
     SDL_RenderPresent(gameRenderer);
+
+    SDL_Delay(1);
   }
 
   return 0;
