@@ -2,7 +2,7 @@
 
 Simple isometric (2:1) SDL2 starter project.
 
-![An application window with the title "SDL2Application4 (isometric demo). It shows an isometric red wedge sprite/player character on a white and light blue kitchen floor style chequered floor surface](./doc_assets/runtime_example_0.png)
+![An application window with the title "SDL2Application4 (isometric demo). It shows an isometric red wedge sprite/player character on a white and light blue kitchen floor style chequered floor surface](./doc_assets/runtime_example_1.png)
 
 # Build
 
