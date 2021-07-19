@@ -68,8 +68,11 @@ int main() {
   const int screenHeight = 600;
   const float velocity = 1;
 
-  float tileXOffsetConstant = 125.0;
-  float tileYOffsetConstant = 62.0;
+  // 251 = tile width
+  // 126 = tile height (the tiles have to interlace vertically, hence divide it by two)
+  // TODO: This can be determined off the input tile image asset.
+  float tileXOffsetConstant = 250;
+  float tileYOffsetConstant = (125 / 2);
 
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -193,15 +196,20 @@ int main() {
 
     SDL_RenderClear(gameRenderer);
 
-    tilePositionRect.y = -tileYOffsetConstant;
+    tilePositionRect.y = -tileYOffsetConstant * 2;
+    tilePositionRect.x = -tileXOffsetConstant / 2;
     for (int i=0; i<11; ++i) {
-      tilePositionRect.x = -tileXOffsetConstant;
+      if (i%2 == 0) {
+        tilePositionRect.x = 0;
+      } else {
+        tilePositionRect.x = -tileXOffsetConstant / 2;
+      }
+      tilePositionRect.y += tileYOffsetConstant;
       SDL_RenderCopyF(gameRenderer, isometricBackgroundTexture, NULL, &tilePositionRect);
-      for (int j=0; j<6; ++j) {
+      for (int j=0; j<3; ++j) {
         tilePositionRect.x += tileXOffsetConstant;
         SDL_RenderCopyF(gameRenderer, isometricBackgroundTexture, NULL, &tilePositionRect);
       }
-      tilePositionRect.y += tileYOffsetConstant;
     }
 
     SDL_RenderCopyF(gameRenderer, playerSpriteSheetTexture,
