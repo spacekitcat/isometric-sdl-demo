@@ -12,6 +12,7 @@ Simple isometric (2:1) SDL2 starter project.
 brew install sdl2
 brew install cmake
 brew install sdl2_image
+brew install catch2
 ```
 
 ## Build (cmake)
@@ -43,6 +44,21 @@ I'm glad I just accepted it started learning blender, it would surprise you how 
 
 [CMAKE documentation](https://cmake.org/cmake/help/latest/guide/tutorial/index.html#build-and-test)
 
+## Development tips
+
+To avoid having to regenerate the build every time the assets change during development:
+
+```sh
+mkdir build && cd build
+cmake ..
+cmake --build .
+rm -r assets
+ln -s ../assets assets
+./SDL2Test
+```
+
+Now the assets will always by in sync within the build. All you have to worry about is re-running `make` from the `build` folder.
+
 ## Useful commands (Macs only, mostly)
 
 Convert an image to bitmap:
@@ -55,4 +71,10 @@ Get file dimensions:
 
 ```sh
 sips -g pixelHeight -g pixelWidth ${INPUT_IMAGE}
+```
+
+Merge animation frames into spritesheet with ImageMagick:
+
+```sh
+montage water_tile_0_0*.png -tile 10x10 -geometry 256x128+0+0 water_tile_0_sheet.png
 ```
