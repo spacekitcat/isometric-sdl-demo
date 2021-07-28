@@ -2,14 +2,19 @@
 #define SPRITESHEET_H
 
 #include <SDL.h>
+#include <iostream>
+#include <math.h>
+
 
 class SpriteSheet {
     private:
+        int _columns;
+        int _rows;
         SDL_Renderer *renderer;
         SDL_Surface *spriteSheetSurface;
         SDL_Texture *spriteSheetTexture;
 
-        void _updateSpriteSheetFrame(int index, SDL_Surface *spriteSheet, SDL_Rect *clippingFrame);
+        void _updateSpriteSheetFrame(int index, SDL_Rect *clippingFrame);
 
     public:
         SpriteSheet(SDL_Renderer *renderer, SDL_Surface *spriteSheetSurface, int columns, int rows);

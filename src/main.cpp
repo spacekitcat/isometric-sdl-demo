@@ -67,12 +67,10 @@ int main() {
 
   SDL_Surface *playerSpriteSheetSurface = NULL;
   SDL_Surface *isometricBackgroundSurface = NULL;
-  SDL_Texture *isometricBackgroundTexture = NULL;
 
   try {
     playerSpriteSheetSurface = loadGameImageAsset("./assets/Rendered spritesheets/boat_iso.png");
     isometricBackgroundSurface = loadGameImageAsset("./assets/Rendered spritesheets/water_tile_0_sheet.png");
-    isometricBackgroundTexture = loadGameTextureAsset(isometricBackgroundSurface, gameRenderer);
   } catch (const std::runtime_error &ex) {
     throw;
   }
@@ -85,25 +83,22 @@ int main() {
 
   SDL_FRect playerPositioningRect = {
       .x = screenWidth/2 - 64, .y = screenHeight/2 - 64, .w = playerSpriteSheetSurface->w / 2, .h = playerSpriteSheetSurface->h / 2};
-  SDL_Rect playerSpriteSheetClippingRect;
 
   KEY_STATE keyState = {
       .up = false, .down = false, .left = false, .right = false};
 
   SDL_FRect tilePositionRect = {.x = 0.0, .y = 0.0, .w = isometricBackgroundSurface->w / 10 , .h = isometricBackgroundSurface->h / 10 };
 
-  SDL_Rect screenView = {.x = 0, .y = 0, .w = screenWidth, .h = screenHeight };
-
-  SDL_Rect animOffset = {.x=0, .y=0, .w=256, .h=128 };
-
   float cam_x = 0.0;
   float cam_y = 0.0;
-  int anim_index = 0;
-  SpriteSheet *boatSpriteSheet = new SpriteSheet(gameRenderer, playerSpriteSheetSurface, 4, 4);
+  SpriteSheet *boatSpriteSheet = new SpriteSheet(gameRenderer, playerSpriteSheetSurface, 2, 2);
   SpriteSheet *seaTileSpriteSheet = new SpriteSheet(gameRenderer, isometricBackgroundSurface, 10, 10);
+  int backgroundTileAnimationFrame = 0;
+  int playerSpriteFrame = 0;
   while (true) {
     SDL_Event event;
 
+    /* Process events and key states */
     if (SDL_PollEvent(&event)) {
       switch (event.type) {
       case SDL_QUIT:
@@ -161,7 +156,7 @@ int main() {
       }
     }
 
-    int playerSpriteFrame;
+    /* Apply velcity components and select sprite from key state */
     if (keyState.left) {
       cam_x -= calculateHorizontalVectorComponent(-1);
       cam_y -= calculateVerticalVectorComponent(-1);
@@ -185,16 +180,10 @@ int main() {
     }
 
     SDL_RenderClear(gameRenderer);
+
+    /* Lay tiles with SpriteSheet */
     tilePositionRect.y = cam_y - (tileYOffsetConstant * 2) - 300;
-
-    anim_index = 0;
-    anim_index = (SDL_GetTicks() / 172) % 100;
-    int anim_row = round(anim_index / 10);
-    int anim_column = round(anim_index % 10);
-    animOffset.x = anim_column * 256;
-    animOffset.y = anim_row * 128;
-
-    std::cout << anim_index << std::endl;
+    backgroundTileAnimationFrame = (SDL_GetTicks() / 128) % 100;
     for (int i=0; i<visible_tiles_y * 2; ++i) {
       if (i%2 == 0) {
         tilePositionRect.x = cam_x - 100;
@@ -202,21 +191,18 @@ int main() {
         tilePositionRect.x = cam_x - (tileXOffsetConstant / 2) - 100;
       }
       tilePositionRect.y += tileYOffsetConstant;
-      SDL_RenderCopyF(gameRenderer, isometricBackgroundTexture, &animOffset, &tilePositionRect);
-      // seaTileSpriteSheet->render(&tilePositionRect, anim_index);
+      seaTileSpriteSheet->render(&tilePositionRect, backgroundTileAnimationFrame);
 
       for (int j=0; j<visible_tiles_x * 2; ++j) {
         tilePositionRect.x += tileXOffsetConstant;
-        SDL_RenderCopyF(gameRenderer, isometricBackgroundTexture, &animOffset, &tilePositionRect);
-        // seaTileSpriteSheet->render(&tilePositionRect, anim_index);
+        
+        seaTileSpriteSheet->render(&tilePositionRect, backgroundTileAnimationFrame);
       }
     }
 
+    /* Render player sprite with SpriteSheet */
     boatSpriteSheet->render(&playerPositioningRect, playerSpriteFrame);
-
     SDL_RenderPresent(gameRenderer);
-
-    screenView.y += 1;
 
     SDL_Delay(5);
   }
