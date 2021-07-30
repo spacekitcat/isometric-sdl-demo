@@ -4,7 +4,7 @@
 	"spriteHeight": 128,
 	"paddingWidth": 0,
 	"paddingHeight": 0,
-	"numColumns": 2,
+	"numColumns": 4,
 	"numRows": 2,
 	"imageFile": "boat_iso.png",
 	"stills": [
@@ -14,15 +14,31 @@
 		},
 		{
 			"frame": 1,
-			"rotation": 90
+			"rotation": 45
 		},
 		{
 			"frame": 2,
-			"rotation": 180
+			"rotation": 90
 		},
 		{
 			"frame": 3,
+			"rotation": 135
+		},
+		{
+			"frame": 4,
+			"rotation": 180
+		},
+		{
+			"frame": 5,
+			"rotation": 225
+		},
+		{
+			"frame": 6,
 			"rotation": 270
+		},
+		{
+			"frame": 7,
+			"rotation": 315
 		}
 	]
 }

@@ -15,8 +15,9 @@ SpriteSheet::~SpriteSheet() {
 }
 
 void SpriteSheet::_updateSpriteSheetFrame(int index, SDL_Rect *clippingFrame) {  
-    int row = round(index / this->_rows);
+    int row = round(index / this->_columns);
     int column = round(index % this->_columns);
+
     float frameWidth = this->spriteSheetSurface->w / this->_columns;
     float frameHeight = this->spriteSheetSurface->h / this->_rows;
 
