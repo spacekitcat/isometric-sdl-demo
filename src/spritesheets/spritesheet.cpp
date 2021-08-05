@@ -34,3 +34,23 @@ void SpriteSheet::render(SDL_FRect *position, int frame) {
 
     SDL_RenderCopyF(this->renderer, this->spriteSheetTexture, &clippingRect, position);
 }
+
+int SpriteSheet::getFrameCount() {
+    return this->_rows * this->_columns;
+}
+
+int SpriteSheet::getColumnCount() {
+    return this->_columns;
+}
+
+int SpriteSheet::getRowCount() {
+    return this->_rows;
+}
+
+float SpriteSheet::getFrameWidth() {
+    return this->spriteSheetSurface->w / this->_columns;
+}
+
+float SpriteSheet::getFrameHeight() {
+    return this->spriteSheetSurface->h / this->_rows;
+}

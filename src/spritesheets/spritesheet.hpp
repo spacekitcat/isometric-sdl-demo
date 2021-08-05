@@ -22,6 +22,16 @@ class SpriteSheet {
         ~SpriteSheet();
 
         void render(SDL_FRect *position, int frame);
+
+        int getFrameCount();
+        
+        int getColumnCount();
+
+        int getRowCount();
+
+        float getFrameWidth();
+
+        float getFrameHeight();
 };
 
 #endif

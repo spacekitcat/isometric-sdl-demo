@@ -1,13 +1,14 @@
+#include "spritesheets/spritesheet.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <math.h>
-#include <chrono>
-#include <random>
-#include "spritesheets/spritesheet.hpp"
 #include <SDL_keyboard.h>
+#include <SDL_mixer.h>
+#include <chrono>
+#include <iomanip>
+#include <iostream>
+#include <math.h>
+#include <random>
+#include <sstream>
 
 using namespace std;
 using std::chrono::duration_cast;
@@ -41,7 +42,8 @@ SDL_Surface *loadGameImageAsset(std::string path) {
   return imageAsset;
 }
 
-SDL_Texture *loadGameTextureAsset(SDL_Surface *imageAsset, SDL_Renderer *renderer) {
+SDL_Texture *loadGameTextureAsset(SDL_Surface *imageAsset,
+                                  SDL_Renderer *renderer) {
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, imageAsset);
   SDL_SetColorKey(imageAsset, SDL_TRUE,
                   SDL_MapRGB(imageAsset->format, 255, 255, 255));
@@ -50,13 +52,13 @@ SDL_Texture *loadGameTextureAsset(SDL_Surface *imageAsset, SDL_Renderer *rendere
 }
 
 int main() {
-  auto map = new int [255][255];
+  auto map = new int[255][255];
 
   std::random_device r;
   std::default_random_engine e1(r());
-  std::uniform_int_distribution<int> uniform_dist(0, 1);
-  for (int i=0; i<255; ++i) {
-    for (int j=0; j<255; ++j) {
+  std::uniform_int_distribution<int> uniform_dist(1, 3);
+  for (int i = 0; i < 255; ++i) {
+    for (int j = 0; j < 255; ++j) {
       map[i][j] = uniform_dist(e1);
     }
   }
@@ -65,10 +67,17 @@ int main() {
   const int screenHeight = 600;
   const float velocity = 1;
 
-
   // BEGIN: SDL Setup area
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+    return 1;
+  }
+
+  int flags = MIX_INIT_MP3 | MIX_INIT_MOD;
+  int initted = Mix_Init(flags);
+  if (initted & flags != flags) {
+    printf("Mix_Init: Failed to init required ogg and mod support!\n");
+    printf("Mix_Init: %s\n", Mix_GetError());
     return 1;
   }
 
@@ -82,46 +91,114 @@ int main() {
 
   // END: SDL Setup area
 
+  // BEGIN: Audio Setup area
+  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
+    printf("Mix_OpenAudio: %s\n", Mix_GetError());
+    exit(2);
+  }
+
+  Mix_Chunk *sample;
+  sample = Mix_LoadWAV("./assets/audio.wav");
+  if (!sample) {
+    printf("Mix_LoadWAV: %s\n", Mix_GetError());
+    // handle error
+  }
+
+  if (Mix_PlayChannel(-1, sample, 0) == -1) {
+    printf("Mix_PlayMusic: %s\n", Mix_GetError());
+    // well, there's no music, but most games don't break without music...
+  }
+  // END: Audio Setup area
+
   // BEGIN: Asset loading
-  SDL_Surface *playerSpriteSheetSurface = NULL;
+  SDL_Surface *playerSpriteSheetSurfaceN = NULL;
+  SDL_Surface *playerSpriteSheetSurfaceNE = NULL;
+  SDL_Surface *playerSpriteSheetSurfaceE = NULL;
+  SDL_Surface *playerSpriteSheetSurfaceSE = NULL;
+  SDL_Surface *playerSpriteSheetSurfaceS = NULL;
+  SDL_Surface *playerSpriteSheetSurfaceSW = NULL;
+  SDL_Surface *playerSpriteSheetSurfaceW = NULL;
+  SDL_Surface *playerSpriteSheetSurfaceNW = NULL;
+
   SDL_Surface *isometricBackgroundSurface = NULL;
-  SDL_Surface *isometricBackgroundSurface2 = NULL;
 
   try {
-    playerSpriteSheetSurface = loadGameImageAsset("./assets/Rendered spritesheets/boat_iso.png");
-    isometricBackgroundSurface = loadGameImageAsset("./assets/Rendered\ spritesheets/water_tile_0_sheet.png");
-    isometricBackgroundSurface2 = loadGameImageAsset("./assets/Rendered\ spritesheets/water_tile_1_sheet.png");
+    playerSpriteSheetSurfaceN =
+        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot225.png");
+    playerSpriteSheetSurfaceNE =
+        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot180.png");
+    playerSpriteSheetSurfaceE =
+        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot135.png");
+    playerSpriteSheetSurfaceSE =
+        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot090.png");
+    playerSpriteSheetSurfaceS =
+        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot045.png");
+   playerSpriteSheetSurfaceSW =
+        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot000.png");
+   playerSpriteSheetSurfaceW =
+        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot315.png");
+   playerSpriteSheetSurfaceNW =
+        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot270.png");
+
+    isometricBackgroundSurface = loadGameImageAsset(
+        "./assets/water_tile_1_sheet.png");
   } catch (const std::runtime_error &ex) {
     throw;
   }
 
-  SpriteSheet *boatSpriteSheet = new SpriteSheet(gameRenderer, playerSpriteSheetSurface, 4, 2);
-  SpriteSheet *seaTileSpriteSheet = new SpriteSheet(gameRenderer, isometricBackgroundSurface, 10, 10);
-  SpriteSheet *seaTileSpriteSheet2 = new SpriteSheet(gameRenderer, isometricBackgroundSurface2, 10, 10);
+  SpriteSheet *playerSpriteSheetN =
+    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceN, 4, 4);
+  SpriteSheet *playerSpriteSheetNE =
+    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceNE, 4, 4);
+  SpriteSheet *playerSpriteSheetE =
+    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceE, 4, 4);
+  SpriteSheet *playerSpriteSheetSE =
+    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceSE, 4, 4);
+  SpriteSheet *playerSpriteSheetS =
+    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceS, 4, 4);
+  SpriteSheet *playerSpriteSheetSW =
+    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceSW, 4, 4);
+  SpriteSheet *playerSpriteSheetW =
+    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceW, 4, 4);
+  SpriteSheet *playerSpriteSheetNW =
+    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceNW, 4, 4);
+
+  SpriteSheet *activeSpriteSheet = playerSpriteSheetN;
+
+  SpriteSheet *seaTileSpriteSheet =
+      new SpriteSheet(gameRenderer, isometricBackgroundSurface, 10, 3);
 
   // END: Asset loading
 
   // BEGIN: Constant setup and state init
   // TODO: This needs a better abstraction.
-  float tileXOffsetConstant = (isometricBackgroundSurface->w / 10) - 2;
-  float tileYOffsetConstant = (isometricBackgroundSurface->h / 10) / 2 - 2;
+  float tileXOffsetConstant = (isometricBackgroundSurface->w / seaTileSpriteSheet->getColumnCount());
+  float tileYOffsetConstant = (isometricBackgroundSurface->h / seaTileSpriteSheet->getRowCount()) / 2;
 
   int visible_tiles_x = screenWidth / tileXOffsetConstant;
-  int visible_tiles_y = (screenHeight / tileYOffsetConstant) + 2;
+  int visible_tiles_y = (screenHeight / tileYOffsetConstant);
 
-  SDL_FRect playerPositioningRect = {
-      .x = screenWidth/2 - 64, .y = screenHeight/2 - 64, .w = playerSpriteSheetSurface->w / 4, .h = playerSpriteSheetSurface->h / 2};
+  SDL_FRect playerPositioningRect = {.x = (screenWidth / 2) - (seaTileSpriteSheet->getFrameWidth()),
+                                     .y = (screenHeight / 2) - (seaTileSpriteSheet->getFrameHeight()),
+                                     .w = playerSpriteSheetSurfaceN->w / playerSpriteSheetN->getColumnCount(),
+                                     .h = playerSpriteSheetSurfaceN->h / playerSpriteSheetN->getRowCount()};
 
   KEY_STATE keyState = {
       .up = false, .down = false, .left = false, .right = false};
 
-  SDL_FRect tilePositionRect = {.x = 0.0, .y = 0.0, .w = isometricBackgroundSurface->w / 10 , .h = isometricBackgroundSurface->h / 10 };
+  SDL_FRect tilePositionRect = {.x = 0.0,
+                                .y = 0.0,
+                                .w = isometricBackgroundSurface->w / seaTileSpriteSheet->getColumnCount(),
+                                .h = isometricBackgroundSurface->h / seaTileSpriteSheet->getRowCount()};
 
   float cam_x = 0.0;
   float cam_y = 0.0;
   int backgroundTileAnimationFrame = 0;
+  int spriteAnimationFrame = 0;
   int playerSpriteFrame = 0;
   // END: Constant setup and state init
+
+  bool moving = false;
 
   Uint32 rotLoop = 0;
   /* Game loop */
@@ -147,82 +224,93 @@ int main() {
 
     /* Read and process input control keys */
 
-    // TODO: Give sprite sheet 8 directions and add 4 new listeners for NW, NE, SE and SW (to fix dodgey velocity component code on multiple key presses)
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-    if ((state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) && (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A])) {
+    moving = true;
+    // Next level up for this would be a event stack to handle key events.
+    if ((state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
+        (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A])) {
       cam_x -= calculateHorizontalVectorComponent(-1);
       cam_y -= calculateVerticalVectorComponent(-1);
-      
+
+      activeSpriteSheet = playerSpriteSheetNW;
       playerSpriteFrame = 6;
-    } else if ((state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) && (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])) {
+
+    } else if ((state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
+               (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])) {
       cam_x -= calculateHorizontalVectorComponent(1);
       cam_y -= calculateVerticalVectorComponent(-1);
 
+      activeSpriteSheet = playerSpriteSheetNE;
       playerSpriteFrame = 4;
-    } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) && (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_A])) {
-      cam_x -= calculateHorizontalVectorComponent(-1);
-      cam_y -= calculateVerticalVectorComponent(1);
-
-      playerSpriteFrame = 0;
-    } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) && (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])) {
+    } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
+               (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])) {
       cam_x -= calculateHorizontalVectorComponent(1);
       cam_y -= calculateVerticalVectorComponent(1);
 
+      activeSpriteSheet = playerSpriteSheetSE;
       playerSpriteFrame = 2;
+    } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
+               (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A])) {
+      cam_x -= calculateHorizontalVectorComponent(-1);
+      cam_y -= calculateVerticalVectorComponent(1);
+
+      activeSpriteSheet = playerSpriteSheetSW;
+      playerSpriteFrame = 0;
     } else if (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) {
       cam_y -= 1;
       playerSpriteFrame = 1;
+      activeSpriteSheet = playerSpriteSheetS;
     } else if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) {
       cam_y -= -1;
       playerSpriteFrame = 5;
-    } else if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_D]) {
+      activeSpriteSheet = playerSpriteSheetN;
+    } else if (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D]) {
       cam_x -= 1;
       playerSpriteFrame = 3;
-    } else if (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_A]) {
+      activeSpriteSheet = playerSpriteSheetE;
+    } else if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]) {
       cam_x -= -1;
       playerSpriteFrame = 7;
+      activeSpriteSheet = playerSpriteSheetW;
     } else {
-      if (SDL_GetTicks() > rotLoop + 50) {
-        ++playerSpriteFrame;
-        if (playerSpriteFrame > 7) {
-          playerSpriteFrame = 0;
-        }
-        rotLoop = SDL_GetTicks();
-      }
-  }
+      moving = false;
+    }
 
     SDL_RenderClear(gameRenderer);
 
+    backgroundTileAnimationFrame =
+        (SDL_GetTicks() / 200) % seaTileSpriteSheet->getFrameCount();
+
     /* Lay tiles with SpriteSheet */
     tilePositionRect.y = cam_y - (tileYOffsetConstant * 2) - 300;
-    backgroundTileAnimationFrame = (SDL_GetTicks() / 128) % 39;
-    for (int i=0; i<visible_tiles_y * 2; ++i) {
-      if (i%2 == 0) {
+
+    for (int i = 0; i < visible_tiles_y * 2; ++i) {
+      if (i % 2 == 0) {
         tilePositionRect.x = cam_x - 100;
       } else {
         tilePositionRect.x = cam_x - (tileXOffsetConstant / 2) - 100;
       }
-      tilePositionRect.y += tileYOffsetConstant - 1;
-      seaTileSpriteSheet->render(&tilePositionRect, backgroundTileAnimationFrame);
+      tilePositionRect.y += tileYOffsetConstant;
+      seaTileSpriteSheet->render(&tilePositionRect,
+                                  backgroundTileAnimationFrame);
 
-      for (int j=0; j<visible_tiles_x * 2; ++j) {
+      for (int j = 0; j < visible_tiles_x * 2; ++j) {
         tilePositionRect.x += tileXOffsetConstant;
-        
-        if (map[i][j] == 1) {
-          seaTileSpriteSheet2->render(&tilePositionRect, backgroundTileAnimationFrame);
-        } else {
-          seaTileSpriteSheet->render(&tilePositionRect, backgroundTileAnimationFrame);
-        }
+
+        seaTileSpriteSheet->render(&tilePositionRect,
+                                    backgroundTileAnimationFrame);
       }
     }
 
     /* Render player sprite with SpriteSheet */
-    boatSpriteSheet->render(&playerPositioningRect, playerSpriteFrame);
+    activeSpriteSheet->render(&playerPositioningRect, spriteAnimationFrame);
     SDL_RenderPresent(gameRenderer);
 
+    if (moving) {
+      spriteAnimationFrame = (SDL_GetTicks() / 250) % activeSpriteSheet->getFrameCount();
+    }
     SDL_Delay(10);
-
   }
 
   return 0;

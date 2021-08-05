@@ -9,8 +9,9 @@ Simple isometric (2:1) SDL2 starter project.
 ## Prerequisites
 
 ```sh
-brew install sdl2
 brew install cmake
+brew install sdl2
+brew install sdl2_mixer
 brew install sdl2_image
 brew install catch2
 ```
@@ -78,3 +79,11 @@ Merge animation frames into spritesheet with ImageMagick:
 ```sh
 montage water_tile_0_0*.png -tile 10x10 -geometry 256x128+0+0 water_tile_0_sheet.png
 ```
+
+## Thinking aloud
+
+The Crystaline Conundrum - EDIT: HAHAHA, WHAT!?
+
+## TODOS
+
+- 

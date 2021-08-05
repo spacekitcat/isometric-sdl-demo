@@ -1,0 +1,20 @@
+{
+	"baseObjectName": "tank",
+	"spriteWidth": 256,
+	"spriteHeight": 256,
+	"paddingWidth": 0,
+	"paddingHeight": 0,
+	"numColumns": 4,
+	"numRows": 4,
+	"imageFile": "tank_idle_rot180.png",
+	"animations": [
+		{
+			"frameRate": 1,
+			"frameSkip": 0,
+			"name": "idle",
+			"numFrames": 16,
+			"rotation": 180,
+			"startFrame": 0
+		}
+	]
+}
