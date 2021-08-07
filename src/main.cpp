@@ -12,19 +12,8 @@
 #include <sstream>
 
 using namespace std;
-using std::chrono::duration_cast;
-using std::chrono::milliseconds;
-using std::chrono::seconds;
-using std::chrono::system_clock;
 
 #define PI 3.14159265
-
-struct KEY_STATE {
-  bool up;
-  bool down;
-  bool right;
-  bool left;
-};
 
 float calculateHorizontalVectorComponent(float vectorMagnitude) {
   return vectorMagnitude * cos(26.6 * PI / 180.0);
@@ -32,24 +21,6 @@ float calculateHorizontalVectorComponent(float vectorMagnitude) {
 
 float calculateVerticalVectorComponent(float vectorMagnitude) {
   return vectorMagnitude * sin(26.6 * PI / 180.0);
-}
-
-SDL_Surface *loadGameImageAsset(std::string path) {
-  SDL_Surface *imageAsset = IMG_Load(path.c_str());
-  if (imageAsset == NULL) {
-    throw std::runtime_error("unable to load image");
-  }
-
-  return imageAsset;
-}
-
-SDL_Texture *loadGameTextureAsset(SDL_Surface *imageAsset,
-                                  SDL_Renderer *renderer) {
-  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, imageAsset);
-  SDL_SetColorKey(imageAsset, SDL_TRUE,
-                  SDL_MapRGB(imageAsset->format, 255, 255, 255));
-
-  return texture;
 }
 
 int main() {
@@ -112,94 +83,74 @@ int main() {
   // END: Audio Setup area
 
   // BEGIN: Asset loading
-  SDL_Surface *playerSpriteSheetSurfaceN = NULL;
-  SDL_Surface *playerSpriteSheetSurfaceNE = NULL;
-  SDL_Surface *playerSpriteSheetSurfaceE = NULL;
-  SDL_Surface *playerSpriteSheetSurfaceSE = NULL;
-  SDL_Surface *playerSpriteSheetSurfaceS = NULL;
-  SDL_Surface *playerSpriteSheetSurfaceSW = NULL;
-  SDL_Surface *playerSpriteSheetSurfaceW = NULL;
-  SDL_Surface *playerSpriteSheetSurfaceNW = NULL;
 
-  SDL_Surface *isometricBackgroundSurface = NULL;
-
+  Sprite *playerSpriteN = NULL;
+  Sprite *playerSpriteNE = NULL;
+  Sprite *playerSpriteE = NULL;
+  Sprite *playerSpriteSE = NULL;
+  Sprite *playerSpriteS = NULL;
+  Sprite *playerSpriteSW = NULL;
+  Sprite *playerSpriteW = NULL;
+  Sprite *playerSpriteNW = NULL;
   try {
-    playerSpriteSheetSurfaceN =
-        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot225.png");
-    playerSpriteSheetSurfaceNE =
-        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot180.png");
-    playerSpriteSheetSurfaceE =
-        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot135.png");
-    playerSpriteSheetSurfaceSE =
-        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot090.png");
-    playerSpriteSheetSurfaceS =
-        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot045.png");
-   playerSpriteSheetSurfaceSW =
-        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot000.png");
-   playerSpriteSheetSurfaceW =
-        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot315.png");
-   playerSpriteSheetSurfaceNW =
-        loadGameImageAsset("./assets/Rendered spritesheets/tank_idle_rot270.png");
-
-    isometricBackgroundSurface = loadGameImageAsset(
-        "./assets/water_tile_1_sheet.png");
+    playerSpriteN = new Sprite(
+        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot225.png", 4,
+        4);
+    playerSpriteNE = new Sprite(
+        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot180.png", 4,
+        4);
+    playerSpriteE = new Sprite(
+        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot135.png", 4,
+        4);
+    playerSpriteSE = new Sprite(
+        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot090.png", 4,
+        4);
+    playerSpriteS = new Sprite(
+        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot045.png", 4,
+        4);
+    playerSpriteSW = new Sprite(
+        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot000.png", 4,
+        4);
+    playerSpriteW = new Sprite(
+        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot315.png", 4,
+        4);
+    playerSpriteNW = new Sprite(
+        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot270.png", 4,
+        4);
   } catch (const std::runtime_error &ex) {
     throw;
   }
 
-  Sprite *playerSpriteN =
-    new Sprite(gameRenderer, playerSpriteSheetSurfaceN, 4, 4);
-  Sprite *playerSpriteNE =
-    new Sprite(gameRenderer, playerSpriteSheetSurfaceNE, 4, 4);
-  Sprite *playerSpriteE =
-    new Sprite(gameRenderer, playerSpriteSheetSurfaceE, 4, 4);
-  Sprite *playerSpriteSE =
-    new Sprite(gameRenderer, playerSpriteSheetSurfaceSE, 4, 4);
-  Sprite *playerSpriteSheetS =
-    new Sprite(gameRenderer, playerSpriteSheetSurfaceS, 4, 4);
-  Sprite *playerSpriteSheetSW =
-    new Sprite(gameRenderer, playerSpriteSheetSurfaceSW, 4, 4);
-  Sprite *playerSpriteSheetW =
-    new Sprite(gameRenderer, playerSpriteSheetSurfaceW, 4, 4);
-  Sprite *playerSpriteNW =
-    new Sprite(gameRenderer, playerSpriteSheetSurfaceNW, 4, 4);
-
   Sprite *activeSpriteSheet = playerSpriteN;
 
   Sprite *seaTileSpriteSheet =
-      new Sprite(gameRenderer, isometricBackgroundSurface, 10, 3);
+      new Sprite(gameRenderer, "./assets/water_tile_1_sheet.png", 10, 3);
 
   // END: Asset loading
 
   // BEGIN: Constant setup and state init
   // TODO: This needs a better abstraction.
-  float tileXOffsetConstant = (isometricBackgroundSurface->w / seaTileSpriteSheet->getColumnCount());
-  float tileYOffsetConstant = (isometricBackgroundSurface->h / seaTileSpriteSheet->getRowCount()) / 2;
+  int visible_tiles_x = screenWidth / seaTileSpriteSheet->getFrameWidth();
+  int visible_tiles_y = (screenHeight / (seaTileSpriteSheet->getFrameHeight() / 2));
 
-  int visible_tiles_x = screenWidth / tileXOffsetConstant;
-  int visible_tiles_y = (screenHeight / tileYOffsetConstant);
+  SDL_FRect playerPositioningRect = {
+      .x = (screenWidth / 2) - (seaTileSpriteSheet->getFrameWidth()),
+      .y = (screenHeight / 2) - (seaTileSpriteSheet->getFrameHeight()),
+      .w = playerSpriteN->getFrameWidth(),
+      .h = playerSpriteN->getFrameHeight()};
 
-  SDL_FRect playerPositioningRect = {.x = (screenWidth / 2) - (seaTileSpriteSheet->getFrameWidth()),
-                                     .y = (screenHeight / 2) - (seaTileSpriteSheet->getFrameHeight()),
-                                     .w = playerSpriteSheetSurfaceN->w / playerSpriteN->getColumnCount(),
-                                     .h = playerSpriteSheetSurfaceN->h / playerSpriteN->getRowCount()};
-
-  KEY_STATE keyState = {
-      .up = false, .down = false, .left = false, .right = false};
-
-  SDL_FRect tilePositionRect = {.x = 0.0,
-                                .y = 0.0,
-                                .w = isometricBackgroundSurface->w / seaTileSpriteSheet->getColumnCount(),
-                                .h = isometricBackgroundSurface->h / seaTileSpriteSheet->getRowCount()};
+  SDL_FRect tilePositionRect = {
+      .x = 0.0,
+      .y = 0.0,
+      .w = seaTileSpriteSheet->getFrameWidth(),
+      .h = seaTileSpriteSheet->getFrameHeight()
+  };
 
   float cam_x = 0.0;
   float cam_y = 0.0;
   int playerSpriteFrame = 0;
   // END: Constant setup and state init
 
-  bool moving = false;
-
-  Uint32 rotLoop = 0;
   /* Game loop */
   while (true) {
     SDL_Event event;
@@ -225,7 +176,6 @@ int main() {
 
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-    moving = true;
     // Next level up for this would be a event stack to handle key events.
     if ((state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
         (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A])) {
@@ -254,12 +204,12 @@ int main() {
       cam_x -= calculateHorizontalVectorComponent(-1);
       cam_y -= calculateVerticalVectorComponent(1);
 
-      activeSpriteSheet = playerSpriteSheetSW;
+      activeSpriteSheet = playerSpriteSW;
       playerSpriteFrame = 0;
     } else if (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) {
       cam_y -= 1;
       playerSpriteFrame = 1;
-      activeSpriteSheet = playerSpriteSheetS;
+      activeSpriteSheet = playerSpriteS;
     } else if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) {
       cam_y -= -1;
       playerSpriteFrame = 5;
@@ -271,27 +221,25 @@ int main() {
     } else if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]) {
       cam_x -= -1;
       playerSpriteFrame = 7;
-      activeSpriteSheet = playerSpriteSheetW;
-    } else {
-      moving = false;
+      activeSpriteSheet = playerSpriteW;
     }
 
     SDL_RenderClear(gameRenderer);
 
     /* Lay tiles with SpriteSheet */
-    tilePositionRect.y = cam_y - (tileYOffsetConstant * 2) - 300;
+    tilePositionRect.y = cam_y - (seaTileSpriteSheet->getFrameHeight()) - 300;
 
     for (int i = 0; i < visible_tiles_y * 2; ++i) {
       if (i % 2 == 0) {
         tilePositionRect.x = cam_x - 100;
       } else {
-        tilePositionRect.x = cam_x - (tileXOffsetConstant / 2) - 100;
+        tilePositionRect.x = cam_x - (seaTileSpriteSheet->getFrameWidth() / 2) - 100;
       }
-      tilePositionRect.y += tileYOffsetConstant;
+      tilePositionRect.y += seaTileSpriteSheet->getFrameHeight() / 2;
       seaTileSpriteSheet->renderTick(&tilePositionRect);
 
       for (int j = 0; j < visible_tiles_x * 2; ++j) {
-        tilePositionRect.x += tileXOffsetConstant;
+        tilePositionRect.x += seaTileSpriteSheet->getFrameWidth();
 
         seaTileSpriteSheet->renderTick(&tilePositionRect);
       }

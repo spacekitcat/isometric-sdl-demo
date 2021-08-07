@@ -5,39 +5,43 @@
 #include <iostream>
 #include <math.h>
 
+class Sprite {
+private:
+  int _animationInterval;
+  int _currentFrame;
+  int _columns;
+  int _rows;
+  SDL_Renderer *renderer;
+  SDL_Surface *spriteSheetSurface;
+  SDL_Texture *spriteSheetTexture;
 
-class Sprite  {
-    private:
-        int _animationInterval;
-        int _currentFrame;
-        int _columns;
-        int _rows;
-        SDL_Renderer *renderer;
-        SDL_Surface *spriteSheetSurface;
-        SDL_Texture *spriteSheetTexture;
+  void _updateSpriteFrame(int index, SDL_Rect *clippingFrame);
 
-        void _updateSpriteFrame(int index, SDL_Rect *clippingFrame);
+  SDL_Surface *loadGameImageAsset(std::string path);
 
-    public:
-        Sprite();
+public:
+  Sprite();
 
-        Sprite(SDL_Renderer *renderer, SDL_Surface *spriteSheetSurface, int columns, int rows);
+  Sprite(SDL_Renderer *renderer, SDL_Surface *spriteSheetSurface, int columns,
+         int rows);
+  Sprite(SDL_Renderer *renderer, std::string spriteSheetPath, int column,
+         int rows);
 
-        ~Sprite();
+  ~Sprite();
 
-        void render(SDL_FRect *position, int frame);
+  void render(SDL_FRect *position, int frame);
 
-        void renderTick(SDL_FRect *position);
+  void renderTick(SDL_FRect *position);
 
-        int getFrameCount();
-        
-        int getColumnCount();
+  int getFrameCount();
 
-        int getRowCount();
+  int getColumnCount();
 
-        float getFrameWidth();
+  int getRowCount();
 
-        float getFrameHeight();
+  float getFrameWidth();
+
+  float getFrameHeight();
 };
 
 #endif
