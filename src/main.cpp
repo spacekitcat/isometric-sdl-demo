@@ -7,9 +7,9 @@
 #include <random>
 #include <sstream>
 
-#include "sprites/sprite.hpp"
-#include "sprites/sprite-state.hpp"
 #include "sprites/sprite-selector.hpp"
+#include "sprites/sprite-state.hpp"
+#include "sprites/sprite.hpp"
 
 using namespace std;
 
@@ -21,6 +21,71 @@ float calculateHorizontalVectorComponent(float vectorMagnitude) {
 
 float calculateVerticalVectorComponent(float vectorMagnitude) {
   return vectorMagnitude * sin(26.6 * PI / 180.0);
+}
+
+bool isNorthWestPressed(const Uint8 *state) {
+  return (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
+         (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]);
+}
+
+bool isNorthEastPressed(const Uint8 *state) {
+  return (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
+         (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D]);
+}
+
+bool isSouthWestPressed(const Uint8 *state) {
+  return (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
+         (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]);
+}
+
+bool isSouthEastPressed(const Uint8 *state) {
+  return (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
+         (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D]);
+}
+
+bool isNorthPressed(const Uint8 *state) {
+  return state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W];
+}
+
+bool isSouthPressed(const Uint8 *state) {
+  return state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S];
+}
+
+bool isEastPressed(const Uint8 *state) {
+  return state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D];
+}
+
+bool isWestPressed(const Uint8 *state) {
+  return state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A];
+}
+
+SpriteStateDirectionEnum getInputDirection(const Uint8 *state) {
+  if (isNorthWestPressed(state)) {
+    return NorthWest;
+  } else if (isNorthEastPressed(state)) {
+    return NorthEast;
+  } else if (isSouthWestPressed(state)) {
+    return SouthWest;
+  } else if (isSouthEastPressed(state)) {
+    return SouthEast;
+  } else if (isSouthPressed(state)) {
+    return South;
+  } else if (isNorthPressed(state)) {
+    return North;
+  } else if (isEastPressed(state)) {
+    return East;
+  } else if (isWestPressed(state)) {
+    return West;
+  } else {
+    return Idle;
+  }
+}
+
+bool noKeysPressed(const Uint8 *state) {
+  return !(isNorthWestPressed(state) || isNorthEastPressed(state) ||
+           isSouthWestPressed(state) || isSouthEastPressed(state) ||
+           isNorthPressed(state) || isSouthPressed(state) ||
+           isEastPressed(state) || isWestPressed(state));
 }
 
 int main() {
@@ -93,75 +158,64 @@ int main() {
   Sprite *playerSpriteSW = NULL;
   Sprite *playerSpriteW = NULL;
   Sprite *playerSpriteNW = NULL;
+
+  Sprite *seaTileSpriteSheet = NULL;
   try {
-    playerSpriteN = new Sprite(
-        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot225.png", 4,
-        4);
-      playerSpriteSelector->registerDirectionSprite(North, playerSpriteN);
+    playerSpriteN =
+        new Sprite(gameRenderer,
+                   "./assets/Rendered spritesheets/tank_idle_rot225.png", 4, 4);
+    playerSpriteSelector->registerDirectionSprite(North, playerSpriteN);
 
-    playerSpriteNE = new Sprite(
-        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot180.png", 4,
-        4);
-      playerSpriteSelector->registerDirectionSprite(NorthEast, playerSpriteNE);
+    playerSpriteNE =
+        new Sprite(gameRenderer,
+                   "./assets/Rendered spritesheets/tank_idle_rot180.png", 4, 4);
+    playerSpriteSelector->registerDirectionSprite(NorthEast, playerSpriteNE);
 
-    playerSpriteE = new Sprite(
-        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot135.png", 4,
-        4);
-      playerSpriteSelector->registerDirectionSprite(East, playerSpriteE);
+    playerSpriteE =
+        new Sprite(gameRenderer,
+                   "./assets/Rendered spritesheets/tank_idle_rot135.png", 4, 4);
+    playerSpriteSelector->registerDirectionSprite(East, playerSpriteE);
 
-    playerSpriteSE = new Sprite(
-        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot090.png", 4,
-        4);
-      playerSpriteSelector->registerDirectionSprite(SouthEast, playerSpriteSE);
+    playerSpriteSE =
+        new Sprite(gameRenderer,
+                   "./assets/Rendered spritesheets/tank_idle_rot090.png", 4, 4);
+    playerSpriteSelector->registerDirectionSprite(SouthEast, playerSpriteSE);
 
-    playerSpriteS = new Sprite(
-        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot045.png", 4,
-        4);
-      playerSpriteSelector->registerDirectionSprite(South, playerSpriteS);
+    playerSpriteS =
+        new Sprite(gameRenderer,
+                   "./assets/Rendered spritesheets/tank_idle_rot045.png", 4, 4);
+    playerSpriteSelector->registerDirectionSprite(South, playerSpriteS);
 
-    playerSpriteSW = new Sprite(
-        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot000.png", 4,
-        4);
-      playerSpriteSelector->registerDirectionSprite(SouthWest, playerSpriteSW);
+    playerSpriteSW =
+        new Sprite(gameRenderer,
+                   "./assets/Rendered spritesheets/tank_idle_rot000.png", 4, 4);
+    playerSpriteSelector->registerDirectionSprite(SouthWest, playerSpriteSW);
 
-    playerSpriteW = new Sprite(
-        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot315.png", 4,
-        4);
-      playerSpriteSelector->registerDirectionSprite(West, playerSpriteW);
+    playerSpriteW =
+        new Sprite(gameRenderer,
+                   "./assets/Rendered spritesheets/tank_idle_rot315.png", 4, 4);
+    playerSpriteSelector->registerDirectionSprite(West, playerSpriteW);
 
-    playerSpriteNW = new Sprite(
-        gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot270.png", 4,
-        4);
-      playerSpriteSelector->registerDirectionSprite(NorthWest, playerSpriteNW);
+    playerSpriteNW =
+        new Sprite(gameRenderer,
+                   "./assets/Rendered spritesheets/tank_idle_rot270.png", 4, 4);
+    playerSpriteSelector->registerDirectionSprite(NorthWest, playerSpriteNW);
 
+    seaTileSpriteSheet =
+        new Sprite(gameRenderer, "./assets/water_tile_1_sheet.png", 10, 3);
   } catch (const std::runtime_error &ex) {
     throw;
   }
-
-  Sprite *seaTileSpriteSheet =
-      new Sprite(gameRenderer, "./assets/water_tile_1_sheet.png", 10, 3);
-
   // END: Asset loading
 
   // BEGIN: Constant setup and state init
-  // TODO: This needs a better abstraction.
-  int visible_tiles_x = screenWidth / seaTileSpriteSheet->getFrameWidth();
-  int visible_tiles_y = (screenHeight / (seaTileSpriteSheet->getFrameHeight() / 2));
-
   SDL_FRect playerPositioningRect = {
       .x = (screenWidth / 2) - (seaTileSpriteSheet->getFrameWidth()),
       .y = (screenHeight / 2) - (seaTileSpriteSheet->getFrameHeight()),
       .w = playerSpriteN->getFrameWidth(),
       .h = playerSpriteN->getFrameHeight()};
 
-  SDL_FRect tilePositionRect = {
-      .x = 0.0,
-      .y = 0.0,
-      .w = seaTileSpriteSheet->getFrameWidth(),
-      .h = seaTileSpriteSheet->getFrameHeight()
-  };
-
-  SpriteState spriteState = { .direction = North };
+  SpriteState spriteState = {.direction = North};
 
   float cam_x = 0.0;
   float cam_y = 0.0;
@@ -190,66 +244,65 @@ int main() {
 
     /* Read and process input control keys */
 
-    const Uint8 *state = SDL_GetKeyboardState(NULL);
+    const Uint8 *keyState = SDL_GetKeyboardState(NULL);
+    if (!noKeysPressed(keyState)) {
+      spriteState.direction = getInputDirection(keyState);
 
-    // Next level up for this would be a event stack to handle key events.
-    if ((state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
-        (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A])) {
-      cam_x -= calculateHorizontalVectorComponent(-1);
-      cam_y -= calculateVerticalVectorComponent(-1);
-
-      spriteState.direction = NorthWest;
-    } else if ((state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
-               (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])) {
-      cam_x -= calculateHorizontalVectorComponent(1);
-      cam_y -= calculateVerticalVectorComponent(-1);
-
-      spriteState.direction = NorthEast;
-    } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
-               (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])) {
-      cam_x -= calculateHorizontalVectorComponent(1);
-      cam_y -= calculateVerticalVectorComponent(1);
-
-      spriteState.direction = SouthEast;
-    } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
-               (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A])) {
-      cam_x -= calculateHorizontalVectorComponent(-1);
-      cam_y -= calculateVerticalVectorComponent(1);
-
-      spriteState.direction = SouthWest;
-    } else if (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) {
-      cam_y -= 1;
-
-      spriteState.direction = South;
-    } else if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) {
-      cam_y -= -1;
-
-      spriteState.direction = North;
-    } else if (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D]) {
-      cam_x -= 1;
-
-      spriteState.direction = East;
-    } else if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]) {
-      cam_x -= -1;
-
-      spriteState.direction = West;
+      switch (spriteState.direction) {
+      case NorthWest:
+        cam_x -= calculateHorizontalVectorComponent(-1);
+        cam_y -= calculateVerticalVectorComponent(-1);
+        break;
+      case NorthEast:
+        cam_x -= calculateHorizontalVectorComponent(1);
+        cam_y -= calculateVerticalVectorComponent(-1);
+        break;
+      case SouthEast:
+        cam_x -= calculateHorizontalVectorComponent(1);
+        cam_y -= calculateVerticalVectorComponent(1);
+        break;
+      case SouthWest:
+        cam_x -= calculateHorizontalVectorComponent(-1);
+        cam_y -= calculateVerticalVectorComponent(1);
+        break;
+      case South:
+        cam_y -= 1;
+        break;
+      case North:
+        cam_y -= -1;
+        break;
+      case East:
+        cam_x -= 1;
+        break;
+      case West:
+        cam_x -= -1;
+        break;
+      }
     }
 
     SDL_RenderClear(gameRenderer);
 
     /* Lay tiles with SpriteSheet */
-    tilePositionRect.y = cam_y - (seaTileSpriteSheet->getFrameHeight()) - 300;
+    SDL_FRect tilePositionRect = {.x = 0.0,
+                                  .y = cam_y -
+                                       seaTileSpriteSheet->getFrameHeight(),
+                                  .w = seaTileSpriteSheet->getFrameWidth(),
+                                  .h = seaTileSpriteSheet->getFrameHeight()};
 
-    for (int i = 0; i < visible_tiles_y * 2; ++i) {
+    int visible_tiles_x = screenWidth / seaTileSpriteSheet->getFrameWidth();
+    int visible_tiles_y =
+        (screenHeight / (seaTileSpriteSheet->getFrameHeight() / 2)) * 2;
+    for (int i = 0; i < visible_tiles_y; ++i) {
       if (i % 2 == 0) {
-        tilePositionRect.x = cam_x - 100;
+        tilePositionRect.x = cam_x;
       } else {
-        tilePositionRect.x = cam_x - (seaTileSpriteSheet->getFrameWidth() / 2) - 100;
+        // Every other row has a negative offset of half the tile width.
+        tilePositionRect.x = cam_x - (seaTileSpriteSheet->getFrameWidth() / 2);
       }
       tilePositionRect.y += seaTileSpriteSheet->getFrameHeight() / 2;
       seaTileSpriteSheet->renderTick(&tilePositionRect);
 
-      for (int j = 0; j < visible_tiles_x * 2; ++j) {
+      for (int j = 0; j < visible_tiles_x; ++j) {
         tilePositionRect.x += seaTileSpriteSheet->getFrameWidth();
 
         seaTileSpriteSheet->renderTick(&tilePositionRect);
@@ -259,10 +312,10 @@ int main() {
     /* Render player sprite with SpriteSheet */
     Sprite *playerSprite = playerSpriteSelector->selectSprite(spriteState);
     if (playerSprite != NULL) {
-        playerSprite->renderTick(&playerPositioningRect);
+      playerSprite->renderTick(&playerPositioningRect);
     }
-    SDL_RenderPresent(gameRenderer);
 
+    SDL_RenderPresent(gameRenderer);
     SDL_Delay(10);
   }
 
