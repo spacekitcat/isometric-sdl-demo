@@ -86,4 +86,6 @@ The Crystaline Conundrum - EDIT: HAHAHA, WHAT!?
 
 ## TODOS
 
-- 
+- Better shutdown code
+- Modify sprite->render to take x and y co-ordinate (instead of a rect)
+- Implement sprite selector module

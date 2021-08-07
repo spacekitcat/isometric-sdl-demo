@@ -1,15 +1,16 @@
-#include "sprites/sprite.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_keyboard.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
-#include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <math.h>
 #include <random>
 #include <sstream>
+
+#include "sprites/sprite.hpp"
+#include "sprites/sprite-state.hpp"
 
 using namespace std;
 
@@ -146,6 +147,8 @@ int main() {
       .h = seaTileSpriteSheet->getFrameHeight()
   };
 
+  SpriteState spriteState = { .direction = North };
+
   float cam_x = 0.0;
   float cam_y = 0.0;
   int playerSpriteFrame = 0;
@@ -182,6 +185,8 @@ int main() {
       cam_x -= calculateHorizontalVectorComponent(-1);
       cam_y -= calculateVerticalVectorComponent(-1);
 
+      spriteState.direction = NorthWest;
+
       activeSpriteSheet = playerSpriteNW;
       playerSpriteFrame = 6;
 
@@ -190,12 +195,16 @@ int main() {
       cam_x -= calculateHorizontalVectorComponent(1);
       cam_y -= calculateVerticalVectorComponent(-1);
 
+      spriteState.direction = NorthEast;
+
       activeSpriteSheet = playerSpriteNE;
       playerSpriteFrame = 4;
     } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
                (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])) {
       cam_x -= calculateHorizontalVectorComponent(1);
       cam_y -= calculateVerticalVectorComponent(1);
+
+      spriteState.direction = SouthEast;
 
       activeSpriteSheet = playerSpriteSE;
       playerSpriteFrame = 2;
@@ -204,22 +213,36 @@ int main() {
       cam_x -= calculateHorizontalVectorComponent(-1);
       cam_y -= calculateVerticalVectorComponent(1);
 
+      spriteState.direction = SouthWest;
+
       activeSpriteSheet = playerSpriteSW;
       playerSpriteFrame = 0;
     } else if (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) {
       cam_y -= 1;
+
+      spriteState.direction = South;
+
       playerSpriteFrame = 1;
       activeSpriteSheet = playerSpriteS;
     } else if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) {
       cam_y -= -1;
+
+      spriteState.direction = North;
+
       playerSpriteFrame = 5;
       activeSpriteSheet = playerSpriteN;
     } else if (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D]) {
       cam_x -= 1;
+
+      spriteState.direction = East;
+
       playerSpriteFrame = 3;
       activeSpriteSheet = playerSpriteE;
     } else if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]) {
       cam_x -= -1;
+
+      spriteState.direction = West;
+
       playerSpriteFrame = 7;
       activeSpriteSheet = playerSpriteW;
     }
