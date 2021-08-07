@@ -22,8 +22,6 @@ private:
 public:
   Sprite();
 
-  Sprite(SDL_Renderer *renderer, SDL_Surface *spriteSheetSurface, int columns,
-         int rows);
   Sprite(SDL_Renderer *renderer, std::string spriteSheetPath, int column,
          int rows);
 

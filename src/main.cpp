@@ -11,6 +11,7 @@
 
 #include "sprites/sprite.hpp"
 #include "sprites/sprite-state.hpp"
+#include "sprites/sprite-selector.hpp"
 
 using namespace std;
 
@@ -85,6 +86,8 @@ int main() {
 
   // BEGIN: Asset loading
 
+  SpriteSelector *playerSpriteSelector = new SpriteSelector();
+
   Sprite *playerSpriteN = NULL;
   Sprite *playerSpriteNE = NULL;
   Sprite *playerSpriteE = NULL;
@@ -97,32 +100,46 @@ int main() {
     playerSpriteN = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot225.png", 4,
         4);
+    playerSpriteSelector->setDirectionSprite(North, playerSpriteN);
+
     playerSpriteNE = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot180.png", 4,
         4);
+    playerSpriteSelector->setDirectionSprite(NorthEast, playerSpriteNE);
+
     playerSpriteE = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot135.png", 4,
         4);
+    playerSpriteSelector->setDirectionSprite(East, playerSpriteE);
+
     playerSpriteSE = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot090.png", 4,
         4);
+    playerSpriteSelector->setDirectionSprite(SouthEast, playerSpriteSE);
+
     playerSpriteS = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot045.png", 4,
         4);
+    playerSpriteSelector->setDirectionSprite(South, playerSpriteS);
+
     playerSpriteSW = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot000.png", 4,
         4);
+    playerSpriteSelector->setDirectionSprite(SouthWest, playerSpriteSW);
+
     playerSpriteW = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot315.png", 4,
         4);
+    playerSpriteSelector->setDirectionSprite(West, playerSpriteW);
+
     playerSpriteNW = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot270.png", 4,
         4);
+    playerSpriteSelector->setDirectionSprite(NorthWest, playerSpriteNW);
+
   } catch (const std::runtime_error &ex) {
     throw;
   }
-
-  Sprite *activeSpriteSheet = playerSpriteN;
 
   Sprite *seaTileSpriteSheet =
       new Sprite(gameRenderer, "./assets/water_tile_1_sheet.png", 10, 3);
@@ -151,7 +168,6 @@ int main() {
 
   float cam_x = 0.0;
   float cam_y = 0.0;
-  int playerSpriteFrame = 0;
   // END: Constant setup and state init
 
   /* Game loop */
@@ -186,65 +202,40 @@ int main() {
       cam_y -= calculateVerticalVectorComponent(-1);
 
       spriteState.direction = NorthWest;
-
-      activeSpriteSheet = playerSpriteNW;
-      playerSpriteFrame = 6;
-
     } else if ((state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
                (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])) {
       cam_x -= calculateHorizontalVectorComponent(1);
       cam_y -= calculateVerticalVectorComponent(-1);
 
       spriteState.direction = NorthEast;
-
-      activeSpriteSheet = playerSpriteNE;
-      playerSpriteFrame = 4;
     } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
                (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])) {
       cam_x -= calculateHorizontalVectorComponent(1);
       cam_y -= calculateVerticalVectorComponent(1);
 
       spriteState.direction = SouthEast;
-
-      activeSpriteSheet = playerSpriteSE;
-      playerSpriteFrame = 2;
     } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
                (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A])) {
       cam_x -= calculateHorizontalVectorComponent(-1);
       cam_y -= calculateVerticalVectorComponent(1);
 
       spriteState.direction = SouthWest;
-
-      activeSpriteSheet = playerSpriteSW;
-      playerSpriteFrame = 0;
     } else if (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) {
       cam_y -= 1;
 
       spriteState.direction = South;
-
-      playerSpriteFrame = 1;
-      activeSpriteSheet = playerSpriteS;
     } else if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) {
       cam_y -= -1;
 
       spriteState.direction = North;
-
-      playerSpriteFrame = 5;
-      activeSpriteSheet = playerSpriteN;
     } else if (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D]) {
       cam_x -= 1;
 
       spriteState.direction = East;
-
-      playerSpriteFrame = 3;
-      activeSpriteSheet = playerSpriteE;
     } else if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]) {
       cam_x -= -1;
 
       spriteState.direction = West;
-
-      playerSpriteFrame = 7;
-      activeSpriteSheet = playerSpriteW;
     }
 
     SDL_RenderClear(gameRenderer);
@@ -269,7 +260,10 @@ int main() {
     }
 
     /* Render player sprite with SpriteSheet */
-    activeSpriteSheet->renderTick(&playerPositioningRect);
+    Sprite *playerSprite = playerSpriteSelector->selectSprite(spriteState);
+    if (playerSprite != NULL) {
+        playerSprite->renderTick(&playerPositioningRect);
+    }
     SDL_RenderPresent(gameRenderer);
 
     SDL_Delay(10);

@@ -11,7 +11,7 @@ find_package(SDL2_ttf REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_IMAGE_DIRS})
 
-add_executable(SDL2Test src/Main.cpp src/sprites/sprite.cpp)
+add_executable(SDL2Test src/Main.cpp src/sprites/sprite.cpp src/sprites/sprite-selector.cpp src/sprites/sprite-selector.hpp)
 target_link_libraries(SDL2Test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES})
 
 find_package(Catch2 REQUIRED)
