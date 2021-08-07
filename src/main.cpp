@@ -7,6 +7,7 @@
 #include <random>
 #include <sstream>
 
+#include "input/direction-input-helpers.hpp"
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
@@ -23,69 +24,26 @@ float calculateVerticalVectorComponent(float vectorMagnitude) {
   return vectorMagnitude * sin(26.6 * PI / 180.0);
 }
 
-bool isNorthWestPressed(const Uint8 *state) {
-  return (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
-         (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]);
-}
-
-bool isNorthEastPressed(const Uint8 *state) {
-  return (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
-         (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D]);
-}
-
-bool isSouthWestPressed(const Uint8 *state) {
-  return (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
-         (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]);
-}
-
-bool isSouthEastPressed(const Uint8 *state) {
-  return (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
-         (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D]);
-}
-
-bool isNorthPressed(const Uint8 *state) {
-  return state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W];
-}
-
-bool isSouthPressed(const Uint8 *state) {
-  return state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S];
-}
-
-bool isEastPressed(const Uint8 *state) {
-  return state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D];
-}
-
-bool isWestPressed(const Uint8 *state) {
-  return state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A];
-}
-
 SpriteStateDirectionEnum getInputDirection(const Uint8 *state) {
-  if (isNorthWestPressed(state)) {
+  if (DirectionInputHelpers::isNorthWestPressed(state)) {
     return NorthWest;
-  } else if (isNorthEastPressed(state)) {
+  } else if (DirectionInputHelpers::isNorthEastPressed(state)) {
     return NorthEast;
-  } else if (isSouthWestPressed(state)) {
+  } else if (DirectionInputHelpers::isSouthWestPressed(state)) {
     return SouthWest;
-  } else if (isSouthEastPressed(state)) {
+  } else if (DirectionInputHelpers::isSouthEastPressed(state)) {
     return SouthEast;
-  } else if (isSouthPressed(state)) {
+  } else if (DirectionInputHelpers::isSouthPressed(state)) {
     return South;
-  } else if (isNorthPressed(state)) {
+  } else if (DirectionInputHelpers::isNorthPressed(state)) {
     return North;
-  } else if (isEastPressed(state)) {
+  } else if (DirectionInputHelpers::isEastPressed(state)) {
     return East;
-  } else if (isWestPressed(state)) {
+  } else if (DirectionInputHelpers::isWestPressed(state)) {
     return West;
   } else {
     return Idle;
   }
-}
-
-bool noKeysPressed(const Uint8 *state) {
-  return !(isNorthWestPressed(state) || isNorthEastPressed(state) ||
-           isSouthWestPressed(state) || isSouthEastPressed(state) ||
-           isNorthPressed(state) || isSouthPressed(state) ||
-           isEastPressed(state) || isWestPressed(state));
 }
 
 int main() {
@@ -245,7 +203,7 @@ int main() {
     /* Read and process input control keys */
 
     const Uint8 *keyState = SDL_GetKeyboardState(NULL);
-    if (!noKeysPressed(keyState)) {
+    if (!DirectionInputHelpers::noKeysPressed(keyState)) {
       spriteState.direction = getInputDirection(keyState);
 
       switch (spriteState.direction) {
