@@ -1,6 +1,6 @@
 #include "sprite.hpp"
 #include <SDL.h>
-#include <SDL_Image.h>
+#include <SDL_image.h>
 
 Sprite::Sprite() {}
 
@@ -16,7 +16,6 @@ Sprite::Sprite(SDL_Renderer *renderer, std::string spriteSheetPath, int columns,
   }
 
   this->renderer = renderer;
-  this->spriteSheetSurface = spriteSheetSurface;
   this->spriteSheetTexture =
       SDL_CreateTextureFromSurface(this->renderer, this->spriteSheetSurface);
   this->_columns = columns;

@@ -47,7 +47,7 @@ int main() {
 
   int flags = MIX_INIT_MP3 | MIX_INIT_MOD;
   int initted = Mix_Init(flags);
-  if (initted & flags != flags) {
+  if (initted & !flags) {
     printf("Mix_Init: Failed to init required ogg and mod support!\n");
     printf("Mix_Init: %s\n", Mix_GetError());
     return 1;
