@@ -1,8 +1,9 @@
-#include "spritesheets/spritesheet.hpp"
+#include "sprites/sprite.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_keyboard.h>
 #include <SDL_mixer.h>
+#include <SDL_ttf.h>
 #include <chrono>
 #include <iomanip>
 #include <iostream>
@@ -98,7 +99,7 @@ int main() {
   }
 
   Mix_Chunk *sample;
-  sample = Mix_LoadWAV("./assets/audio.wav");
+  sample = Mix_LoadWAV("./assets/x109.wav");
   if (!sample) {
     printf("Mix_LoadWAV: %s\n", Mix_GetError());
     // handle error
@@ -146,27 +147,27 @@ int main() {
     throw;
   }
 
-  SpriteSheet *playerSpriteSheetN =
-    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceN, 4, 4);
-  SpriteSheet *playerSpriteSheetNE =
-    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceNE, 4, 4);
-  SpriteSheet *playerSpriteSheetE =
-    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceE, 4, 4);
-  SpriteSheet *playerSpriteSheetSE =
-    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceSE, 4, 4);
-  SpriteSheet *playerSpriteSheetS =
-    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceS, 4, 4);
-  SpriteSheet *playerSpriteSheetSW =
-    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceSW, 4, 4);
-  SpriteSheet *playerSpriteSheetW =
-    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceW, 4, 4);
-  SpriteSheet *playerSpriteSheetNW =
-    new SpriteSheet(gameRenderer, playerSpriteSheetSurfaceNW, 4, 4);
+  Sprite *playerSpriteN =
+    new Sprite(gameRenderer, playerSpriteSheetSurfaceN, 4, 4);
+  Sprite *playerSpriteNE =
+    new Sprite(gameRenderer, playerSpriteSheetSurfaceNE, 4, 4);
+  Sprite *playerSpriteE =
+    new Sprite(gameRenderer, playerSpriteSheetSurfaceE, 4, 4);
+  Sprite *playerSpriteSE =
+    new Sprite(gameRenderer, playerSpriteSheetSurfaceSE, 4, 4);
+  Sprite *playerSpriteSheetS =
+    new Sprite(gameRenderer, playerSpriteSheetSurfaceS, 4, 4);
+  Sprite *playerSpriteSheetSW =
+    new Sprite(gameRenderer, playerSpriteSheetSurfaceSW, 4, 4);
+  Sprite *playerSpriteSheetW =
+    new Sprite(gameRenderer, playerSpriteSheetSurfaceW, 4, 4);
+  Sprite *playerSpriteNW =
+    new Sprite(gameRenderer, playerSpriteSheetSurfaceNW, 4, 4);
 
-  SpriteSheet *activeSpriteSheet = playerSpriteSheetN;
+  Sprite *activeSpriteSheet = playerSpriteN;
 
-  SpriteSheet *seaTileSpriteSheet =
-      new SpriteSheet(gameRenderer, isometricBackgroundSurface, 10, 3);
+  Sprite *seaTileSpriteSheet =
+      new Sprite(gameRenderer, isometricBackgroundSurface, 10, 3);
 
   // END: Asset loading
 
@@ -180,8 +181,8 @@ int main() {
 
   SDL_FRect playerPositioningRect = {.x = (screenWidth / 2) - (seaTileSpriteSheet->getFrameWidth()),
                                      .y = (screenHeight / 2) - (seaTileSpriteSheet->getFrameHeight()),
-                                     .w = playerSpriteSheetSurfaceN->w / playerSpriteSheetN->getColumnCount(),
-                                     .h = playerSpriteSheetSurfaceN->h / playerSpriteSheetN->getRowCount()};
+                                     .w = playerSpriteSheetSurfaceN->w / playerSpriteN->getColumnCount(),
+                                     .h = playerSpriteSheetSurfaceN->h / playerSpriteN->getRowCount()};
 
   KEY_STATE keyState = {
       .up = false, .down = false, .left = false, .right = false};
@@ -193,8 +194,6 @@ int main() {
 
   float cam_x = 0.0;
   float cam_y = 0.0;
-  int backgroundTileAnimationFrame = 0;
-  int spriteAnimationFrame = 0;
   int playerSpriteFrame = 0;
   // END: Constant setup and state init
 
@@ -233,7 +232,7 @@ int main() {
       cam_x -= calculateHorizontalVectorComponent(-1);
       cam_y -= calculateVerticalVectorComponent(-1);
 
-      activeSpriteSheet = playerSpriteSheetNW;
+      activeSpriteSheet = playerSpriteNW;
       playerSpriteFrame = 6;
 
     } else if ((state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) &&
@@ -241,14 +240,14 @@ int main() {
       cam_x -= calculateHorizontalVectorComponent(1);
       cam_y -= calculateVerticalVectorComponent(-1);
 
-      activeSpriteSheet = playerSpriteSheetNE;
+      activeSpriteSheet = playerSpriteNE;
       playerSpriteFrame = 4;
     } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
                (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])) {
       cam_x -= calculateHorizontalVectorComponent(1);
       cam_y -= calculateVerticalVectorComponent(1);
 
-      activeSpriteSheet = playerSpriteSheetSE;
+      activeSpriteSheet = playerSpriteSE;
       playerSpriteFrame = 2;
     } else if ((state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S]) &&
                (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A])) {
@@ -264,11 +263,11 @@ int main() {
     } else if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W]) {
       cam_y -= -1;
       playerSpriteFrame = 5;
-      activeSpriteSheet = playerSpriteSheetN;
+      activeSpriteSheet = playerSpriteN;
     } else if (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D]) {
       cam_x -= 1;
       playerSpriteFrame = 3;
-      activeSpriteSheet = playerSpriteSheetE;
+      activeSpriteSheet = playerSpriteE;
     } else if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]) {
       cam_x -= -1;
       playerSpriteFrame = 7;
@@ -278,9 +277,6 @@ int main() {
     }
 
     SDL_RenderClear(gameRenderer);
-
-    backgroundTileAnimationFrame =
-        (SDL_GetTicks() / 200) % seaTileSpriteSheet->getFrameCount();
 
     /* Lay tiles with SpriteSheet */
     tilePositionRect.y = cam_y - (tileYOffsetConstant * 2) - 300;
@@ -292,24 +288,19 @@ int main() {
         tilePositionRect.x = cam_x - (tileXOffsetConstant / 2) - 100;
       }
       tilePositionRect.y += tileYOffsetConstant;
-      seaTileSpriteSheet->render(&tilePositionRect,
-                                  backgroundTileAnimationFrame);
+      seaTileSpriteSheet->renderTick(&tilePositionRect);
 
       for (int j = 0; j < visible_tiles_x * 2; ++j) {
         tilePositionRect.x += tileXOffsetConstant;
 
-        seaTileSpriteSheet->render(&tilePositionRect,
-                                    backgroundTileAnimationFrame);
+        seaTileSpriteSheet->renderTick(&tilePositionRect);
       }
     }
 
     /* Render player sprite with SpriteSheet */
-    activeSpriteSheet->render(&playerPositioningRect, spriteAnimationFrame);
+    activeSpriteSheet->renderTick(&playerPositioningRect);
     SDL_RenderPresent(gameRenderer);
 
-    if (moving) {
-      spriteAnimationFrame = (SDL_GetTicks() / 250) % activeSpriteSheet->getFrameCount();
-    }
     SDL_Delay(10);
   }
 
