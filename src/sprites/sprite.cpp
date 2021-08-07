@@ -2,12 +2,10 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-Sprite::Sprite() {}
-
 Sprite::Sprite(SDL_Renderer *renderer, std::string spriteSheetPath, int columns,
                int rows) {
-  this->spriteSheetSurface = NULL;
-  this->spriteSheetTexture = NULL;
+  this->spriteSheetSurface = nullptr;
+  this->spriteSheetTexture = nullptr;
 
   try {
     this->spriteSheetSurface = loadGameImageAsset(spriteSheetPath);
@@ -28,16 +26,16 @@ Sprite::Sprite(SDL_Renderer *renderer, std::string spriteSheetPath, int columns,
 
 Sprite::~Sprite() {
     free(this->spriteSheetSurface);
-    this->spriteSheetSurface = NULL;
+    this->spriteSheetSurface = nullptr;
 
     free(this->spriteSheetTexture);
-    this->spriteSheetTexture = NULL;
+    this->spriteSheetTexture = nullptr;
 
 }
 
 SDL_Surface *Sprite::loadGameImageAsset(std::string path) {
   SDL_Surface *imageAsset = IMG_Load(path.c_str());
-  if (imageAsset == NULL) {
+  if (imageAsset == nullptr) {
     throw std::runtime_error("unable to load image");
   }
 
@@ -48,8 +46,8 @@ void Sprite::_updateSpriteFrame(int index, SDL_Rect *clippingFrame) {
   int row = round(index / this->_columns);
   int column = round(index % this->_columns);
 
-  float frameWidth = this->spriteSheetSurface->w / this->_columns;
-  float frameHeight = this->spriteSheetSurface->h / this->_rows;
+  int frameWidth = this->spriteSheetSurface->w / this->_columns;
+  int frameHeight = this->spriteSheetSurface->h / this->_rows;
 
   clippingFrame->x = column * frameWidth;
   clippingFrame->y = row * frameHeight;
@@ -57,19 +55,21 @@ void Sprite::_updateSpriteFrame(int index, SDL_Rect *clippingFrame) {
   clippingFrame->h = frameHeight;
 }
 
-void Sprite::render(SDL_FRect *position, int frame) {
+void Sprite::render(float xPosition, float yPosition, int frame) {
   SDL_Rect clippingRect;
-
+  SDL_FRect positionRect = { .w=this->getFrameWidth(), .h=this->getFrameHeight() };
+  positionRect.x = xPosition;
+  positionRect.y = yPosition;
   this->_updateSpriteFrame(frame, &clippingRect);
 
   SDL_RenderCopyF(this->renderer, this->spriteSheetTexture, &clippingRect,
-                  position);
+                  &positionRect);
 }
 
 void Sprite::renderTick(SDL_FRect *position) {
   this->_currentFrame =
       (SDL_GetTicks() / this->_animationInterval) % this->getFrameCount();
-  this->render(position, this->_currentFrame);
+    this->render(position->x, position->y, this->_currentFrame);
 }
 
 int Sprite::getFrameCount() { return this->_rows * this->_columns; }

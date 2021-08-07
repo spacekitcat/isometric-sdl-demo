@@ -7,7 +7,7 @@ SpriteSelector::SpriteSelector() {
 SpriteSelector::~SpriteSelector() {
 }
 
-void SpriteSelector::setDirectionSprite(SpriteStateDirectionEnum direction, Sprite *sprite) {
+void SpriteSelector::registerDirectionSprite(SpriteStateDirectionEnum direction, Sprite *sprite) {
     this->_sprites.insert(std::pair<SpriteStateDirectionEnum, Sprite*>(direction, sprite));
 }
 

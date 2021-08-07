@@ -13,7 +13,7 @@ class SpriteSelector {
         SpriteSelector();
         ~SpriteSelector();
 
-        void setDirectionSprite(SpriteStateDirectionEnum direction, Sprite *sprite);
+        void registerDirectionSprite(SpriteStateDirectionEnum direction, Sprite *sprite);
 
         Sprite* selectSprite(SpriteState spriteState);
 };

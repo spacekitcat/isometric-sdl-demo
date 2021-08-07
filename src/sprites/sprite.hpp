@@ -20,14 +20,12 @@ private:
   SDL_Surface *loadGameImageAsset(std::string path);
 
 public:
-  Sprite();
-
   Sprite(SDL_Renderer *renderer, std::string spriteSheetPath, int column,
          int rows);
 
   ~Sprite();
 
-  void render(SDL_FRect *position, int frame);
+  void render(float xPosition, float yPosition, int frame);
 
   void renderTick(SDL_FRect *position);
 

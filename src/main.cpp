@@ -1,10 +1,8 @@
 #include <SDL.h>
-#include <SDL_image.h>
 #include <SDL_keyboard.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include <iomanip>
-#include <iostream>
 #include <math.h>
 #include <random>
 #include <sstream>
@@ -39,7 +37,6 @@ int main() {
 
   const int screenWidth = 800;
   const int screenHeight = 600;
-  const float velocity = 1;
 
   // BEGIN: SDL Setup area
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -100,42 +97,42 @@ int main() {
     playerSpriteN = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot225.png", 4,
         4);
-    playerSpriteSelector->setDirectionSprite(North, playerSpriteN);
+      playerSpriteSelector->registerDirectionSprite(North, playerSpriteN);
 
     playerSpriteNE = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot180.png", 4,
         4);
-    playerSpriteSelector->setDirectionSprite(NorthEast, playerSpriteNE);
+      playerSpriteSelector->registerDirectionSprite(NorthEast, playerSpriteNE);
 
     playerSpriteE = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot135.png", 4,
         4);
-    playerSpriteSelector->setDirectionSprite(East, playerSpriteE);
+      playerSpriteSelector->registerDirectionSprite(East, playerSpriteE);
 
     playerSpriteSE = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot090.png", 4,
         4);
-    playerSpriteSelector->setDirectionSprite(SouthEast, playerSpriteSE);
+      playerSpriteSelector->registerDirectionSprite(SouthEast, playerSpriteSE);
 
     playerSpriteS = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot045.png", 4,
         4);
-    playerSpriteSelector->setDirectionSprite(South, playerSpriteS);
+      playerSpriteSelector->registerDirectionSprite(South, playerSpriteS);
 
     playerSpriteSW = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot000.png", 4,
         4);
-    playerSpriteSelector->setDirectionSprite(SouthWest, playerSpriteSW);
+      playerSpriteSelector->registerDirectionSprite(SouthWest, playerSpriteSW);
 
     playerSpriteW = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot315.png", 4,
         4);
-    playerSpriteSelector->setDirectionSprite(West, playerSpriteW);
+      playerSpriteSelector->registerDirectionSprite(West, playerSpriteW);
 
     playerSpriteNW = new Sprite(
         gameRenderer, "./assets/Rendered spritesheets/tank_idle_rot270.png", 4,
         4);
-    playerSpriteSelector->setDirectionSprite(NorthWest, playerSpriteNW);
+      playerSpriteSelector->registerDirectionSprite(NorthWest, playerSpriteNW);
 
   } catch (const std::runtime_error &ex) {
     throw;
