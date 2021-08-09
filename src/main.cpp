@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include "input/direction-input-helpers.hpp"
+#include "map/isometric-tile-map-sector.hpp"
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
@@ -24,42 +25,31 @@ float calculateVerticalVectorComponent(float vectorMagnitude) {
   return vectorMagnitude * sin(26.6 * PI / 180.0);
 }
 
-SpriteStateDirectionEnum getInputDirection(const Uint8 *state) {
-  if (DirectionInputHelpers::isNorthWestPressed(state)) {
-    return NorthWest;
-  } else if (DirectionInputHelpers::isNorthEastPressed(state)) {
-    return NorthEast;
-  } else if (DirectionInputHelpers::isSouthWestPressed(state)) {
-    return SouthWest;
-  } else if (DirectionInputHelpers::isSouthEastPressed(state)) {
-    return SouthEast;
-  } else if (DirectionInputHelpers::isSouthPressed(state)) {
-    return South;
-  } else if (DirectionInputHelpers::isNorthPressed(state)) {
-    return North;
-  } else if (DirectionInputHelpers::isEastPressed(state)) {
-    return East;
-  } else if (DirectionInputHelpers::isWestPressed(state)) {
-    return West;
-  } else {
-    return Idle;
-  }
+std::pair<float, float> centerCamera(std::pair<float, float> worldPosition, std::pair<int, int> screenDimensions, std::pair<float, float> playerSpriteDimensions) {
+  return std::make_pair<float, float>(
+      -worldPosition.first + (screenDimensions.first / 2) -
+          (playerSpriteDimensions.first / 2),
+      worldPosition.second + (screenDimensions.second / 2) -
+          (playerSpriteDimensions.second / 2));
 }
 
 int main() {
-  auto map = new int[255][255];
+  auto map = new int[512][512];
 
   std::random_device r;
   std::default_random_engine e1(r());
-  std::uniform_int_distribution<int> uniform_dist(1, 3);
-  for (int i = 0; i < 255; ++i) {
-    for (int j = 0; j < 255; ++j) {
+  std::uniform_int_distribution<int> uniform_dist(0, 2);
+  for (int i = 0; i < 512; ++i) {
+    for (int j = 0; j < 512; ++j) {
       map[i][j] = uniform_dist(e1);
     }
   }
 
   const int screenWidth = 800;
   const int screenHeight = 600;
+
+  IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
+      std::make_pair(0.0, 0.0), std::make_pair(screenWidth, screenHeight));
 
   // BEGIN: SDL Setup area
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -98,10 +88,10 @@ int main() {
     // handle error
   }
 
-  if (Mix_PlayChannel(-1, sample, 0) == -1) {
-    printf("Mix_PlayMusic: %s\n", Mix_GetError());
-    // well, there's no music, but most games don't break without music...
-  }
+  // if (Mix_PlayChannel(-1, sample, 0) == -1) {
+  //   printf("Mix_PlayMusic: %s\n", Mix_GetError());
+  //   // well, there's no music, but most games don't break without music...
+  // }
   // END: Audio Setup area
 
   // BEGIN: Asset loading
@@ -118,6 +108,7 @@ int main() {
   Sprite *playerSpriteNW = NULL;
 
   Sprite *seaTileSpriteSheet = NULL;
+  Sprite *seaTileSpriteSheet1 = NULL;
   try {
     playerSpriteN =
         new Sprite(gameRenderer,
@@ -159,6 +150,9 @@ int main() {
                    "./assets/Rendered spritesheets/tank_idle_rot270.png", 4, 4);
     playerSpriteSelector->registerDirectionSprite(NorthWest, playerSpriteNW);
 
+    seaTileSpriteSheet1 =
+        new Sprite(gameRenderer, "./assets/water_tile_2_sheet.png", 10, 3);
+
     seaTileSpriteSheet =
         new Sprite(gameRenderer, "./assets/water_tile_1_sheet.png", 10, 3);
   } catch (const std::runtime_error &ex) {
@@ -166,21 +160,24 @@ int main() {
   }
   // END: Asset loading
 
+  
   // BEGIN: Constant setup and state init
-  SDL_FRect playerPositioningRect = {
-      .x = (screenWidth / 2) - (seaTileSpriteSheet->getFrameWidth()),
-      .y = (screenHeight / 2) - (seaTileSpriteSheet->getFrameHeight()),
-      .w = playerSpriteN->getFrameWidth(),
-      .h = playerSpriteN->getFrameHeight()};
+  std::pair<float, float> cameraPosition = std::make_pair(0, 0);
 
+  SDL_FRect playerPositioningRect = {.x = centerCamera(cameraPosition, std::make_pair(screenWidth, screenHeight), std::make_pair(playerSpriteN->getFrameWidth(), playerSpriteN->getFrameHeight())).first,
+                                     .y = centerCamera(cameraPosition, std::make_pair(screenWidth, screenHeight), std::make_pair(playerSpriteN->getFrameWidth(), playerSpriteN->getFrameHeight())).second,
+                                     .w = playerSpriteN->getFrameWidth(),
+                                     .h = playerSpriteN->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
 
-  float cam_x = 0.0;
-  float cam_y = 0.0;
   // END: Constant setup and state init
 
   /* Game loop */
   while (true) {
+    std::cout << cameraPosition.first << " " << cameraPosition.second << std::endl;
+    std::cout << isoMapSector->pointIntersects(cameraPosition)
+              << std::endl
+              << std::endl;
     SDL_Event event;
 
     /* Process events and session control level */
@@ -200,40 +197,41 @@ int main() {
       }
     }
 
+    const int speed = 2;
     /* Read and process input control keys */
-
     const Uint8 *keyState = SDL_GetKeyboardState(NULL);
     if (!DirectionInputHelpers::noKeysPressed(keyState)) {
-      spriteState.direction = getInputDirection(keyState);
+      spriteState.direction =
+          DirectionInputHelpers::getInputDirection(keyState);
 
       switch (spriteState.direction) {
       case NorthWest:
-        cam_x -= calculateHorizontalVectorComponent(-1);
-        cam_y -= calculateVerticalVectorComponent(-1);
+        cameraPosition.first -= calculateHorizontalVectorComponent(speed);
+        cameraPosition.second -= calculateVerticalVectorComponent(-speed);
         break;
       case NorthEast:
-        cam_x -= calculateHorizontalVectorComponent(1);
-        cam_y -= calculateVerticalVectorComponent(-1);
+        cameraPosition.first += calculateHorizontalVectorComponent(speed);
+        cameraPosition.second -= calculateVerticalVectorComponent(-speed);
         break;
       case SouthEast:
-        cam_x -= calculateHorizontalVectorComponent(1);
-        cam_y -= calculateVerticalVectorComponent(1);
+        cameraPosition.first += calculateHorizontalVectorComponent(speed);
+        cameraPosition.second -= calculateVerticalVectorComponent(speed);
         break;
       case SouthWest:
-        cam_x -= calculateHorizontalVectorComponent(-1);
-        cam_y -= calculateVerticalVectorComponent(1);
+        cameraPosition.first -= calculateHorizontalVectorComponent(speed);
+        cameraPosition.second -= calculateVerticalVectorComponent(speed);
         break;
       case South:
-        cam_y -= 1;
+        cameraPosition.second -= speed;
         break;
       case North:
-        cam_y -= -1;
+        cameraPosition.second += speed;
         break;
       case East:
-        cam_x -= 1;
+        cameraPosition.first += speed;
         break;
       case West:
-        cam_x -= -1;
+        cameraPosition.first -= speed;
         break;
       }
     }
@@ -241,30 +239,30 @@ int main() {
     SDL_RenderClear(gameRenderer);
 
     /* Lay tiles with SpriteSheet */
-    SDL_FRect tilePositionRect = {.x = 0.0,
-                                  .y = cam_y -
-                                       seaTileSpriteSheet->getFrameHeight(),
-                                  .w = seaTileSpriteSheet->getFrameWidth(),
-                                  .h = seaTileSpriteSheet->getFrameHeight()};
+    SDL_FRect tilePositionRect = {
+        .x = 0,
+        .y = centerCamera(cameraPosition, std::make_pair(screenWidth, screenHeight), std::make_pair(seaTileSpriteSheet->getFrameWidth(), seaTileSpriteSheet->getFrameHeight())).second,
+        .w = seaTileSpriteSheet->getFrameWidth(),
+        .h = seaTileSpriteSheet->getFrameHeight()};
 
+    // seaTileSpriteSheet->renderTick(&tilePositionRect);
     int visible_tiles_x = screenWidth / seaTileSpriteSheet->getFrameWidth();
     int visible_tiles_y =
-        (screenHeight / (seaTileSpriteSheet->getFrameHeight() / 2)) * 2;
-    for (int i = 0; i < visible_tiles_y; ++i) {
-      if (i % 2 == 0) {
-        tilePositionRect.x = cam_x;
-      } else {
-        // Every other row has a negative offset of half the tile width.
-        tilePositionRect.x = cam_x - (seaTileSpriteSheet->getFrameWidth() / 2);
-      }
-      tilePositionRect.y += seaTileSpriteSheet->getFrameHeight() / 2;
-      seaTileSpriteSheet->renderTick(&tilePositionRect);
-
-      for (int j = 0; j < visible_tiles_x; ++j) {
-        tilePositionRect.x += seaTileSpriteSheet->getFrameWidth();
+        (screenHeight / (seaTileSpriteSheet->getFrameHeight() / 2));
+    for (int y = 0; y < visible_tiles_y; ++y) {
+      for (int x = 0; x < visible_tiles_x; ++x) {
+        if (y % 2 == 0) {
+          tilePositionRect.x =
+              centerCamera(cameraPosition, std::make_pair(screenWidth, screenHeight), std::make_pair(seaTileSpriteSheet->getFrameWidth(), seaTileSpriteSheet->getFrameHeight())).first + (x * seaTileSpriteSheet->getFrameWidth());
+        } else {
+          // Every other row has a negative offset of half the tile width.
+          tilePositionRect.x =
+              centerCamera(cameraPosition, std::make_pair(screenWidth, screenHeight), std::make_pair(seaTileSpriteSheet->getFrameWidth(), seaTileSpriteSheet->getFrameHeight())).first + (x * seaTileSpriteSheet->getFrameWidth()) + (seaTileSpriteSheet->getFrameWidth() / 2);
+        }
 
         seaTileSpriteSheet->renderTick(&tilePositionRect);
       }
+      tilePositionRect.y -= (seaTileSpriteSheet->getFrameHeight() / 2);
     }
 
     /* Render player sprite with SpriteSheet */

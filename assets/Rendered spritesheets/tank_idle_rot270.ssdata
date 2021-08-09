@@ -1,7 +1,7 @@
 {
 	"baseObjectName": "tank",
-	"spriteWidth": 256,
-	"spriteHeight": 256,
+	"spriteWidth": 128,
+	"spriteHeight": 128,
 	"paddingWidth": 0,
 	"paddingHeight": 0,
 	"numColumns": 4,

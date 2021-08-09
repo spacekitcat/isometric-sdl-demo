@@ -2,6 +2,7 @@
 #define SDL2APPLICATION4_DIRECTION_INPUT_HELPERS_HPP
 
 #include <SDL.h>
+#include "../sprites/sprite-state.hpp"
 
 class DirectionInputHelpers {
 public:
@@ -22,6 +23,9 @@ public:
   static bool isSouthEastPressed(const Uint8 *state);
 
   static bool noKeysPressed(const Uint8 *state);
+
+  static SpriteStateDirectionEnum getInputDirection(const Uint8 *state);
+
 };
 
 

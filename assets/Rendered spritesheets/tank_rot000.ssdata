@@ -1,0 +1,16 @@
+{
+	"baseObjectName": "tank",
+	"spriteWidth": 256,
+	"spriteHeight": 256,
+	"paddingWidth": 0,
+	"paddingHeight": 0,
+	"numColumns": 1,
+	"numRows": 1,
+	"imageFile": "tank_rot000.png",
+	"stills": [
+		{
+			"frame": 0,
+			"rotation": 0
+		}
+	]
+}
