@@ -4,7 +4,6 @@
 #include <SDL_ttf.h>
 #include <iomanip>
 #include <math.h>
-#include <random>
 #include <sstream>
 
 #include "input/direction-input-helpers.hpp"
@@ -25,7 +24,10 @@ float calculateVerticalVectorComponent(float vectorMagnitude) {
   return vectorMagnitude * sin(26.6 * PI / 180.0);
 }
 
-std::pair<float, float> centerCamera(std::pair<float, float> worldPosition, std::pair<int, int> screenDimensions, std::pair<float, float> playerSpriteDimensions) {
+std::pair<float, float>
+worldToScreen(std::pair<float, float> worldPosition,
+              std::pair<int, int> screenDimensions,
+              std::pair<float, float> playerSpriteDimensions) {
   return std::make_pair<float, float>(
       -worldPosition.first + (screenDimensions.first / 2) -
           (playerSpriteDimensions.first / 2),
@@ -33,23 +35,14 @@ std::pair<float, float> centerCamera(std::pair<float, float> worldPosition, std:
           (playerSpriteDimensions.second / 2));
 }
 
+std::pair<float, float> addPair(std::pair<float, float> first,
+                                std::pair<float, float> second) {
+  return std::make_pair(first.first + second.first,
+                        first.second - second.second);
+}
+
 int main() {
-  auto map = new int[512][512];
-
-  std::random_device r;
-  std::default_random_engine e1(r());
-  std::uniform_int_distribution<int> uniform_dist(0, 2);
-  for (int i = 0; i < 512; ++i) {
-    for (int j = 0; j < 512; ++j) {
-      map[i][j] = uniform_dist(e1);
-    }
-  }
-
-  const int screenWidth = 800;
-  const int screenHeight = 600;
-
-  IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
-      std::make_pair(0.0, 0.0), std::make_pair(screenWidth, screenHeight));
+  std::pair<int, int> screenDimensions(800, 600);
 
   // BEGIN: SDL Setup area
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -67,7 +60,7 @@ int main() {
 
   SDL_Window *screen = SDL_CreateWindow(
       "SDL2Application4 (isometric demo)", SDL_WINDOWPOS_UNDEFINED,
-      SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight,
+      SDL_WINDOWPOS_UNDEFINED, screenDimensions.first, screenDimensions.second,
       SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
   SDL_Renderer *gameRenderer =
@@ -160,23 +153,34 @@ int main() {
   }
   // END: Asset loading
 
-  
   // BEGIN: Constant setup and state init
+  IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
+      std::make_pair(0.0, 0.0), screenDimensions,
+      std::make_pair(seaTileSpriteSheet->getFrameWidth(),
+                     seaTileSpriteSheet->getFrameHeight()));
+
   std::pair<float, float> cameraPosition = std::make_pair(0, 0);
 
-  SDL_FRect playerPositioningRect = {.x = centerCamera(cameraPosition, std::make_pair(screenWidth, screenHeight), std::make_pair(playerSpriteN->getFrameWidth(), playerSpriteN->getFrameHeight())).first,
-                                     .y = centerCamera(cameraPosition, std::make_pair(screenWidth, screenHeight), std::make_pair(playerSpriteN->getFrameWidth(), playerSpriteN->getFrameHeight())).second,
-                                     .w = playerSpriteN->getFrameWidth(),
-                                     .h = playerSpriteN->getFrameHeight()};
+  SDL_FRect playerPositioningRect = {
+      .x = worldToScreen(cameraPosition, screenDimensions,
+                         std::make_pair(playerSpriteN->getFrameWidth(),
+                                        playerSpriteN->getFrameHeight()))
+               .first,
+      .y = worldToScreen(cameraPosition, screenDimensions,
+                         std::make_pair(playerSpriteN->getFrameWidth(),
+                                        playerSpriteN->getFrameHeight()))
+               .second,
+      .w = playerSpriteN->getFrameWidth(),
+      .h = playerSpriteN->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
 
   // END: Constant setup and state init
 
   /* Game loop */
   while (true) {
-    std::cout << cameraPosition.first << " " << cameraPosition.second << std::endl;
-    std::cout << isoMapSector->pointIntersects(cameraPosition)
-              << std::endl
+    std::cout << "ABS:" << cameraPosition.first << " " << cameraPosition.second
+              << std::endl;
+    std::cout << isoMapSector->pointIntersects(cameraPosition) << std::endl
               << std::endl;
     SDL_Event event;
 
@@ -238,29 +242,48 @@ int main() {
 
     SDL_RenderClear(gameRenderer);
 
+    std::pair<float, float> isoBottomLeft = isoMapSector->getBottomLeft();
+    std::pair<float, float> dim = isoMapSector->getDimensions();
+    std::pair<float, float> isoBottomLeftCent =
+        addPair(worldToScreen(cameraPosition, screenDimensions,
+                              std::make_pair(playerSpriteN->getFrameWidth(),
+                                             playerSpriteN->getFrameHeight())),
+                isoBottomLeft);
+
+    SDL_Rect rectangleRect = {
+        .x = isoBottomLeftCent.first + 64,
+        .y = isoBottomLeftCent.second + 64,
+        .w = dim.first,
+        .h = -dim.second,
+    };
+
     /* Lay tiles with SpriteSheet */
     SDL_FRect tilePositionRect = {
         .x = 0,
-        .y = centerCamera(cameraPosition, std::make_pair(screenWidth, screenHeight), std::make_pair(seaTileSpriteSheet->getFrameWidth(), seaTileSpriteSheet->getFrameHeight())).second,
+        .y = worldToScreen(cameraPosition, screenDimensions,
+                           std::make_pair(seaTileSpriteSheet->getFrameWidth(),
+                                          seaTileSpriteSheet->getFrameHeight()))
+                 .second,
         .w = seaTileSpriteSheet->getFrameWidth(),
         .h = seaTileSpriteSheet->getFrameHeight()};
 
-    // seaTileSpriteSheet->renderTick(&tilePositionRect);
-    int visible_tiles_x = screenWidth / seaTileSpriteSheet->getFrameWidth();
-    int visible_tiles_y =
-        (screenHeight / (seaTileSpriteSheet->getFrameHeight() / 2));
-    for (int y = 0; y < visible_tiles_y; ++y) {
-      for (int x = 0; x < visible_tiles_x; ++x) {
+    for (int y = 0; y < isoMapSector->getTilesPerAxis().second; ++y) {
+      for (int x = 0; x < isoMapSector->getTilesPerAxis().first; ++x) {
         if (y % 2 == 0) {
-          tilePositionRect.x =
-              centerCamera(cameraPosition, std::make_pair(screenWidth, screenHeight), std::make_pair(seaTileSpriteSheet->getFrameWidth(), seaTileSpriteSheet->getFrameHeight())).first + (x * seaTileSpriteSheet->getFrameWidth());
+          tilePositionRect.x = isoBottomLeftCent.first +
+                               (x * seaTileSpriteSheet->getFrameWidth());
         } else {
           // Every other row has a negative offset of half the tile width.
-          tilePositionRect.x =
-              centerCamera(cameraPosition, std::make_pair(screenWidth, screenHeight), std::make_pair(seaTileSpriteSheet->getFrameWidth(), seaTileSpriteSheet->getFrameHeight())).first + (x * seaTileSpriteSheet->getFrameWidth()) + (seaTileSpriteSheet->getFrameWidth() / 2);
+          tilePositionRect.x = isoBottomLeftCent.first +
+                               (x * seaTileSpriteSheet->getFrameWidth()) +
+                               (seaTileSpriteSheet->getFrameWidth() / 2);
         }
 
-        seaTileSpriteSheet->renderTick(&tilePositionRect);
+        if (isoMapSector->getTile(x, y) == 0) {
+          seaTileSpriteSheet->renderTick(&tilePositionRect);
+        } else {
+          seaTileSpriteSheet1->renderTick(&tilePositionRect);
+        }
       }
       tilePositionRect.y -= (seaTileSpriteSheet->getFrameHeight() / 2);
     }
@@ -270,6 +293,25 @@ int main() {
     if (playerSprite != NULL) {
       playerSprite->renderTick(&playerPositioningRect);
     }
+
+    SDL_SetRenderDrawColor(gameRenderer, 255, 0, 0, 255);
+    SDL_RenderDrawRect(gameRenderer, &rectangleRect);
+
+    std::pair<float, float> playerPosition =
+        worldToScreen(cameraPosition, screenDimensions,
+                      std::make_pair(playerSpriteN->getFrameWidth(),
+                                     playerSpriteN->getFrameHeight()));
+    SDL_Rect playerRect = {
+        .x = playerPositioningRect.x,
+        .y = playerPositioningRect.y,
+        .w = playerPositioningRect.w,
+        .h = playerPositioningRect.h,
+    };
+
+    SDL_SetRenderDrawColor(gameRenderer, 255, 255, 255, 255);
+    SDL_RenderDrawRect(gameRenderer, &playerRect);
+
+    SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 255);
 
     SDL_RenderPresent(gameRenderer);
     SDL_Delay(10);
