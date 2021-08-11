@@ -58,8 +58,8 @@ void Sprite::_updateSpriteFrame(int index, SDL_Rect *clippingFrame) {
 void Sprite::render(float xPosition, float yPosition, int frame) {
   SDL_Rect clippingRect;
   SDL_FRect positionRect = { .w=this->getFrameWidth(), .h=this->getFrameHeight() };
-  positionRect.x = xPosition;
-  positionRect.y = yPosition;
+  positionRect.x = xPosition; // + (this->getFrameWidth() / 2);
+  positionRect.y = yPosition - this->getFrameHeight();
   this->_updateSpriteFrame(frame, &clippingRect);
 
   SDL_RenderCopyF(this->renderer, this->spriteSheetTexture, &clippingRect,

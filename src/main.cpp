@@ -11,6 +11,8 @@
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
+#include "sprites/sprite-metadata.hpp"
+#include "sprites/sprite-registry.hpp"
 
 using namespace std;
 
@@ -91,57 +93,36 @@ int main() {
 
   SpriteSelector *playerSpriteSelector = new SpriteSelector();
 
-  Sprite *playerSpriteN = NULL;
-  Sprite *playerSpriteNE = NULL;
-  Sprite *playerSpriteE = NULL;
-  Sprite *playerSpriteSE = NULL;
-  Sprite *playerSpriteS = NULL;
-  Sprite *playerSpriteSW = NULL;
-  Sprite *playerSpriteW = NULL;
-  Sprite *playerSpriteNW = NULL;
+  SpriteRegistry *spriteRegistry = new SpriteRegistry(gameRenderer);
 
   Sprite *seaTileSpriteSheet = NULL;
   Sprite *seaTileSpriteSheet1 = NULL;
   try {
-    playerSpriteN =
-        new Sprite(gameRenderer,
-                   "./assets/Rendered spritesheets/tank_idle_rot225.png", 4, 4);
-    playerSpriteSelector->registerDirectionSprite(North, playerSpriteN);
+    struct SpriteMetadata spriteNMeta = { .rows=4, .columns=4 };
 
-    playerSpriteNE =
-        new Sprite(gameRenderer,
-                   "./assets/Rendered spritesheets/tank_idle_rot180.png", 4, 4);
-    playerSpriteSelector->registerDirectionSprite(NorthEast, playerSpriteNE);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot225.png", "tank_idle_rot225", &spriteNMeta);
+    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot225"));
 
-    playerSpriteE =
-        new Sprite(gameRenderer,
-                   "./assets/Rendered spritesheets/tank_idle_rot135.png", 4, 4);
-    playerSpriteSelector->registerDirectionSprite(East, playerSpriteE);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot180.png", "tank_idle_rot180", &spriteNMeta);
+    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot180"));
 
-    playerSpriteSE =
-        new Sprite(gameRenderer,
-                   "./assets/Rendered spritesheets/tank_idle_rot090.png", 4, 4);
-    playerSpriteSelector->registerDirectionSprite(SouthEast, playerSpriteSE);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot135.png", "tank_idle_rot135", &spriteNMeta);
+    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot135"));
 
-    playerSpriteS =
-        new Sprite(gameRenderer,
-                   "./assets/Rendered spritesheets/tank_idle_rot045.png", 4, 4);
-    playerSpriteSelector->registerDirectionSprite(South, playerSpriteS);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot090.png", "tank_idle_rot090", &spriteNMeta);
+    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot090"));
 
-    playerSpriteSW =
-        new Sprite(gameRenderer,
-                   "./assets/Rendered spritesheets/tank_idle_rot000.png", 4, 4);
-    playerSpriteSelector->registerDirectionSprite(SouthWest, playerSpriteSW);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot045.png", "tank_idle_rot045", &spriteNMeta);
+    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot045"));
 
-    playerSpriteW =
-        new Sprite(gameRenderer,
-                   "./assets/Rendered spritesheets/tank_idle_rot315.png", 4, 4);
-    playerSpriteSelector->registerDirectionSprite(West, playerSpriteW);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot000.png", "tank_idle_rot000", &spriteNMeta);
+    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot000"));
 
-    playerSpriteNW =
-        new Sprite(gameRenderer,
-                   "./assets/Rendered spritesheets/tank_idle_rot270.png", 4, 4);
-    playerSpriteSelector->registerDirectionSprite(NorthWest, playerSpriteNW);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot315.png", "tank_idle_rot315", &spriteNMeta);
+    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot315"));
+
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot270.png", "tank_idle_rot270", &spriteNMeta);
+    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot270"));
 
     seaTileSpriteSheet1 =
         new Sprite(gameRenderer, "./assets/water_tile_2_sheet.png", 10, 3);
@@ -163,25 +144,25 @@ int main() {
 
   SDL_FRect playerPositioningRect = {
       .x = worldToScreen(cameraPosition, screenDimensions,
-                         std::make_pair(playerSpriteN->getFrameWidth(),
-                                        playerSpriteN->getFrameHeight()))
+                         std::make_pair(spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+                                        spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight()))
                .first,
       .y = worldToScreen(cameraPosition, screenDimensions,
-                         std::make_pair(playerSpriteN->getFrameWidth(),
-                                        playerSpriteN->getFrameHeight()))
+                         std::make_pair(spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+                                        spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight()))
                .second,
-      .w = playerSpriteN->getFrameWidth(),
-      .h = playerSpriteN->getFrameHeight()};
+      .w = spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+      .h = spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
 
   // END: Constant setup and state init
 
   /* Game loop */
   while (true) {
+    
     std::cout << "ABS:" << cameraPosition.first << " " << cameraPosition.second
               << std::endl;
-    std::cout << isoMapSector->pointIntersects(cameraPosition) << std::endl
-              << std::endl;
+    std::cout << (isoMapSector->pointIntersects(cameraPosition) || isoMapSector->pointIntersects(addPair(cameraPosition, std::make_pair<float, float>(spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(), -spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight())))) << std::endl;
     SDL_Event event;
 
     /* Process events and session control level */
@@ -246,13 +227,13 @@ int main() {
     std::pair<float, float> dim = isoMapSector->getDimensions();
     std::pair<float, float> isoBottomLeftCent =
         addPair(worldToScreen(cameraPosition, screenDimensions,
-                              std::make_pair(playerSpriteN->getFrameWidth(),
-                                             playerSpriteN->getFrameHeight())),
+                              std::make_pair(spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+                                             spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight())),
                 isoBottomLeft);
 
     SDL_Rect rectangleRect = {
-        .x = isoBottomLeftCent.first + 64,
-        .y = isoBottomLeftCent.second + 64,
+        .x = isoBottomLeftCent.first,
+        .y = isoBottomLeftCent.second,
         .w = dim.first,
         .h = -dim.second,
     };
@@ -299,13 +280,13 @@ int main() {
 
     std::pair<float, float> playerPosition =
         worldToScreen(cameraPosition, screenDimensions,
-                      std::make_pair(playerSpriteN->getFrameWidth(),
-                                     playerSpriteN->getFrameHeight()));
+                      std::make_pair(spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+                                     spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight()));
     SDL_Rect playerRect = {
         .x = playerPositioningRect.x,
         .y = playerPositioningRect.y,
         .w = playerPositioningRect.w,
-        .h = playerPositioningRect.h,
+        .h = -playerPositioningRect.h,
     };
 
     SDL_SetRenderDrawColor(gameRenderer, 255, 255, 255, 255);

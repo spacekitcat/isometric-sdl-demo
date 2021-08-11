@@ -10,7 +10,7 @@ IsometricTileMapSector::IsometricTileMapSector(
 
   this->_tilesPerAxis =
       std::make_pair(round(dimensions.first / tileDimensions.first),
-                     round(dimensions.second / tileDimensions.second) * 2);
+                     round(dimensions.second / (tileDimensions.second / 2)));
   this->_tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
   std::random_device r;
   std::default_random_engine e1(r());
@@ -43,4 +43,28 @@ int IsometricTileMapSector::getTile(int x, int y) {
 
 std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
   return this->_tilesPerAxis;
+}
+
+void IsometricTileMapSector::render(SDL_Renderer *renderer, float xPosition,
+                                    float yPosition) {
+  // for (int y = 0; y < this->getTilesPerAxis().second; ++y) {
+  //   for (int x = 0; x < this->getTilesPerAxis().first; ++x) {
+  //     if (y % 2 == 0) {
+  //       tilePositionRect.x =
+  //           isoBottomLeftCent.first + (x * seaTileSpriteSheet->getFrameWidth());
+  //     } else {
+  //       // Every other row has a negative offset of half the tile width.
+  //       tilePositionRect.x = isoBottomLeftCent.first +
+  //                            (x * seaTileSpriteSheet->getFrameWidth()) +
+  //                            (seaTileSpriteSheet->getFrameWidth() / 2);
+  //     }
+
+  //     if (isoMapSector->getTile(x, y) == 0) {
+  //       // seaTileSpriteSheet->renderTick(&tilePositionRect);
+  //     } else {
+  //       // seaTileSpriteSheet1->renderTick(&tilePositionRect);
+  //     }
+  //   }
+  //   tilePositionRect.y -= (seaTileSpriteSheet->getFrameHeight() / 2);
+  // }
 }

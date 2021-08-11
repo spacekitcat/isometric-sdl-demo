@@ -4,6 +4,7 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#include <SDL.h>
 
 class IsometricTileMapSector {
 private:
@@ -26,6 +27,8 @@ public:
   int getTile(int x, int y);
 
   std::pair<int, int> getTilesPerAxis();
+
+  void render(SDL_Renderer *renderer, float xPosition, float yPosition);
 };
 
 #endif // SDL2APPLICATION4_ISOMETRIC_TILE_MAP_SECTOR_HPP
