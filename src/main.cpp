@@ -104,25 +104,25 @@ int main() {
     playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot225"));
 
     spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot180.png", "tank_idle_rot180", &spriteNMeta);
-    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot180"));
+    playerSpriteSelector->registerDirectionSprite(NorthEast, spriteRegistry->getSprite("tank_idle_rot180"));
 
     spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot135.png", "tank_idle_rot135", &spriteNMeta);
-    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot135"));
+    playerSpriteSelector->registerDirectionSprite(East, spriteRegistry->getSprite("tank_idle_rot135"));
 
     spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot090.png", "tank_idle_rot090", &spriteNMeta);
-    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot090"));
+    playerSpriteSelector->registerDirectionSprite(SouthEast, spriteRegistry->getSprite("tank_idle_rot090"));
 
     spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot045.png", "tank_idle_rot045", &spriteNMeta);
-    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot045"));
+    playerSpriteSelector->registerDirectionSprite(South, spriteRegistry->getSprite("tank_idle_rot045"));
 
     spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot000.png", "tank_idle_rot000", &spriteNMeta);
-    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot000"));
+    playerSpriteSelector->registerDirectionSprite(SouthWest, spriteRegistry->getSprite("tank_idle_rot000"));
 
     spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot315.png", "tank_idle_rot315", &spriteNMeta);
-    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot315"));
+    playerSpriteSelector->registerDirectionSprite(West, spriteRegistry->getSprite("tank_idle_rot315"));
 
     spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot270.png", "tank_idle_rot270", &spriteNMeta);
-    playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot270"));
+    playerSpriteSelector->registerDirectionSprite(NorthWest, spriteRegistry->getSprite("tank_idle_rot270"));
 
     seaTileSpriteSheet1 =
         new Sprite(gameRenderer, "./assets/water_tile_2_sheet.png", 10, 3);
