@@ -14,8 +14,6 @@
 #include "sprites/sprite-metadata.hpp"
 #include "sprites/sprite-registry.hpp"
 
-using namespace std;
-
 #define PI 3.14159265
 
 float calculateHorizontalVectorComponent(float vectorMagnitude) {
