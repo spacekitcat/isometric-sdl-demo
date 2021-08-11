@@ -6,15 +6,20 @@
 #include <vector>
 #include <SDL.h>
 
+#include "../sprites/sprite-registry.hpp"
+
+
 class IsometricTileMapSector {
 private:
   std::pair<float, float> _bottomLeft;
   std::pair<float, float> _dimensions;
   std::pair<int, int> _tilesPerAxis;
+  SpriteRegistry *_spriteRegistry;
   int *_tileMap;
 
 public:
-  IsometricTileMapSector(std::pair<float, float> topLeft,
+  IsometricTileMapSector(SpriteRegistry *spriteRegistry,
+                         std::pair<float, float> topLeft,
                          std::pair<float, float> dimensions,
                          std::pair<float, float> tileDimensions);
 

@@ -92,43 +92,39 @@ int main() {
   // BEGIN: Asset loading
 
   SpriteSelector *playerSpriteSelector = new SpriteSelector();
-
   SpriteRegistry *spriteRegistry = new SpriteRegistry(gameRenderer);
-
-  Sprite *seaTileSpriteSheet = NULL;
-  Sprite *seaTileSpriteSheet1 = NULL;
   try {
-    struct SpriteMetadata spriteNMeta = { .rows=4, .columns=4 };
+    struct SpriteMetadata playerSpriteMetadata = { .rows=4, .columns=4 };
 
-    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot225.png", "tank_idle_rot225", &spriteNMeta);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot225.png", "tank_idle_rot225", &playerSpriteMetadata);
     playerSpriteSelector->registerDirectionSprite(North, spriteRegistry->getSprite("tank_idle_rot225"));
 
-    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot180.png", "tank_idle_rot180", &spriteNMeta);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot180.png", "tank_idle_rot180", &playerSpriteMetadata);
     playerSpriteSelector->registerDirectionSprite(NorthEast, spriteRegistry->getSprite("tank_idle_rot180"));
 
-    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot135.png", "tank_idle_rot135", &spriteNMeta);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot135.png", "tank_idle_rot135", &playerSpriteMetadata);
     playerSpriteSelector->registerDirectionSprite(East, spriteRegistry->getSprite("tank_idle_rot135"));
 
-    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot090.png", "tank_idle_rot090", &spriteNMeta);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot090.png", "tank_idle_rot090", &playerSpriteMetadata);
     playerSpriteSelector->registerDirectionSprite(SouthEast, spriteRegistry->getSprite("tank_idle_rot090"));
 
-    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot045.png", "tank_idle_rot045", &spriteNMeta);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot045.png", "tank_idle_rot045", &playerSpriteMetadata);
     playerSpriteSelector->registerDirectionSprite(South, spriteRegistry->getSprite("tank_idle_rot045"));
 
-    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot000.png", "tank_idle_rot000", &spriteNMeta);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot000.png", "tank_idle_rot000", &playerSpriteMetadata);
     playerSpriteSelector->registerDirectionSprite(SouthWest, spriteRegistry->getSprite("tank_idle_rot000"));
 
-    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot315.png", "tank_idle_rot315", &spriteNMeta);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot315.png", "tank_idle_rot315", &playerSpriteMetadata);
     playerSpriteSelector->registerDirectionSprite(West, spriteRegistry->getSprite("tank_idle_rot315"));
 
-    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot270.png", "tank_idle_rot270", &spriteNMeta);
+    spriteRegistry->loadSprite("./assets/Rendered spritesheets/tank_idle_rot270.png", "tank_idle_rot270", &playerSpriteMetadata);
     playerSpriteSelector->registerDirectionSprite(NorthWest, spriteRegistry->getSprite("tank_idle_rot270"));
 
-    seaTileSpriteSheet1 =
-        new Sprite(gameRenderer, "./assets/water_tile_2_sheet.png", 10, 3);
+    struct SpriteMetadata tileSpriteMetadata = { .rows=3, .columns=10 };
 
-    seaTileSpriteSheet =
-        new Sprite(gameRenderer, "./assets/water_tile_1_sheet.png", 10, 3);
+    spriteRegistry->loadSprite("./assets/water_tile_2_sheet.png", "0", &tileSpriteMetadata);
+    spriteRegistry->loadSprite("./assets/water_tile_1_sheet.png", "1", &tileSpriteMetadata);
+
   } catch (const std::runtime_error &ex) {
     throw;
   }
@@ -136,9 +132,10 @@ int main() {
 
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
+      spriteRegistry,
       std::make_pair(0.0, 0.0), screenDimensions,
-      std::make_pair(seaTileSpriteSheet->getFrameWidth(),
-                     seaTileSpriteSheet->getFrameHeight()));
+      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
+                     spriteRegistry->getSprite("1")->getFrameHeight()));
 
   std::pair<float, float> cameraPosition = std::make_pair(0, 0);
 
@@ -242,31 +239,31 @@ int main() {
     SDL_FRect tilePositionRect = {
         .x = 0,
         .y = worldToScreen(cameraPosition, screenDimensions,
-                           std::make_pair(seaTileSpriteSheet->getFrameWidth(),
-                                          seaTileSpriteSheet->getFrameHeight()))
+                           std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
+                                          spriteRegistry->getSprite("1")->getFrameHeight()))
                  .second,
-        .w = seaTileSpriteSheet->getFrameWidth(),
-        .h = seaTileSpriteSheet->getFrameHeight()};
+        .w = spriteRegistry->getSprite("1")->getFrameWidth(),
+        .h = spriteRegistry->getSprite("1")->getFrameHeight()};
 
     for (int y = 0; y < isoMapSector->getTilesPerAxis().second; ++y) {
       for (int x = 0; x < isoMapSector->getTilesPerAxis().first; ++x) {
         if (y % 2 == 0) {
           tilePositionRect.x = isoBottomLeftCent.first +
-                               (x * seaTileSpriteSheet->getFrameWidth());
+                               (x * spriteRegistry->getSprite("1")->getFrameWidth());
         } else {
           // Every other row has a negative offset of half the tile width.
           tilePositionRect.x = isoBottomLeftCent.first +
-                               (x * seaTileSpriteSheet->getFrameWidth()) +
-                               (seaTileSpriteSheet->getFrameWidth() / 2);
+                               (x * spriteRegistry->getSprite("1")->getFrameWidth()) +
+                               (spriteRegistry->getSprite("1")->getFrameWidth() / 2);
         }
 
         if (isoMapSector->getTile(x, y) == 0) {
-          seaTileSpriteSheet->renderTick(&tilePositionRect);
+          spriteRegistry->getSprite("1")->renderTick(&tilePositionRect);
         } else {
-          seaTileSpriteSheet1->renderTick(&tilePositionRect);
+          spriteRegistry->getSprite("0")->renderTick(&tilePositionRect);
         }
       }
-      tilePositionRect.y -= (seaTileSpriteSheet->getFrameHeight() / 2);
+      tilePositionRect.y -= (spriteRegistry->getSprite("1")->getFrameHeight() / 2);
     }
 
     /* Render player sprite with SpriteSheet */

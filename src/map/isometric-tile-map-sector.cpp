@@ -2,9 +2,11 @@
 #include "math.h"
 
 IsometricTileMapSector::IsometricTileMapSector(
-    std::pair<float, float> bottomLeft, std::pair<float, float> dimensions,
+    SpriteRegistry *spriteRegistry, std::pair<float, float> bottomLeft,
+    std::pair<float, float> dimensions,
     std::pair<float, float> tileDimensions) {
 
+  this->_spriteRegistry = spriteRegistry;
   this->_bottomLeft = bottomLeft;
   this->_dimensions = dimensions;
 
@@ -47,24 +49,38 @@ std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
 
 void IsometricTileMapSector::render(SDL_Renderer *renderer, float xPosition,
                                     float yPosition) {
-  // for (int y = 0; y < this->getTilesPerAxis().second; ++y) {
-  //   for (int x = 0; x < this->getTilesPerAxis().first; ++x) {
-  //     if (y % 2 == 0) {
-  //       tilePositionRect.x =
-  //           isoBottomLeftCent.first + (x * seaTileSpriteSheet->getFrameWidth());
-  //     } else {
-  //       // Every other row has a negative offset of half the tile width.
-  //       tilePositionRect.x = isoBottomLeftCent.first +
-  //                            (x * seaTileSpriteSheet->getFrameWidth()) +
-  //                            (seaTileSpriteSheet->getFrameWidth() / 2);
-  //     }
 
-  //     if (isoMapSector->getTile(x, y) == 0) {
-  //       // seaTileSpriteSheet->renderTick(&tilePositionRect);
-  //     } else {
-  //       // seaTileSpriteSheet1->renderTick(&tilePositionRect);
-  //     }
-  //   }
-  //   tilePositionRect.y -= (seaTileSpriteSheet->getFrameHeight() / 2);
-  // }
+  // SDL_FRect tilePositionRect = {
+  //     .x = 0,
+  //     .y = worldToScreen(
+  //              cameraPosition, screenDimensions,
+  //              std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
+  //                             spriteRegistry->getSprite("1")->getFrameHeight()))
+  //              .second,
+  //     .w = spriteRegistry->getSprite("1")->getFrameWidth(),
+  //     .h = spriteRegistry->getSprite("1")->getFrameHeight()};
+
+  SDL_FRect tilePositionRect;
+  for (int y = 0; y < this->getTilesPerAxis().second; ++y) {
+    for (int x = 0; x < this->getTilesPerAxis().first; ++x) {
+      if (y % 2 == 0) {
+        // tilePositionRect.x =
+        //     isoBottomLeftCent.first +
+        //     (x * this->_spriteRegistry->getSprite("0")->getFrameWidth());
+      } else {
+        // Every other row has a negative offset of half the tile width.
+        // tilePositionRect.x =
+        //     isoBottomLeftCent.first +
+        //     (x * this->_spriteRegistry->getSprite("0")->getFrameWidth()) +
+        //     (this->_spriteRegistry->getSprite("0")->getFrameWidth() / 2);
+      }
+
+      if (this->getTile(x, y) == 0) {
+        this->_spriteRegistry->getSprite("0")->renderTick(&tilePositionRect);
+      } else {
+        this->_spriteRegistry->getSprite("1")->renderTick(&tilePositionRect);
+      }
+    }
+    tilePositionRect.y -= (this->_spriteRegistry->getSprite("0")->getFrameHeight() / 2);
+  }
 }

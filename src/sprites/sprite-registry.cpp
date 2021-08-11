@@ -6,7 +6,7 @@ SpriteRegistry::SpriteRegistry(SDL_Renderer *renderer) {
 
 void SpriteRegistry::loadSprite(const std::string &path, const std::string &asKey, struct SpriteMetadata *metadata) {
     this->_tileRegistry[asKey] = new Sprite(this->_renderer,
-                                            path, metadata->rows, metadata->columns);
+                                            path, metadata->columns, metadata->rows);
 }
 
 Sprite *SpriteRegistry::getSprite(const std::string &key) {
