@@ -74,12 +74,7 @@ void IsometricTileMapSector::render(SDL_Renderer *renderer,
 
   SDL_FRect tilePositionRect = {
       .x = 0,
-      .y = CoordinateMapper::worldToScreen(
-               cameraPosition, screenDimensions,
-               std::make_pair(
-                   this->_spriteRegistry->getSprite("1")->getFrameWidth(),
-                   this->_spriteRegistry->getSprite("1")->getFrameHeight()))
-               .second,
+      .y = isoBottomLeftCent.second,
       .w = this->_spriteRegistry->getSprite("1")->getFrameWidth(),
       .h = this->_spriteRegistry->getSprite("1")->getFrameHeight()};
 

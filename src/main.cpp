@@ -33,7 +33,7 @@ std::pair<float, float> addPair(std::pair<float, float> first,
 }
 
 int main() {
-  std::pair<int, int> screenDimensions(896, 600);
+  std::pair<int, int> screenDimensions(1024, 768);
 
   // BEGIN: SDL Setup area
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -147,12 +147,27 @@ int main() {
 
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
-      spriteRegistry, std::make_pair(0.0, 0.0), std::make_pair(512, 256),
+      spriteRegistry, std::make_pair(0.0, 0.0), screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
-      spriteRegistry, std::make_pair(512, 0.0), std::make_pair(512, 256),
+      spriteRegistry, std::make_pair(screenDimensions.first, 0.0), screenDimensions,
+      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
+                     spriteRegistry->getSprite("1")->getFrameHeight()));
+
+  IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
+      spriteRegistry, std::make_pair(-screenDimensions.first, 0.0), screenDimensions,
+      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
+                     spriteRegistry->getSprite("1")->getFrameHeight()));
+
+  IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
+      spriteRegistry, std::make_pair(0.0, screenDimensions.second), screenDimensions,
+      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
+                     spriteRegistry->getSprite("1")->getFrameHeight()));
+  
+  IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
+      spriteRegistry, std::make_pair(-screenDimensions.first, screenDimensions.second), screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
@@ -255,6 +270,9 @@ int main() {
   
     isoMapSector->render(gameRenderer, screenDimensions, cameraPosition);
     isoMapSector2->render(gameRenderer, screenDimensions, cameraPosition);
+    isoMapSector3->render(gameRenderer, screenDimensions, cameraPosition);
+    isoMapSector4->render(gameRenderer, screenDimensions, cameraPosition);
+    isoMapSector5->render(gameRenderer, screenDimensions, cameraPosition);
 
     /* Render player sprite with SpriteSheet */
     Sprite *playerSprite = playerSpriteSelector->selectSprite(spriteState);
