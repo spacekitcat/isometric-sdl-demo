@@ -14,6 +14,7 @@
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
+#include "./util/pair-operators.hpp"
 
 #define PI 3.14159265
 
@@ -23,13 +24,6 @@ float calculateHorizontalVectorComponent(float vectorMagnitude) {
 
 float calculateVerticalVectorComponent(float vectorMagnitude) {
   return vectorMagnitude * sin(26.6 * PI / 180.0);
-}
-
-// TODO: Exists in two places. Refactor.
-std::pair<float, float> addPair(std::pair<float, float> first,
-                                std::pair<float, float> second) {
-  return std::make_pair(first.first + second.first,
-                        first.second - second.second);
 }
 
 int main() {
@@ -201,7 +195,7 @@ int main() {
               << std::endl;
     std::cout << (isoMapSector->pointIntersects(cameraPosition) ||
                   isoMapSector->pointIntersects(
-                      addPair(cameraPosition,
+                          PairOperators::addPair(cameraPosition,
                               std::make_pair<float, float>(
                                   spriteRegistry->getSprite("tank_idle_rot225")
                                       ->getFrameWidth(),
@@ -283,7 +277,7 @@ int main() {
     /* map debug bounding box */
     std::pair<float, float> isoBottomLeft = isoMapSector->getBottomLeft();
     std::pair<float, float> dim = isoMapSector->getDimensions();
-    std::pair<float, float> isoBottomLeftCent = addPair(
+    std::pair<float, float> isoBottomLeftCent = PairOperators::addPair(
         CoordinateMapper::worldToScreen(
             cameraPosition, screenDimensions,
             std::make_pair(

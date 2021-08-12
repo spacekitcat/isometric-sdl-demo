@@ -18,9 +18,6 @@ private:
   SpriteRegistry *_spriteRegistry;
   int *_tileMap;
 
-  std::pair<float, float> addPair(std::pair<float, float> first,
-                                  std::pair<float, float> second);
-
 public:
   IsometricTileMapSector(SpriteRegistry *spriteRegistry,
                          std::pair<float, float> topLeft,
@@ -28,6 +25,8 @@ public:
                          std::pair<float, float> tileDimensions);
 
   bool pointIntersects(std::pair<float, float> point);
+
+  bool squareIntersects(std::pair<float, float> point, std::pair<float, float> dimensions);
 
   std::pair<float, float> getBottomLeft();
 

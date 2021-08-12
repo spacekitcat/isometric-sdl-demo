@@ -2,6 +2,7 @@
 
 #include "math.h"
 #include "coordinate-mapper.hpp"
+#include "../util/pair-operators.hpp"
 
 IsometricTileMapSector::IsometricTileMapSector(
     SpriteRegistry *spriteRegistry, std::pair<float, float> bottomLeft,
@@ -34,6 +35,11 @@ bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
          point.second <= this->_dimensions.second;
 }
 
+bool IsometricTileMapSector::squareIntersects(std::pair<float, float> point, std::pair<float, float> dimensions) {
+  
+}
+
+
 std::pair<float, float> IsometricTileMapSector::getBottomLeft() {
   return this->_bottomLeft;
 }
@@ -50,20 +56,13 @@ std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
   return this->_tilesPerAxis;
 }
 
-std::pair<float, float>
-IsometricTileMapSector::addPair(std::pair<float, float> first,
-                                std::pair<float, float> second) {
-  return std::make_pair(first.first + second.first,
-                        first.second - second.second);
-}
-
 void IsometricTileMapSector::render(SDL_Renderer *renderer,
                                     std::pair<int, int> screenDimensions,
                                     std::pair<int, int> cameraPosition) {
 
   std::pair<float, float> isoBottomLeft = this->getBottomLeft();
   std::pair<float, float> dim = this->getDimensions();
-  std::pair<float, float> isoBottomLeftCent = addPair(
+  std::pair<float, float> isoBottomLeftCent = PairOperators::addPair(
       CoordinateMapper::worldToScreen(
           cameraPosition, screenDimensions,
           std::make_pair(this->_spriteRegistry->getSprite("tank_idle_rot225")
