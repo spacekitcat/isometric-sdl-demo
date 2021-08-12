@@ -6,6 +6,7 @@
 #include <math.h>
 #include <sstream>
 
+#include "./util/pair-operators.hpp"
 #include "input/direction-input-helpers.hpp"
 #include "map/coordinate-mapper.hpp"
 #include "map/isometric-tile-map-sector.hpp"
@@ -14,7 +15,6 @@
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
-#include "./util/pair-operators.hpp"
 
 #define PI 3.14159265
 
@@ -146,22 +146,27 @@ int main() {
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
-      spriteRegistry, std::make_pair(screenDimensions.first, 0.0), screenDimensions,
+      spriteRegistry, std::make_pair(screenDimensions.first, 0.0),
+      screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
-      spriteRegistry, std::make_pair(-screenDimensions.first, 0.0), screenDimensions,
+      spriteRegistry, std::make_pair(-screenDimensions.first, 0.0),
+      screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
-      spriteRegistry, std::make_pair(0.0, screenDimensions.second), screenDimensions,
+      spriteRegistry, std::make_pair(0.0, screenDimensions.second),
+      screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
-  
+
   IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
-      spriteRegistry, std::make_pair(-screenDimensions.first, screenDimensions.second), screenDimensions,
+      spriteRegistry,
+      std::make_pair(-screenDimensions.first, screenDimensions.second),
+      screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
@@ -192,15 +197,6 @@ int main() {
   while (true) {
 
     std::cout << "ABS:" << cameraPosition.first << " " << cameraPosition.second
-              << std::endl;
-    std::cout << (isoMapSector->pointIntersects(cameraPosition) ||
-                  isoMapSector->pointIntersects(
-                          PairOperators::addPair(cameraPosition,
-                              std::make_pair<float, float>(
-                                  spriteRegistry->getSprite("tank_idle_rot225")
-                                      ->getFrameWidth(),
-                                  -spriteRegistry->getSprite("tank_idle_rot225")
-                                       ->getFrameHeight()))))
               << std::endl;
     SDL_Event event;
 
@@ -261,12 +257,51 @@ int main() {
     }
 
     SDL_RenderClear(gameRenderer);
-  
-    isoMapSector->render(gameRenderer, screenDimensions, cameraPosition);
-    isoMapSector2->render(gameRenderer, screenDimensions, cameraPosition);
-    isoMapSector3->render(gameRenderer, screenDimensions, cameraPosition);
-    isoMapSector4->render(gameRenderer, screenDimensions, cameraPosition);
-    isoMapSector5->render(gameRenderer, screenDimensions, cameraPosition);
+
+    if (isoMapSector->squareIntersects(
+            cameraPosition,
+            std::make_pair<float, float>(
+                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+                spriteRegistry->getSprite("tank_idle_rot225")
+                    ->getFrameHeight()))) {
+      isoMapSector->render(gameRenderer, screenDimensions, cameraPosition);
+    }
+
+    if (isoMapSector2->squareIntersects(
+            cameraPosition,
+            std::make_pair<float, float>(
+                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+                spriteRegistry->getSprite("tank_idle_rot225")
+                    ->getFrameHeight()))) {
+      isoMapSector2->render(gameRenderer, screenDimensions, cameraPosition);
+    }
+
+    if (isoMapSector3->squareIntersects(
+            cameraPosition,
+            std::make_pair<float, float>(
+                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+                spriteRegistry->getSprite("tank_idle_rot225")
+                    ->getFrameHeight()))) {
+      isoMapSector3->render(gameRenderer, screenDimensions, cameraPosition);
+    }
+
+    if (isoMapSector4->squareIntersects(
+            cameraPosition,
+            std::make_pair<float, float>(
+                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+                spriteRegistry->getSprite("tank_idle_rot225")
+                    ->getFrameHeight()))) {
+      isoMapSector4->render(gameRenderer, screenDimensions, cameraPosition);
+    }
+
+    if (isoMapSector5->squareIntersects(
+            cameraPosition,
+            std::make_pair<float, float>(
+                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+                spriteRegistry->getSprite("tank_idle_rot225")
+                    ->getFrameHeight()))) {
+      isoMapSector5->render(gameRenderer, screenDimensions, cameraPosition);
+    }
 
     /* Render player sprite with SpriteSheet */
     Sprite *playerSprite = playerSpriteSelector->selectSprite(spriteState);

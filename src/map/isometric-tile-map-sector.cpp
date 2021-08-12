@@ -1,8 +1,8 @@
 #include "isometric-tile-map-sector.hpp"
 
-#include "math.h"
-#include "coordinate-mapper.hpp"
 #include "../util/pair-operators.hpp"
+#include "coordinate-mapper.hpp"
+#include "math.h"
 
 IsometricTileMapSector::IsometricTileMapSector(
     SpriteRegistry *spriteRegistry, std::pair<float, float> bottomLeft,
@@ -30,15 +30,20 @@ IsometricTileMapSector::IsometricTileMapSector(
 
 bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
   return point.first >= this->_bottomLeft.first &&
-         point.first <= this->_dimensions.first &&
+         point.first <= this->_bottomLeft.first + this->_dimensions.first &&
          point.second >= this->_bottomLeft.second &&
-         point.second <= this->_dimensions.second;
+         point.second <= this->_bottomLeft.second + this->_dimensions.second;
 }
 
-bool IsometricTileMapSector::squareIntersects(std::pair<float, float> point, std::pair<float, float> dimensions) {
-  
+bool IsometricTileMapSector::squareIntersects(
+    std::pair<float, float> point, std::pair<float, float> dimensions) {
+  return this->pointIntersects(point) ||
+         this->pointIntersects(PairOperators::addPair(point, dimensions)) ||
+         this->pointIntersects(PairOperators::addPair(
+             point, std::make_pair(dimensions.first, 0))) ||
+         this->pointIntersects(PairOperators::addPair(
+             point, std::make_pair(0, dimensions.second)));
 }
-
 
 std::pair<float, float> IsometricTileMapSector::getBottomLeft() {
   return this->_bottomLeft;
