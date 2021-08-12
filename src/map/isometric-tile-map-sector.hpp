@@ -8,14 +8,18 @@
 
 #include "../sprites/sprite-registry.hpp"
 
-
 class IsometricTileMapSector {
 private:
+  std::pair<float, float> _position;
   std::pair<float, float> _bottomLeft;
   std::pair<float, float> _dimensions;
   std::pair<int, int> _tilesPerAxis;
+  bool _drawBoundingBox;
   SpriteRegistry *_spriteRegistry;
   int *_tileMap;
+
+  std::pair<float, float> addPair(std::pair<float, float> first,
+                                  std::pair<float, float> second);
 
 public:
   IsometricTileMapSector(SpriteRegistry *spriteRegistry,
@@ -33,7 +37,7 @@ public:
 
   std::pair<int, int> getTilesPerAxis();
 
-  void render(SDL_Renderer *renderer, float xPosition, float yPosition);
+  void render(SDL_Renderer *renderer, std::pair<int, int> screenDimensions, std::pair<int, int> cameraPosition);
 };
 
 #endif // SDL2APPLICATION4_ISOMETRIC_TILE_MAP_SECTOR_HPP

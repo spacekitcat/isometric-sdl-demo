@@ -1,5 +1,7 @@
 #include "isometric-tile-map-sector.hpp"
+
 #include "math.h"
+#include "coordinate-mapper.hpp"
 
 IsometricTileMapSector::IsometricTileMapSector(
     SpriteRegistry *spriteRegistry, std::pair<float, float> bottomLeft,
@@ -9,6 +11,7 @@ IsometricTileMapSector::IsometricTileMapSector(
   this->_spriteRegistry = spriteRegistry;
   this->_bottomLeft = bottomLeft;
   this->_dimensions = dimensions;
+  this->_drawBoundingBox = true;
 
   this->_tilesPerAxis =
       std::make_pair(round(dimensions.first / tileDimensions.first),
@@ -47,32 +50,51 @@ std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
   return this->_tilesPerAxis;
 }
 
-void IsometricTileMapSector::render(SDL_Renderer *renderer, float xPosition,
-                                    float yPosition) {
+std::pair<float, float>
+IsometricTileMapSector::addPair(std::pair<float, float> first,
+                                std::pair<float, float> second) {
+  return std::make_pair(first.first + second.first,
+                        first.second - second.second);
+}
 
-  // SDL_FRect tilePositionRect = {
-  //     .x = 0,
-  //     .y = worldToScreen(
-  //              cameraPosition, screenDimensions,
-  //              std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
-  //                             spriteRegistry->getSprite("1")->getFrameHeight()))
-  //              .second,
-  //     .w = spriteRegistry->getSprite("1")->getFrameWidth(),
-  //     .h = spriteRegistry->getSprite("1")->getFrameHeight()};
+void IsometricTileMapSector::render(SDL_Renderer *renderer,
+                                    std::pair<int, int> screenDimensions,
+                                    std::pair<int, int> cameraPosition) {
 
-  SDL_FRect tilePositionRect;
+  std::pair<float, float> isoBottomLeft = this->getBottomLeft();
+  std::pair<float, float> dim = this->getDimensions();
+  std::pair<float, float> isoBottomLeftCent = addPair(
+      CoordinateMapper::worldToScreen(
+          cameraPosition, screenDimensions,
+          std::make_pair(this->_spriteRegistry->getSprite("tank_idle_rot225")
+                             ->getFrameWidth(),
+                         this->_spriteRegistry->getSprite("tank_idle_rot225")
+                             ->getFrameHeight())),
+      isoBottomLeft);
+
+  SDL_FRect tilePositionRect = {
+      .x = 0,
+      .y = CoordinateMapper::worldToScreen(
+               cameraPosition, screenDimensions,
+               std::make_pair(
+                   this->_spriteRegistry->getSprite("1")->getFrameWidth(),
+                   this->_spriteRegistry->getSprite("1")->getFrameHeight()))
+               .second,
+      .w = this->_spriteRegistry->getSprite("1")->getFrameWidth(),
+      .h = this->_spriteRegistry->getSprite("1")->getFrameHeight()};
+
   for (int y = 0; y < this->getTilesPerAxis().second; ++y) {
     for (int x = 0; x < this->getTilesPerAxis().first; ++x) {
       if (y % 2 == 0) {
-        // tilePositionRect.x =
-        //     isoBottomLeftCent.first +
-        //     (x * this->_spriteRegistry->getSprite("0")->getFrameWidth());
+        tilePositionRect.x =
+            isoBottomLeftCent.first +
+            (x * this->_spriteRegistry->getSprite("0")->getFrameWidth());
       } else {
         // Every other row has a negative offset of half the tile width.
-        // tilePositionRect.x =
-        //     isoBottomLeftCent.first +
-        //     (x * this->_spriteRegistry->getSprite("0")->getFrameWidth()) +
-        //     (this->_spriteRegistry->getSprite("0")->getFrameWidth() / 2);
+        tilePositionRect.x =
+            isoBottomLeftCent.first +
+            (x * this->_spriteRegistry->getSprite("0")->getFrameWidth()) +
+            (this->_spriteRegistry->getSprite("0")->getFrameWidth() / 2);
       }
 
       if (this->getTile(x, y) == 0) {
@@ -81,6 +103,18 @@ void IsometricTileMapSector::render(SDL_Renderer *renderer, float xPosition,
         this->_spriteRegistry->getSprite("1")->renderTick(&tilePositionRect);
       }
     }
-    tilePositionRect.y -= (this->_spriteRegistry->getSprite("0")->getFrameHeight() / 2);
+    tilePositionRect.y -=
+        (this->_spriteRegistry->getSprite("0")->getFrameHeight() / 2);
+  }
+
+  if (this->_drawBoundingBox) {
+    SDL_Rect rectangleRect = {
+        .x = isoBottomLeftCent.first,
+        .y = isoBottomLeftCent.second,
+        .w = this->getDimensions().first,
+        .h = -this->getDimensions().second,
+    };
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawRect(renderer, &rectangleRect);
   }
 }
