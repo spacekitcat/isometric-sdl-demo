@@ -20,6 +20,8 @@
 #include "debug/debug-draw-utils.hpp"
 #include "render/sdl-manager.hpp"
 
+namespace di = boost::di;
+
 #define PI 3.14159265
 
 float calculateHorizontalVectorComponent(float vectorMagnitude) {
@@ -47,9 +49,8 @@ int main() {
     return 1;
   }
 
-  SDLManager *sdlManager = new SDLManager();
-
-
+  auto injector = di::make_injector();
+  SDLManager sdlManager = injector.create<SDLManager>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area
@@ -74,7 +75,7 @@ int main() {
   // BEGIN: Asset loading
 
   SpriteSelector *playerSpriteSelector = new SpriteSelector();
-  SpriteRegistry *spriteRegistry = new SpriteRegistry(sdlManager->getRenderer());
+  SpriteRegistry *spriteRegistry = new SpriteRegistry(sdlManager.getRenderer());
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
 
@@ -254,39 +255,39 @@ int main() {
       }
     }
 
-    SDL_RenderClear(sdlManager->getRenderer());
+    SDL_RenderClear(sdlManager.getRenderer());
 
     if (isoMapSector->squareIntersects(
             cameraPosition,
             screenDimensions)) {
 
       std::cout << "Intersects 1 " << std::endl;
-      isoMapSector->render(sdlManager->getRenderer(), screenDimensions, cameraPosition);
+      isoMapSector->render(sdlManager.getRenderer(), screenDimensions, cameraPosition);
     }
 
     if (isoMapSector2->squareIntersects(
             cameraPosition,
             screenDimensions)) {
       std::cout << "Intersects 2 " << std::endl;
-      isoMapSector2->render(sdlManager->getRenderer(), screenDimensions, cameraPosition);
+      isoMapSector2->render(sdlManager.getRenderer(), screenDimensions, cameraPosition);
     }
 
     if (isoMapSector3->squareIntersects(
             cameraPosition,
             screenDimensions)) {
-      isoMapSector3->render(sdlManager->getRenderer(), screenDimensions, cameraPosition);
+      isoMapSector3->render(sdlManager.getRenderer(), screenDimensions, cameraPosition);
     }
 
     if (isoMapSector4->squareIntersects(
             cameraPosition,
             screenDimensions)) {
-      isoMapSector4->render(sdlManager->getRenderer(), screenDimensions, cameraPosition);
+      isoMapSector4->render(sdlManager.getRenderer(), screenDimensions, cameraPosition);
     }
 
     if (isoMapSector5->squareIntersects(
             cameraPosition,
             screenDimensions)) {
-      isoMapSector5->render(sdlManager->getRenderer(), screenDimensions, cameraPosition);
+      isoMapSector5->render(sdlManager.getRenderer(), screenDimensions, cameraPosition);
     }
 
     /* Render player sprite with SpriteSheet */
@@ -320,14 +321,14 @@ int main() {
         .h = -playerPositioningRect.h,
     };
 
-    SDL_SetRenderDrawColor(sdlManager->getRenderer(), 255, 255, 255, 255);
-    SDL_RenderDrawRect(sdlManager->getRenderer(), &playerRect);
+    SDL_SetRenderDrawColor(sdlManager.getRenderer(), 255, 255, 255, 255);
+    SDL_RenderDrawRect(sdlManager.getRenderer(), &playerRect);
 
-    DebugDrawUtils::drawBox(sdlManager->getRenderer(), std::make_pair(0.0, 0.0), std::make_pair(50.0, 50.0), false);
+    DebugDrawUtils::drawBox(sdlManager.getRenderer(), std::make_pair(0.0, 0.0), std::make_pair(50.0, 50.0), false);
 
     /* redraw */
-    SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
-    SDL_RenderPresent(sdlManager->getRenderer());
+    SDL_SetRenderDrawColor(sdlManager.getRenderer(), 0, 0, 0, 255);
+    SDL_RenderPresent(sdlManager.getRenderer());
     SDL_Delay(10);
   }
 
