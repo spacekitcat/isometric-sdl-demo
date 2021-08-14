@@ -31,8 +31,8 @@ IsometricTileMapSector::IsometricTileMapSector(
 bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
   return point.first >= this->_bottomLeft.first &&
          point.first <= this->_bottomLeft.first + this->_dimensions.first &&
-         point.second >= this->_bottomLeft.second &&
-         point.second <= this->_bottomLeft.second + this->_dimensions.second;
+         point.second >= -this->_bottomLeft.second &&
+         point.second <= -this->_bottomLeft.second + this->_dimensions.second;
 }
 
 bool IsometricTileMapSector::squareIntersects(

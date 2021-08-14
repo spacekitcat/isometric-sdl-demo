@@ -15,6 +15,7 @@
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
+#include "debug/debug-draw-utils.hpp"
 
 #define PI 3.14159265
 
@@ -66,10 +67,10 @@ int main() {
     // handle error
   }
 
-  // if (Mix_PlayChannel(-1, sample, 0) == -1) {
-  //   printf("Mix_PlayMusic: %s\n", Mix_GetError());
-  //   // well, there's no music, but most games don't break without music...
-  // }
+  if (Mix_PlayChannel(-1, sample, 0) == -1) {
+    printf("Mix_PlayMusic: %s\n", Mix_GetError());
+    // well, there's no music, but most games don't break without music...
+  }
   // END: Audio Setup area
 
   // BEGIN: Asset loading
@@ -146,26 +147,25 @@ int main() {
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
-      spriteRegistry, std::make_pair(screenDimensions.first, 0.0),
-      screenDimensions,
-      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
-                     spriteRegistry->getSprite("1")->getFrameHeight()));
-
-  IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
-      spriteRegistry, std::make_pair(-screenDimensions.first, 0.0),
-      screenDimensions,
-      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
-                     spriteRegistry->getSprite("1")->getFrameHeight()));
-
-  IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
       spriteRegistry, std::make_pair(0.0, screenDimensions.second),
       screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
+  IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
+      spriteRegistry, std::make_pair(0.0, -screenDimensions.second),
+      screenDimensions,
+      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
+                     spriteRegistry->getSprite("1")->getFrameHeight()));
+
+  IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
+      spriteRegistry, std::make_pair(screenDimensions.first, 0.0),
+      screenDimensions,
+      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
+                     spriteRegistry->getSprite("1")->getFrameHeight()));
+
   IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
-      spriteRegistry,
-      std::make_pair(-screenDimensions.first, screenDimensions.second),
+      spriteRegistry, std::make_pair(-screenDimensions.first, 0.0),
       screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
@@ -260,46 +260,34 @@ int main() {
 
     if (isoMapSector->squareIntersects(
             cameraPosition,
-            std::make_pair<float, float>(
-                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
-                spriteRegistry->getSprite("tank_idle_rot225")
-                    ->getFrameHeight()))) {
+            screenDimensions)) {
+
+      std::cout << "Intersects 1 " << std::endl;
       isoMapSector->render(gameRenderer, screenDimensions, cameraPosition);
     }
 
     if (isoMapSector2->squareIntersects(
             cameraPosition,
-            std::make_pair<float, float>(
-                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
-                spriteRegistry->getSprite("tank_idle_rot225")
-                    ->getFrameHeight()))) {
+            screenDimensions)) {
+      std::cout << "Intersects 2 " << std::endl;
       isoMapSector2->render(gameRenderer, screenDimensions, cameraPosition);
     }
 
     if (isoMapSector3->squareIntersects(
             cameraPosition,
-            std::make_pair<float, float>(
-                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
-                spriteRegistry->getSprite("tank_idle_rot225")
-                    ->getFrameHeight()))) {
+            screenDimensions)) {
       isoMapSector3->render(gameRenderer, screenDimensions, cameraPosition);
     }
 
     if (isoMapSector4->squareIntersects(
             cameraPosition,
-            std::make_pair<float, float>(
-                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
-                spriteRegistry->getSprite("tank_idle_rot225")
-                    ->getFrameHeight()))) {
+            screenDimensions)) {
       isoMapSector4->render(gameRenderer, screenDimensions, cameraPosition);
     }
 
     if (isoMapSector5->squareIntersects(
             cameraPosition,
-            std::make_pair<float, float>(
-                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
-                spriteRegistry->getSprite("tank_idle_rot225")
-                    ->getFrameHeight()))) {
+            screenDimensions)) {
       isoMapSector5->render(gameRenderer, screenDimensions, cameraPosition);
     }
 
@@ -336,6 +324,8 @@ int main() {
 
     SDL_SetRenderDrawColor(gameRenderer, 255, 255, 255, 255);
     SDL_RenderDrawRect(gameRenderer, &playerRect);
+
+    DebugDrawUtils::drawBox(gameRenderer, std::make_pair(0.0, 0.0), std::make_pair(50.0, 50.0), false);
 
     /* redraw */
     SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 255);
