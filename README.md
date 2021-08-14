@@ -1,14 +1,15 @@
-# SDL2 isometric demo
+# Rover's revenge
 
-Simple isometric (2:1) SDL2 starter project.
+Isometric concept game.
 
-![An application window with the title "SDL2Application4 (isometric demo). It shows an isometric red wedge sprite/player character on a white and light blue kitchen floor style chequered floor surface](./doc_assets/runtime_example_1.png)
+![An application window with the title "SDL2Application4 (isometric demo).](./doc_assets/runtime_example_1.png)
 
 # Build
 
 ## Prerequisites
 
 ```sh
+brew install boost
 brew install cmake
 brew install sdl2
 brew install sdl2_mixer
@@ -29,7 +30,7 @@ cmake --build .
 
 ## Assets
 
-The boat sprite sheet is created with Blender 2.9 with [this](https://github.com/chrishayesmu/Blender-Spritesheet-Renderer) plugin for rendering 3D models as 2D sprite sheets.
+The sprite sheets are created with Blender 2.9 with [this](https://github.com/chrishayesmu/Blender-Spritesheet-Renderer) plugin for rendering 3D models as 2D sprite sheets.
 
 The camera positioning has to be just right for the sprite sheet to project with correct isometric proportions. The Blender project files are included (along with my base template) with all the correct camera angles.
 

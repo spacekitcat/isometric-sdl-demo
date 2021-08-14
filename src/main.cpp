@@ -6,6 +6,8 @@
 #include <math.h>
 #include <sstream>
 
+#include <boost/di.hpp>
+
 #include "./util/pair-operators.hpp"
 #include "input/direction-input-helpers.hpp"
 #include "map/coordinate-mapper.hpp"
