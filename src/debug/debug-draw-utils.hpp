@@ -4,9 +4,11 @@
 #include <iostream>
 #include <SDL.h>
 
+#include "../render/sdl-manager.hpp"
+
 class DebugDrawUtils {
 public:
-  static void drawBox(SDL_Renderer *renderer, std::pair<float, float> origin, std::pair<float, float> dimensions, bool center);
+  static void drawBox(SDLManager *sdlManager, std::pair<float, float> origin, std::pair<float, float> dimensions, bool center);
 };
 
 

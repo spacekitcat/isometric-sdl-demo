@@ -78,6 +78,7 @@ int main() {
 
   SpriteSelector *playerSpriteSelector = new SpriteSelector();
   SpriteRegistry *spriteRegistry = new SpriteRegistry(&sdlManager);
+  // SpriteRegistry *spriteRegistry = injector.create<SpriteRegistry>();
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
 
@@ -335,7 +336,7 @@ int main() {
     SDL_SetRenderDrawColor(sdlManager.getRenderer(), 255, 255, 255, 255);
     SDL_RenderDrawRect(sdlManager.getRenderer(), &playerRect);
 
-    DebugDrawUtils::drawBox(sdlManager.getRenderer(), std::make_pair(0.0, 0.0), std::make_pair(50.0, 50.0), false);
+    DebugDrawUtils::drawBox(&sdlManager, std::make_pair(0.0, 0.0), std::make_pair(50.0, 50.0), false);
 
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager.getRenderer(), 0, 0, 0, 255);
