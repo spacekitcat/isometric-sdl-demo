@@ -77,7 +77,7 @@ int main() {
   // BEGIN: Asset loading
 
   SpriteSelector *playerSpriteSelector = new SpriteSelector();
-  SpriteRegistry *spriteRegistry = new SpriteRegistry(sdlManager.getRenderer());
+  SpriteRegistry *spriteRegistry = new SpriteRegistry(&sdlManager);
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
 
