@@ -13,7 +13,6 @@ private:
   int _columns;
   int _rows;
   SDLManager *_sdlManager;
-  SDL_Renderer *renderer;
   SDL_Surface *spriteSheetSurface;
   SDL_Texture *spriteSheetTexture;
 

@@ -14,7 +14,6 @@ Sprite::Sprite(SDLManager *sdlManager, std::string spriteSheetPath, int columns,
   }
 
   _sdlManager = sdlManager;
-  this->renderer = _sdlManager->getRenderer();
   this->spriteSheetTexture =
       SDL_CreateTextureFromSurface(_sdlManager->getRenderer(), this->spriteSheetSurface);
   this->_columns = columns;

@@ -11,7 +11,6 @@
 class SpriteRegistry {
 private:
   SDLManager *_sdlManager;
-  SDL_Renderer *_renderer;
   std::map<std::string, Sprite*> _tileRegistry;
 
 public:
