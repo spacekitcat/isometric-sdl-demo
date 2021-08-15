@@ -1,15 +1,18 @@
 #ifndef SDL2APPLICATION4_ISOMETRIC_TILE_MAP_SECTOR_HPP
 #define SDL2APPLICATION4_ISOMETRIC_TILE_MAP_SECTOR_HPP
 
+#include <SDL.h>
 #include <iostream>
 #include <random>
 #include <vector>
-#include <SDL.h>
 
 #include "../sprites/sprite-registry.hpp"
+#include "../render/sdl-manager.hpp"
+
 
 class IsometricTileMapSector {
 private:
+  SDLManager *_sdlManager;
   std::pair<float, float> _position;
   std::pair<float, float> _bottomLeft;
   std::pair<float, float> _dimensions;
@@ -19,14 +22,15 @@ private:
   int *_tileMap;
 
 public:
-  IsometricTileMapSector(SpriteRegistry *spriteRegistry,
+  IsometricTileMapSector(SDLManager *sdlManager, SpriteRegistry *spriteRegistry,
                          std::pair<float, float> topLeft,
                          std::pair<float, float> dimensions,
                          std::pair<float, float> tileDimensions);
 
   bool pointIntersects(std::pair<float, float> point);
 
-  bool squareIntersects(std::pair<float, float> point, std::pair<float, float> dimensions);
+  bool squareIntersects(std::pair<float, float> point,
+                        std::pair<float, float> dimensions);
 
   std::pair<float, float> getBottomLeft();
 
@@ -36,7 +40,8 @@ public:
 
   std::pair<int, int> getTilesPerAxis();
 
-  void render(SDL_Renderer *renderer, std::pair<int, int> screenDimensions, std::pair<int, int> cameraPosition);
+  void render(std::pair<int, int> screenDimensions,
+              std::pair<int, int> cameraPosition);
 };
 
 #endif // SDL2APPLICATION4_ISOMETRIC_TILE_MAP_SECTOR_HPP

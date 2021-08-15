@@ -49,7 +49,9 @@ int main() {
     return 1;
   }
 
-  auto injector = di::make_injector();
+  auto injector = di::make_injector(
+    di::bind<SDLManager>().in(di::singleton).to<SDLManager>()
+  );
   SDLManager sdlManager = injector.create<SDLManager>();
   // END: SDL Setup area
 
@@ -141,29 +143,38 @@ int main() {
 
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
+    &sdlManager,
       spriteRegistry, std::make_pair(0.0, 0.0), screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
+    &sdlManager,
+
       spriteRegistry, std::make_pair(0.0, screenDimensions.second),
       screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
+    &sdlManager,
+
       spriteRegistry, std::make_pair(0.0, -screenDimensions.second),
       screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
+    &sdlManager,
+
       spriteRegistry, std::make_pair(screenDimensions.first, 0.0),
       screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
                      spriteRegistry->getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
+    &sdlManager,
+
       spriteRegistry, std::make_pair(-screenDimensions.first, 0.0),
       screenDimensions,
       std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
@@ -262,32 +273,32 @@ int main() {
             screenDimensions)) {
 
       std::cout << "Intersects 1 " << std::endl;
-      isoMapSector->render(sdlManager.getRenderer(), screenDimensions, cameraPosition);
+      isoMapSector->render(screenDimensions, cameraPosition);
     }
 
     if (isoMapSector2->squareIntersects(
             cameraPosition,
             screenDimensions)) {
       std::cout << "Intersects 2 " << std::endl;
-      isoMapSector2->render(sdlManager.getRenderer(), screenDimensions, cameraPosition);
+      isoMapSector2->render(screenDimensions, cameraPosition);
     }
 
     if (isoMapSector3->squareIntersects(
             cameraPosition,
             screenDimensions)) {
-      isoMapSector3->render(sdlManager.getRenderer(), screenDimensions, cameraPosition);
+      isoMapSector3->render(screenDimensions, cameraPosition);
     }
 
     if (isoMapSector4->squareIntersects(
             cameraPosition,
             screenDimensions)) {
-      isoMapSector4->render(sdlManager.getRenderer(), screenDimensions, cameraPosition);
+      isoMapSector4->render(screenDimensions, cameraPosition);
     }
 
     if (isoMapSector5->squareIntersects(
             cameraPosition,
             screenDimensions)) {
-      isoMapSector5->render(sdlManager.getRenderer(), screenDimensions, cameraPosition);
+      isoMapSector5->render(screenDimensions, cameraPosition);
     }
 
     /* Render player sprite with SpriteSheet */

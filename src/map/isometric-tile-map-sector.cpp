@@ -5,9 +5,10 @@
 #include "math.h"
 
 IsometricTileMapSector::IsometricTileMapSector(
-    SpriteRegistry *spriteRegistry, std::pair<float, float> bottomLeft,
-    std::pair<float, float> dimensions,
+    SDLManager *sdlManager, SpriteRegistry *spriteRegistry,
+    std::pair<float, float> bottomLeft, std::pair<float, float> dimensions,
     std::pair<float, float> tileDimensions) {
+  _sdlManager = sdlManager;
 
   this->_spriteRegistry = spriteRegistry;
   this->_bottomLeft = bottomLeft;
@@ -61,7 +62,7 @@ std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
   return this->_tilesPerAxis;
 }
 
-void IsometricTileMapSector::render(SDL_Renderer *renderer,
+void IsometricTileMapSector::render(
                                     std::pair<int, int> screenDimensions,
                                     std::pair<int, int> cameraPosition) {
 
@@ -113,7 +114,7 @@ void IsometricTileMapSector::render(SDL_Renderer *renderer,
         .w = this->getDimensions().first,
         .h = -this->getDimensions().second,
     };
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawRect(renderer, &rectangleRect);
+    SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 255, 0, 0, 255);
+    SDL_RenderDrawRect(_sdlManager->getRenderer(), &rectangleRect);
   }
 }
