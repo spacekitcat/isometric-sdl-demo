@@ -5,7 +5,7 @@ SpriteRegistry::SpriteRegistry(SDLManager *sdlManager) {
 }
 
 void SpriteRegistry::loadSprite(const std::string &path, const std::string &asKey, struct SpriteMetadata *metadata) {
-    this->_tileRegistry[asKey] = new Sprite(_sdlManager->getRenderer(),
+    this->_tileRegistry[asKey] = new Sprite(_sdlManager,
                                             path, metadata->columns, metadata->rows);
 }
 

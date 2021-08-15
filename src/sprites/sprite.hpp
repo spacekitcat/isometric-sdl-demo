@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <iostream>
 #include <math.h>
+#include "../render/sdl-manager.hpp"
 
 class Sprite {
 private:
@@ -11,6 +12,7 @@ private:
   int _currentFrame;
   int _columns;
   int _rows;
+  SDLManager *_sdlManager;
   SDL_Renderer *renderer;
   SDL_Surface *spriteSheetSurface;
   SDL_Texture *spriteSheetTexture;
@@ -20,7 +22,7 @@ private:
   SDL_Surface *loadGameImageAsset(std::string path);
 
 public:
-  Sprite(SDL_Renderer *renderer, std::string spriteSheetPath, int column,
+  Sprite(SDLManager *sdlManager, std::string spriteSheetPath, int column,
          int rows);
 
   ~Sprite();

@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-Sprite::Sprite(SDL_Renderer *renderer, std::string spriteSheetPath, int columns,
+Sprite::Sprite(SDLManager *sdlManager, std::string spriteSheetPath, int columns,
                int rows) {
   this->spriteSheetSurface = nullptr;
   this->spriteSheetTexture = nullptr;
@@ -13,9 +13,10 @@ Sprite::Sprite(SDL_Renderer *renderer, std::string spriteSheetPath, int columns,
     throw;
   }
 
-  this->renderer = renderer;
+  _sdlManager = sdlManager;
+  this->renderer = _sdlManager->getRenderer();
   this->spriteSheetTexture =
-      SDL_CreateTextureFromSurface(this->renderer, this->spriteSheetSurface);
+      SDL_CreateTextureFromSurface(_sdlManager->getRenderer(), this->spriteSheetSurface);
   this->_columns = columns;
   this->_rows = rows;
   SDL_SetColorKey(this->spriteSheetSurface, SDL_TRUE,
@@ -62,7 +63,7 @@ void Sprite::render(float xPosition, float yPosition, int frame) {
   positionRect.y = yPosition - this->getFrameHeight();
   this->_updateSpriteFrame(frame, &clippingRect);
 
-  SDL_RenderCopyF(this->renderer, this->spriteSheetTexture, &clippingRect,
+  SDL_RenderCopyF(_sdlManager->getRenderer(), this->spriteSheetTexture, &clippingRect,
                   &positionRect);
 }
 

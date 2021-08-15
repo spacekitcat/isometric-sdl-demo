@@ -29,7 +29,7 @@ add_executable(SDL2Test src/render/sdl-manager.cpp src/render/sdl-manager.hpp sr
 target_link_libraries(SDL2Test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${Boost_LIBRARIES})
 
 # BEGIN: Test setup
-add_executable(tests src/test/test.cpp src/sprites/sprite.cpp)
+add_executable(tests src/render/sdl-manager.cpp src/render/sdl-manager.hpp src/test/test.cpp src/sprites/sprite.cpp)
 target_link_libraries(tests PRIVATE Catch2::Catch2 ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${Boost_LIBRARIES})
 
 include(CTest)
