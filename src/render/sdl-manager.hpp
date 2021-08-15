@@ -8,9 +8,9 @@ class SDLManager {
 private:
     std::pair<int, int> _screenDimensions;
 
-  SDL_Window *_window;
-  SDL_Renderer *_renderer;
+    SDL_Window *_window;
 
+    SDL_Renderer *_renderer;
 
 public:
   SDLManager();
