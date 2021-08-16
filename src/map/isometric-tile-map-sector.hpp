@@ -12,17 +12,17 @@
 
 class IsometricTileMapSector {
 private:
-  SDLManager *_sdlManager;
+  std::shared_ptr<SDLManager> _sdlManager;
   std::pair<float, float> _position;
   std::pair<float, float> _bottomLeft;
   std::pair<float, float> _dimensions;
   std::pair<int, int> _tilesPerAxis;
   bool _drawBoundingBox;
-  SpriteRegistry *_spriteRegistry;
+  SpriteRegistry _spriteRegistry;
   int *_tileMap;
 
 public:
-  IsometricTileMapSector(SDLManager *sdlManager, SpriteRegistry *spriteRegistry,
+  IsometricTileMapSector(std::shared_ptr<SDLManager> sdlManager, SpriteRegistry& spriteRegistry,
                          std::pair<float, float> topLeft,
                          std::pair<float, float> dimensions,
                          std::pair<float, float> tileDimensions);

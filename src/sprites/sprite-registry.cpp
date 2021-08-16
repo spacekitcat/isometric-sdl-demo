@@ -1,6 +1,10 @@
 #include "sprite-registry.hpp"
 
-SpriteRegistry::SpriteRegistry(SDLManager *sdlManager) {
+SpriteRegistry::SpriteRegistry() {
+
+}
+
+SpriteRegistry::SpriteRegistry(std::shared_ptr<SDLManager> sdlManager) {
   _sdlManager = sdlManager;
 }
 

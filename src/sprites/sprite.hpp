@@ -12,7 +12,7 @@ private:
   int _currentFrame;
   int _columns;
   int _rows;
-  SDLManager *_sdlManager;
+  std::shared_ptr<SDLManager> _sdlManager;
   SDL_Surface *spriteSheetSurface;
   SDL_Texture *spriteSheetTexture;
 
@@ -21,7 +21,7 @@ private:
   SDL_Surface *loadGameImageAsset(std::string path);
 
 public:
-  Sprite(SDLManager *sdlManager, std::string spriteSheetPath, int column,
+  Sprite(std::shared_ptr<SDLManager> sdlManager, std::string spriteSheetPath, int column,
          int rows);
 
   ~Sprite();

@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-Sprite::Sprite(SDLManager *sdlManager, std::string spriteSheetPath, int columns,
+Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager, std::string spriteSheetPath, int columns,
                int rows) {
   this->spriteSheetSurface = nullptr;
   this->spriteSheetTexture = nullptr;

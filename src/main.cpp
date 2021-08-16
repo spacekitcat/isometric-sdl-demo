@@ -9,16 +9,16 @@
 #include <boost/di.hpp>
 
 #include "./util/pair-operators.hpp"
+#include "debug/debug-draw-utils.hpp"
 #include "input/direction-input-helpers.hpp"
 #include "map/coordinate-mapper.hpp"
 #include "map/isometric-tile-map-sector.hpp"
+#include "render/sdl-manager.hpp"
 #include "sprites/sprite-metadata.hpp"
 #include "sprites/sprite-registry.hpp"
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
-#include "debug/debug-draw-utils.hpp"
-#include "render/sdl-manager.hpp"
 
 namespace di = boost::di;
 
@@ -49,10 +49,10 @@ int main() {
     return 1;
   }
 
-  auto injector = di::make_injector(
-    di::bind<SDLManager>().in(di::singleton).to<SDLManager>()
-  );
-  SDLManager sdlManager = injector.create<SDLManager>();
+  const auto injector = di::make_injector(
+      di::bind<SDLManager>().to<SDLManager>().in(di::singleton));
+  auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
+
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area
@@ -76,66 +76,65 @@ int main() {
 
   // BEGIN: Asset loading
 
-  SpriteSelector *playerSpriteSelector = new SpriteSelector();
-  SpriteRegistry *spriteRegistry = new SpriteRegistry(&sdlManager);
-  // SpriteRegistry *spriteRegistry = injector.create<SpriteRegistry>();
+  auto playerSpriteSelector = injector.create<SpriteSelector>();
+  auto spriteRegistry = injector.create<SpriteRegistry>();
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
 
-    spriteRegistry->loadSprite(
+    spriteRegistry.loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot225.png",
         "tank_idle_rot225", &playerSpriteMetadata);
-    playerSpriteSelector->registerDirectionSprite(
-        North, spriteRegistry->getSprite("tank_idle_rot225"));
+    playerSpriteSelector.registerDirectionSprite(
+        North, spriteRegistry.getSprite("tank_idle_rot225"));
 
-    spriteRegistry->loadSprite(
+    spriteRegistry.loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot180.png",
         "tank_idle_rot180", &playerSpriteMetadata);
-    playerSpriteSelector->registerDirectionSprite(
-        NorthEast, spriteRegistry->getSprite("tank_idle_rot180"));
+    playerSpriteSelector.registerDirectionSprite(
+        NorthEast, spriteRegistry.getSprite("tank_idle_rot180"));
 
-    spriteRegistry->loadSprite(
+    spriteRegistry.loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot135.png",
         "tank_idle_rot135", &playerSpriteMetadata);
-    playerSpriteSelector->registerDirectionSprite(
-        East, spriteRegistry->getSprite("tank_idle_rot135"));
+    playerSpriteSelector.registerDirectionSprite(
+        East, spriteRegistry.getSprite("tank_idle_rot135"));
 
-    spriteRegistry->loadSprite(
+    spriteRegistry.loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot090.png",
         "tank_idle_rot090", &playerSpriteMetadata);
-    playerSpriteSelector->registerDirectionSprite(
-        SouthEast, spriteRegistry->getSprite("tank_idle_rot090"));
+    playerSpriteSelector.registerDirectionSprite(
+        SouthEast, spriteRegistry.getSprite("tank_idle_rot090"));
 
-    spriteRegistry->loadSprite(
+    spriteRegistry.loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot045.png",
         "tank_idle_rot045", &playerSpriteMetadata);
-    playerSpriteSelector->registerDirectionSprite(
-        South, spriteRegistry->getSprite("tank_idle_rot045"));
+    playerSpriteSelector.registerDirectionSprite(
+        South, spriteRegistry.getSprite("tank_idle_rot045"));
 
-    spriteRegistry->loadSprite(
+    spriteRegistry.loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot000.png",
         "tank_idle_rot000", &playerSpriteMetadata);
-    playerSpriteSelector->registerDirectionSprite(
-        SouthWest, spriteRegistry->getSprite("tank_idle_rot000"));
+    playerSpriteSelector.registerDirectionSprite(
+        SouthWest, spriteRegistry.getSprite("tank_idle_rot000"));
 
-    spriteRegistry->loadSprite(
+    spriteRegistry.loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot315.png",
         "tank_idle_rot315", &playerSpriteMetadata);
-    playerSpriteSelector->registerDirectionSprite(
-        West, spriteRegistry->getSprite("tank_idle_rot315"));
+    playerSpriteSelector.registerDirectionSprite(
+        West, spriteRegistry.getSprite("tank_idle_rot315"));
 
-    spriteRegistry->loadSprite(
+    spriteRegistry.loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot270.png",
         "tank_idle_rot270", &playerSpriteMetadata);
-    playerSpriteSelector->registerDirectionSprite(
-        NorthWest, spriteRegistry->getSprite("tank_idle_rot270"));
+    playerSpriteSelector.registerDirectionSprite(
+        NorthWest, spriteRegistry.getSprite("tank_idle_rot270"));
 
     struct SpriteMetadata tileSpriteMetadata = {.rows = 3, .columns = 10};
 
-    spriteRegistry->loadSprite("./assets/water_tile_2_sheet.png", "0",
-                               &tileSpriteMetadata);
-    spriteRegistry->loadSprite("./assets/water_tile_1_sheet.png", "1",
-                               &tileSpriteMetadata);
+    spriteRegistry.loadSprite("./assets/water_tile_2_sheet.png", "0",
+                              &tileSpriteMetadata);
+    spriteRegistry.loadSprite("./assets/water_tile_1_sheet.png", "1",
+                              &tileSpriteMetadata);
 
   } catch (const std::runtime_error &ex) {
     throw;
@@ -144,71 +143,69 @@ int main() {
 
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
-    &sdlManager,
-      spriteRegistry, std::make_pair(0.0, 0.0), screenDimensions,
-      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
-                     spriteRegistry->getSprite("1")->getFrameHeight()));
+      sdlManager, spriteRegistry, std::make_pair(0.0, 0.0), screenDimensions,
+      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
+                     spriteRegistry.getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
-    &sdlManager,
+      sdlManager,
 
       spriteRegistry, std::make_pair(0.0, screenDimensions.second),
       screenDimensions,
-      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
-                     spriteRegistry->getSprite("1")->getFrameHeight()));
+      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
+                     spriteRegistry.getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
-    &sdlManager,
+      sdlManager,
 
       spriteRegistry, std::make_pair(0.0, -screenDimensions.second),
       screenDimensions,
-      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
-                     spriteRegistry->getSprite("1")->getFrameHeight()));
+      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
+                     spriteRegistry.getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
-    &sdlManager,
+      sdlManager,
 
       spriteRegistry, std::make_pair(screenDimensions.first, 0.0),
       screenDimensions,
-      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
-                     spriteRegistry->getSprite("1")->getFrameHeight()));
+      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
+                     spriteRegistry.getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
-    &sdlManager,
+      sdlManager,
 
       spriteRegistry, std::make_pair(-screenDimensions.first, 0.0),
       screenDimensions,
-      std::make_pair(spriteRegistry->getSprite("1")->getFrameWidth(),
-                     spriteRegistry->getSprite("1")->getFrameHeight()));
+      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
+                     spriteRegistry.getSprite("1")->getFrameHeight()));
 
   std::pair<float, float> cameraPosition = std::make_pair(0, 0);
 
   SDL_FRect playerPositioningRect = {
-      .x = CoordinateMapper::worldToScreen(
-               cameraPosition, screenDimensions,
-               std::make_pair(spriteRegistry->getSprite("tank_idle_rot225")
-                                  ->getFrameWidth(),
-                              spriteRegistry->getSprite("tank_idle_rot225")
-                                  ->getFrameHeight()))
-               .first,
-      .y = CoordinateMapper::worldToScreen(
-               cameraPosition, screenDimensions,
-               std::make_pair(spriteRegistry->getSprite("tank_idle_rot225")
-                                  ->getFrameWidth(),
-                              spriteRegistry->getSprite("tank_idle_rot225")
-                                  ->getFrameHeight()))
-               .second,
-      .w = spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
-      .h = spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight()};
+      .x =
+          CoordinateMapper::worldToScreen(
+              cameraPosition, screenDimensions,
+              std::make_pair(
+                  spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
+                  spriteRegistry.getSprite("tank_idle_rot225")
+                      ->getFrameHeight()))
+              .first,
+      .y =
+          CoordinateMapper::worldToScreen(
+              cameraPosition, screenDimensions,
+              std::make_pair(
+                  spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
+                  spriteRegistry.getSprite("tank_idle_rot225")
+                      ->getFrameHeight()))
+              .second,
+      .w = spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
+      .h = spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
 
   // END: Constant setup and state init
 
   /* Game loop */
   while (true) {
-
-    std::cout << "ABS:" << cameraPosition.first << " " << cameraPosition.second
-              << std::endl;
     SDL_Event event;
 
     /* Process events and session control level */
@@ -267,65 +264,40 @@ int main() {
       }
     }
 
-    SDL_RenderClear(sdlManager.getRenderer());
+    SDL_RenderClear(sdlManager->getRenderer());
 
-    if (isoMapSector->squareIntersects(
-            cameraPosition,
-            screenDimensions)) {
+    if (isoMapSector->squareIntersects(cameraPosition, screenDimensions)) {
 
       std::cout << "Intersects 1 " << std::endl;
       isoMapSector->render(screenDimensions, cameraPosition);
     }
 
-    if (isoMapSector2->squareIntersects(
-            cameraPosition,
-            screenDimensions)) {
+    if (isoMapSector2->squareIntersects(cameraPosition, screenDimensions)) {
       std::cout << "Intersects 2 " << std::endl;
       isoMapSector2->render(screenDimensions, cameraPosition);
     }
 
-    if (isoMapSector3->squareIntersects(
-            cameraPosition,
-            screenDimensions)) {
+    if (isoMapSector3->squareIntersects(cameraPosition, screenDimensions)) {
+      std::cout << "Intersects 3 " << std::endl;
       isoMapSector3->render(screenDimensions, cameraPosition);
     }
 
-    if (isoMapSector4->squareIntersects(
-            cameraPosition,
-            screenDimensions)) {
+    if (isoMapSector4->squareIntersects(cameraPosition, screenDimensions)) {
+      std::cout << "Intersects 4 " << std::endl;
       isoMapSector4->render(screenDimensions, cameraPosition);
     }
 
-    if (isoMapSector5->squareIntersects(
-            cameraPosition,
-            screenDimensions)) {
+    if (isoMapSector5->squareIntersects(cameraPosition, screenDimensions)) {
+      std::cout << "Intersects 5 " << std::endl;
       isoMapSector5->render(screenDimensions, cameraPosition);
     }
 
     /* Render player sprite with SpriteSheet */
-    Sprite *playerSprite = playerSpriteSelector->selectSprite(spriteState);
+    Sprite *playerSprite = playerSpriteSelector.selectSprite(spriteState);
     if (playerSprite != NULL) {
       playerSprite->renderTick(&playerPositioningRect);
     }
 
-    /* map debug bounding box */
-    std::pair<float, float> isoBottomLeft = isoMapSector->getBottomLeft();
-    std::pair<float, float> dim = isoMapSector->getDimensions();
-    std::pair<float, float> isoBottomLeftCent = PairOperators::addPair(
-        CoordinateMapper::worldToScreen(
-            cameraPosition, screenDimensions,
-            std::make_pair(
-                spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
-                spriteRegistry->getSprite("tank_idle_rot225")
-                    ->getFrameHeight())),
-        isoBottomLeft);
-
-    /* player debug bounding box */
-    std::pair<float, float> playerPosition = CoordinateMapper::worldToScreen(
-        cameraPosition, screenDimensions,
-        std::make_pair(
-            spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
-            spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight()));
     SDL_Rect playerRect = {
         .x = playerPositioningRect.x,
         .y = playerPositioningRect.y,
@@ -333,14 +305,12 @@ int main() {
         .h = -playerPositioningRect.h,
     };
 
-    SDL_SetRenderDrawColor(sdlManager.getRenderer(), 255, 255, 255, 255);
-    SDL_RenderDrawRect(sdlManager.getRenderer(), &playerRect);
-
-    DebugDrawUtils::drawBox(&sdlManager, std::make_pair(0.0, 0.0), std::make_pair(50.0, 50.0), false);
+    SDL_SetRenderDrawColor(sdlManager->getRenderer(), 255, 255, 255, 255);
+    SDL_RenderDrawRect(sdlManager->getRenderer(), &playerRect);
 
     /* redraw */
-    SDL_SetRenderDrawColor(sdlManager.getRenderer(), 0, 0, 0, 255);
-    SDL_RenderPresent(sdlManager.getRenderer());
+    SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
+    SDL_RenderPresent(sdlManager->getRenderer());
     SDL_Delay(10);
   }
 

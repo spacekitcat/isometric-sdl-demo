@@ -10,11 +10,13 @@
 
 class SpriteRegistry {
 private:
-  SDLManager *_sdlManager;
+  std::shared_ptr<SDLManager> _sdlManager;
   std::map<std::string, Sprite*> _tileRegistry;
 
 public:
-  SpriteRegistry(SDLManager *sdlManager);
+  SpriteRegistry();
+
+  SpriteRegistry(std::shared_ptr<SDLManager> sdlManager);
 
   void loadSprite(const std::string& path, const std::string& asKey, struct SpriteMetadata *metadata);
 
