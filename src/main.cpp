@@ -68,10 +68,10 @@ int main() {
     // handle error
   }
 
-  if (Mix_PlayChannel(-1, sample, 0) == -1) {
-    printf("Mix_PlayMusic: %s\n", Mix_GetError());
-    // well, there's no music, but most games don't break without music...
-  }
+  // if (Mix_PlayChannel(-1, sample, 0) == -1) {
+  //   printf("Mix_PlayMusic: %s\n", Mix_GetError());
+  //   // well, there's no music, but most games don't break without music...
+  // }
   // END: Audio Setup area
 
   // BEGIN: Asset loading
@@ -261,34 +261,30 @@ int main() {
       case West:
         cameraPosition.first -= speed;
         break;
+      case Idle:
+        break;
       }
     }
 
-    SDL_RenderClear(sdlManager->getRenderer());
+    sdlManager->renderClear();
 
     if (isoMapSector->squareIntersects(cameraPosition, screenDimensions)) {
-
-      std::cout << "Intersects 1 " << std::endl;
       isoMapSector->render(screenDimensions, cameraPosition);
     }
 
     if (isoMapSector2->squareIntersects(cameraPosition, screenDimensions)) {
-      std::cout << "Intersects 2 " << std::endl;
       isoMapSector2->render(screenDimensions, cameraPosition);
     }
 
     if (isoMapSector3->squareIntersects(cameraPosition, screenDimensions)) {
-      std::cout << "Intersects 3 " << std::endl;
       isoMapSector3->render(screenDimensions, cameraPosition);
     }
 
     if (isoMapSector4->squareIntersects(cameraPosition, screenDimensions)) {
-      std::cout << "Intersects 4 " << std::endl;
       isoMapSector4->render(screenDimensions, cameraPosition);
     }
 
     if (isoMapSector5->squareIntersects(cameraPosition, screenDimensions)) {
-      std::cout << "Intersects 5 " << std::endl;
       isoMapSector5->render(screenDimensions, cameraPosition);
     }
 

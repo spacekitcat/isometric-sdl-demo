@@ -20,6 +20,8 @@ public:
   SDL_Window* getWindow();
 
   SDL_Renderer* getRenderer();
+
+  void renderClear();
 };
 
 

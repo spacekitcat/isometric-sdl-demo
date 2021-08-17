@@ -18,3 +18,7 @@ std::pair<int, int> SDLManager::getWindowDimensions() {
 SDL_Window *SDLManager::getWindow() { return _window; }
 
 SDL_Renderer *SDLManager::getRenderer() { return _renderer; }
+
+void SDLManager::renderClear() {
+  SDL_RenderClear(this->getRenderer());
+}
