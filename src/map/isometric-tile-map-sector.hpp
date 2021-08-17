@@ -26,6 +26,8 @@ public:
                          std::pair<float, float> topLeft,
                          std::pair<float, float> dimensions,
                          std::pair<float, float> tileDimensions);
+  
+  ~IsometricTileMapSector();
 
   bool pointIntersects(std::pair<float, float> point);
 
