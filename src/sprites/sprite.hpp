@@ -5,6 +5,7 @@
 #include <iostream>
 #include <math.h>
 #include "../render/sdl-manager.hpp"
+#include "./sprite-metadata.hpp"
 
 class Sprite {
 private:
@@ -13,18 +14,19 @@ private:
   int _columns;
   int _rows;
   std::shared_ptr<SDLManager> _sdlManager;
-  SDL_Surface *spriteSheetSurface;
-  SDL_Texture *spriteSheetTexture;
+  SDL_Surface *_spritesheetSurface;
+  SDL_Texture *_spritesheetTexture;
 
-  void _updateSpriteFrame(int index, SDL_Rect *clippingFrame);
+  void updateSpriteFrame(int index, SDL_Rect *clippingFrame);
 
   SDL_Surface *loadGameImageAsset(std::string path);
 
 public:
-  Sprite(std::shared_ptr<SDLManager> sdlManager, std::string spriteSheetPath, int column,
-         int rows);
+  Sprite(std::shared_ptr<SDLManager> sdlManager, std::string spritesheetPath, struct SpriteMetadata *spritesheetMetadata);
 
   ~Sprite();
+
+  void setSpriteSheet(std::string spriteSheetPath, struct SpriteMetadata *metadata);
 
   void render(float xPosition, float yPosition, int frame);
 
