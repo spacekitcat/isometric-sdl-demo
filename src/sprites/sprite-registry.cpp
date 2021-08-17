@@ -9,7 +9,9 @@ SpriteRegistry::SpriteRegistry(std::shared_ptr<SDLManager> sdlManager) {
 void SpriteRegistry::loadSprite(const std::string &path,
                                 const std::string &asKey,
                                 struct SpriteMetadata *metadata) {
-  this->_tileRegistry[asKey] = new Sprite(_sdlManager, path, metadata);
+  auto sprite = new Sprite(_sdlManager);
+  sprite->setSpritesheet(path, metadata);
+  this->_tileRegistry[asKey] = sprite;
 }
 
 Sprite *SpriteRegistry::getSprite(const std::string &key) {

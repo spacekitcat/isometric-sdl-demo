@@ -2,16 +2,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager,
-               std::string spritesheetPath, struct SpriteMetadata *spritesheetMetadata) {
+Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager) {
 
   _spritesheetSurface = nullptr;
   _spritesheetTexture = nullptr;
   _sdlManager = sdlManager;
 
   assert(_sdlManager != nullptr);
-
-  this->setSpriteSheet(spritesheetPath, spritesheetMetadata);
 
   this->_animationInterval = 200;
   this->_currentFrame = 0;
@@ -25,7 +22,7 @@ Sprite::~Sprite() {
   _spritesheetTexture = nullptr;
 }
 
-void Sprite::setSpriteSheet(std::string spritesheetPath,
+void Sprite::setSpritesheet(std::string spritesheetPath,
                             struct SpriteMetadata *metadata) {
   _spritesheetSurface = nullptr;
   _spritesheetTexture = nullptr;

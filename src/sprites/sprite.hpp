@@ -22,11 +22,11 @@ private:
   SDL_Surface *loadGameImageAsset(std::string path);
 
 public:
-  Sprite(std::shared_ptr<SDLManager> sdlManager, std::string spritesheetPath, struct SpriteMetadata *spritesheetMetadata);
+  Sprite(std::shared_ptr<SDLManager> sdlManager);
 
   ~Sprite();
 
-  void setSpriteSheet(std::string spriteSheetPath, struct SpriteMetadata *metadata);
+  void setSpritesheet(std::string spriteSheetPath, struct SpriteMetadata *metadata);
 
   void render(float xPosition, float yPosition, int frame);
 
