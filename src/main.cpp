@@ -32,6 +32,36 @@ float calculateVerticalVectorComponent(float vectorMagnitude) {
   return vectorMagnitude * sin(26.6 * PI / 180.0);
 }
 
+void renderText(TTF_Font *font, std::shared_ptr<SDLManager> sdlManager,
+                std::string text) {
+
+  TTF_SetFontOutline(font, 1);
+  SDL_Color textBgColor = {0, 0, 0};
+  SDL_Surface *text_surface_bg =
+      TTF_RenderText_Blended(font, text.c_str(), textBgColor);
+  
+  TTF_SetFontOutline(font, 0);
+  SDL_Color textFgColor = {255, 255, 255};
+  SDL_Surface *text_surface_fg =
+      TTF_RenderText_Blended(font, text.c_str(), textFgColor);
+
+  SDL_Rect offset = {.x=1, .y=1};
+  SDL_BlitSurface(text_surface_fg, NULL, text_surface_bg, &offset);
+
+  SDL_Texture *tex =
+      SDL_CreateTextureFromSurface(sdlManager->getRenderer(), text_surface_bg);
+
+  SDL_Rect dest = {
+      .x = 100, .y = 100, .w = text_surface_bg->w, .h = text_surface_bg->h};
+  SDL_RenderCopy(sdlManager->getRenderer(), tex, NULL, &dest);
+
+  // SDL_DestroyTexture(tex);
+
+  SDL_FreeSurface(text_surface_bg);
+  SDL_FreeSurface(text_surface_fg);
+
+}
+
 int main() {
   std::pair<int, int> screenDimensions(1024, 768);
 
@@ -68,11 +98,30 @@ int main() {
     // handle error
   }
 
-  if (Mix_PlayChannel(-1, sample, 0) == -1) {
-    printf("Mix_PlayMusic: %s\n", Mix_GetError());
-    // well, there's no music, but most games don't break without music...
-  }
+  // if (Mix_PlayChannel(-1, sample, 0) == -1) {
+  //   printf("Mix_PlayMusic: %s\n", Mix_GetError());
+  //   // well, there's no music, but most games don't break without music...
+  // }
   // END: Audio Setup area
+
+  // BEGIN: TTF Setup area
+  if (TTF_Init() != 0) {
+    std::cout << "TF_Init: " << TTF_GetError();
+    exit(2);
+  }
+
+  TTF_Font *font;
+  font = TTF_OpenFont("./assets/OpenSans-Regular.ttf", 8);
+  // TTF_SetFontOutline(font, 1);
+
+  if (!font) {
+    printf("TTF_OpenFont: %s\n", TTF_GetError());
+    exit(2);
+  }
+
+  // SDL_Surface *screen;
+
+  // END: TTF Setup area
 
   // BEGIN: Asset loading
 
@@ -303,6 +352,11 @@ int main() {
 
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 255, 255, 255, 255);
     SDL_RenderDrawRect(sdlManager->getRenderer(), &playerRect);
+
+    SDL_SetRenderDrawColor(sdlManager->getRenderer(), 255, 255, 255, 255);
+    TTF_SetFontOutline(font, 1);
+    SDL_Color textBgColor = {0, 0, 0};
+    renderText(font, sdlManager, "Job priority: 100 / 200");
 
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
