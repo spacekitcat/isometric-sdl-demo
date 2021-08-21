@@ -23,10 +23,11 @@ find_package(SDL2_ttf REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_IMAGE_DIRS})
+include_directories(${SDL2TTF_INCLUDE_DIR})
 include_directories(include/)
 
 add_executable(SDL2Test src/render/sdl-manager.cpp src/render/sdl-manager.hpp src/Main.cpp src/sprites/sprite.cpp src/sprites/sprite-selector.cpp src/sprites/sprite-selector.hpp src/input/direction-input-helpers.cpp src/input/direction-input-helpers.hpp src/map/isometric-tile-map-sector.cpp src/map/isometric-tile-map-sector.hpp src/sprites/sprite-registry.cpp src/sprites/sprite-registry.hpp src/sprites/sprite-metadata.hpp src/map/coordinate-mapper.cpp src/map/coordinate-mapper.hpp src/util/pair-operators.cpp src/util/pair-operators.hpp src/debug/debug-draw-utils.cpp src/debug/debug-draw-utils.hpp)
-target_link_libraries(SDL2Test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(SDL2Test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2TTF_LIBRARY} ${Boost_LIBRARIES})
 
 # BEGIN: Test setup
 add_executable(tests src/render/sdl-manager.cpp src/render/sdl-manager.hpp src/test/test.cpp src/sprites/sprite.cpp)
