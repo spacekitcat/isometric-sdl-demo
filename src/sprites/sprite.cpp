@@ -2,35 +2,43 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-Sprite::Sprite(SDLManager *sdlManager, std::string spriteSheetPath, int columns,
-               int rows) {
-  this->spriteSheetSurface = nullptr;
-  this->spriteSheetTexture = nullptr;
+Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager) {
 
-  try {
-    this->spriteSheetSurface = loadGameImageAsset(spriteSheetPath);
-  } catch (const std::runtime_error &ex) {
-    throw;
-  }
-
+  _spritesheetSurface = nullptr;
+  _spritesheetTexture = nullptr;
   _sdlManager = sdlManager;
-  this->spriteSheetTexture =
-      SDL_CreateTextureFromSurface(_sdlManager->getRenderer(), this->spriteSheetSurface);
-  this->_columns = columns;
-  this->_rows = rows;
-  SDL_SetColorKey(this->spriteSheetSurface, SDL_TRUE,
-                  SDL_MapRGB(this->spriteSheetSurface->format, 255, 255, 255));
+
+  assert(_sdlManager != nullptr);
+
   this->_animationInterval = 200;
   this->_currentFrame = 0;
 }
 
 Sprite::~Sprite() {
-    free(this->spriteSheetSurface);
-    this->spriteSheetSurface = nullptr;
+  free(_spritesheetSurface);
+  _spritesheetSurface = nullptr;
 
-    free(this->spriteSheetTexture);
-    this->spriteSheetTexture = nullptr;
+  free(_spritesheetTexture);
+  _spritesheetTexture = nullptr;
+}
 
+void Sprite::setSpritesheet(std::string spritesheetPath,
+                            struct SpriteMetadata *metadata) {
+  _spritesheetSurface = nullptr;
+  _spritesheetTexture = nullptr;
+
+  try {
+    _spritesheetSurface = loadGameImageAsset(spritesheetPath);
+  } catch (const std::runtime_error &ex) {
+    throw;
+  }
+
+  _spritesheetTexture = SDL_CreateTextureFromSurface(_sdlManager->getRenderer(),
+                                                     _spritesheetSurface);
+  this->_columns = metadata->columns;
+  this->_rows = metadata->rows;
+  SDL_SetColorKey(_spritesheetSurface, SDL_TRUE,
+                  SDL_MapRGB(_spritesheetSurface->format, 255, 255, 255));
 }
 
 SDL_Surface *Sprite::loadGameImageAsset(std::string path) {
@@ -42,12 +50,12 @@ SDL_Surface *Sprite::loadGameImageAsset(std::string path) {
   return imageAsset;
 }
 
-void Sprite::_updateSpriteFrame(int index, SDL_Rect *clippingFrame) {
-  int row = round(index / this->_columns);
-  int column = round(index % this->_columns);
+void Sprite::updateSpriteFrame(int index, SDL_Rect *clippingFrame) {
+  int row = round(index / _columns);
+  int column = round(index % _columns);
 
-  int frameWidth = this->spriteSheetSurface->w / this->_columns;
-  int frameHeight = this->spriteSheetSurface->h / this->_rows;
+  int frameWidth = this->getFrameWidth();
+  int frameHeight = this->getFrameHeight();
 
   clippingFrame->x = column * frameWidth;
   clippingFrame->y = row * frameHeight;
@@ -57,31 +65,28 @@ void Sprite::_updateSpriteFrame(int index, SDL_Rect *clippingFrame) {
 
 void Sprite::render(float xPosition, float yPosition, int frame) {
   SDL_Rect clippingRect;
-  SDL_FRect positionRect = { .w=this->getFrameWidth(), .h=this->getFrameHeight() };
+  SDL_FRect positionRect = {.w = this->getFrameWidth(),
+                            .h = this->getFrameHeight()};
   positionRect.x = xPosition; // + (this->getFrameWidth() / 2);
   positionRect.y = yPosition - this->getFrameHeight();
-  this->_updateSpriteFrame(frame, &clippingRect);
+  this->updateSpriteFrame(frame, &clippingRect);
 
-  SDL_RenderCopyF(_sdlManager->getRenderer(), this->spriteSheetTexture, &clippingRect,
-                  &positionRect);
+  SDL_RenderCopyF(_sdlManager->getRenderer(), _spritesheetTexture,
+                  &clippingRect, &positionRect);
 }
 
 void Sprite::renderTick(SDL_FRect *position) {
   this->_currentFrame =
       (SDL_GetTicks() / this->_animationInterval) % this->getFrameCount();
-    this->render(position->x, position->y, this->_currentFrame);
+  this->render(position->x, position->y, this->_currentFrame);
 }
 
-int Sprite::getFrameCount() { return this->_rows * this->_columns; }
+int Sprite::getFrameCount() { return _rows * _columns; }
 
-int Sprite::getColumnCount() { return this->_columns; }
+int Sprite::getColumnCount() { return _columns; }
 
-int Sprite::getRowCount() { return this->_rows; }
+int Sprite::getRowCount() { return _rows; }
 
-float Sprite::getFrameWidth() {
-  return this->spriteSheetSurface->w / this->_columns;
-}
+float Sprite::getFrameWidth() { return _spritesheetSurface->w / _columns; }
 
-float Sprite::getFrameHeight() {
-  return this->spriteSheetSurface->h / this->_rows;
-}
+float Sprite::getFrameHeight() { return _spritesheetSurface->h / _rows; }
