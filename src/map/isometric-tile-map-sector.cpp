@@ -5,10 +5,12 @@
 #include "math.h"
 
 IsometricTileMapSector::IsometricTileMapSector(
-    std::shared_ptr<SDLManager> sdlManager,  SpriteRegistry& spriteRegistry,
-    std::pair<float, float> bottomLeft, std::pair<float, float> dimensions,
+    std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera,
+    SpriteRegistry &spriteRegistry, std::pair<float, float> bottomLeft,
+    std::pair<float, float> dimensions,
     std::pair<float, float> tileDimensions) {
   _sdlManager = sdlManager;
+  _camera = camera;
 
   this->_spriteRegistry = spriteRegistry;
   this->_bottomLeft = bottomLeft;
@@ -62,15 +64,13 @@ std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
   return this->_tilesPerAxis;
 }
 
-void IsometricTileMapSector::render(
-                                    std::pair<int, int> screenDimensions,
-                                    std::pair<int, int> cameraPosition) {
+void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
 
   std::pair<float, float> isoBottomLeft = this->getBottomLeft();
   std::pair<float, float> dim = this->getDimensions();
   std::pair<float, float> isoBottomLeftCent = PairOperators::addPair(
       CoordinateMapper::worldToScreen(
-          cameraPosition, screenDimensions,
+          _camera->getPosition(), screenDimensions,
           std::make_pair(this->_spriteRegistry.getSprite("tank_idle_rot225")
                              ->getFrameWidth(),
                          this->_spriteRegistry.getSprite("tank_idle_rot225")

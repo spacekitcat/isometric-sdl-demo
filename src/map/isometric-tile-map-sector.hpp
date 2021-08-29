@@ -6,13 +6,14 @@
 #include <random>
 #include <vector>
 
-#include "../sprites/sprite-registry.hpp"
 #include "../render/sdl-manager.hpp"
-
+#include "../sprites/sprite-registry.hpp"
+#include "../map/camera.hpp"
 
 class IsometricTileMapSector {
 private:
   std::shared_ptr<SDLManager> _sdlManager;
+  std::shared_ptr<Camera> _camera;
   std::pair<float, float> _position;
   std::pair<float, float> _bottomLeft;
   std::pair<float, float> _dimensions;
@@ -22,11 +23,13 @@ private:
   int *_tileMap;
 
 public:
-  IsometricTileMapSector(std::shared_ptr<SDLManager> sdlManager, SpriteRegistry& spriteRegistry,
+  IsometricTileMapSector(std::shared_ptr<SDLManager> sdlManager,
+                         std::shared_ptr<Camera> camera,
+                         SpriteRegistry &spriteRegistry,
                          std::pair<float, float> topLeft,
                          std::pair<float, float> dimensions,
                          std::pair<float, float> tileDimensions);
-  
+
   ~IsometricTileMapSector();
 
   bool pointIntersects(std::pair<float, float> point);
@@ -42,8 +45,7 @@ public:
 
   std::pair<int, int> getTilesPerAxis();
 
-  void render(std::pair<int, int> screenDimensions,
-              std::pair<int, int> cameraPosition);
+  void render(std::pair<int, int> screenDimensions);
 };
 
 #endif // SDL2APPLICATION4_ISOMETRIC_TILE_MAP_SECTOR_HPP

@@ -12,6 +12,7 @@
 #include "./util/pair-operators.hpp"
 #include "debug/debug-draw-utils.hpp"
 #include "input/direction-input-helpers.hpp"
+#include "map/camera.hpp"
 #include "map/coordinate-mapper.hpp"
 #include "map/isometric-tile-map-sector.hpp"
 #include "render/sdl-manager.hpp"
@@ -20,7 +21,6 @@
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
-#include "map/camera.hpp"
 
 namespace di = boost::di;
 
@@ -41,13 +41,13 @@ void renderText(TTF_Font *font, std::shared_ptr<SDLManager> sdlManager,
   SDL_Color textBgColor = {0, 0, 0};
   SDL_Surface *text_surface_bg =
       TTF_RenderText_Blended(font, text.c_str(), textBgColor);
-  
+
   TTF_SetFontOutline(font, 0);
   SDL_Color textFgColor = {255, 255, 255};
   SDL_Surface *text_surface_fg =
       TTF_RenderText_Blended(font, text.c_str(), textFgColor);
 
-  SDL_Rect offset = {.x=1, .y=1};
+  SDL_Rect offset = {.x = 1, .y = 1};
   SDL_BlitSurface(text_surface_fg, NULL, text_surface_bg, &offset);
 
   SDL_Texture *tex =
@@ -61,7 +61,6 @@ void renderText(TTF_Font *font, std::shared_ptr<SDLManager> sdlManager,
 
   SDL_FreeSurface(text_surface_bg);
   SDL_FreeSurface(text_surface_fg);
-
 }
 
 int main() {
@@ -196,39 +195,32 @@ int main() {
 
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
-      sdlManager, spriteRegistry, std::make_pair(0.0, 0.0), screenDimensions,
+      sdlManager, camera, spriteRegistry, std::make_pair(0.0, 0.0),
+      screenDimensions,
       std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
                      spriteRegistry.getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
-      sdlManager,
-
-      spriteRegistry, std::make_pair(0.0, screenDimensions.second),
-      screenDimensions,
+      sdlManager, camera, spriteRegistry,
+      std::make_pair(0.0, screenDimensions.second), screenDimensions,
       std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
                      spriteRegistry.getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
-      sdlManager,
-
-      spriteRegistry, std::make_pair(0.0, -screenDimensions.second),
-      screenDimensions,
+      sdlManager, camera, spriteRegistry,
+      std::make_pair(0.0, -screenDimensions.second), screenDimensions,
       std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
                      spriteRegistry.getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
-      sdlManager,
-
-      spriteRegistry, std::make_pair(screenDimensions.first, 0.0),
-      screenDimensions,
+      sdlManager, camera, spriteRegistry,
+      std::make_pair(screenDimensions.first, 0.0), screenDimensions,
       std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
                      spriteRegistry.getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
-      sdlManager,
-
-      spriteRegistry, std::make_pair(-screenDimensions.first, 0.0),
-      screenDimensions,
+      sdlManager, camera, spriteRegistry,
+      std::make_pair(-screenDimensions.first, 0.0), screenDimensions,
       std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
                      spriteRegistry.getSprite("1")->getFrameHeight()));
 
@@ -285,16 +277,24 @@ int main() {
 
       switch (spriteState.direction) {
       case NorthWest:
-        camera->applyDelta(std::make_pair(-calculateHorizontalVectorComponent(speed), -calculateVerticalVectorComponent(-speed)));
+        camera->applyDelta(
+            std::make_pair(-calculateHorizontalVectorComponent(speed),
+                           -calculateVerticalVectorComponent(-speed)));
         break;
       case NorthEast:
-        camera->applyDelta(std::make_pair(+calculateHorizontalVectorComponent(speed), -calculateVerticalVectorComponent(-speed)));
+        camera->applyDelta(
+            std::make_pair(+calculateHorizontalVectorComponent(speed),
+                           -calculateVerticalVectorComponent(-speed)));
         break;
       case SouthEast:
-        camera->applyDelta(std::make_pair(+calculateHorizontalVectorComponent(speed), -calculateVerticalVectorComponent(speed)));
+        camera->applyDelta(
+            std::make_pair(+calculateHorizontalVectorComponent(speed),
+                           -calculateVerticalVectorComponent(speed)));
         break;
       case SouthWest:
-        camera->applyDelta(std::make_pair(-calculateHorizontalVectorComponent(speed), -calculateVerticalVectorComponent(speed)));
+        camera->applyDelta(
+            std::make_pair(-calculateHorizontalVectorComponent(speed),
+                           -calculateVerticalVectorComponent(speed)));
         break;
       case South:
         camera->applyDelta(std::make_pair(0, -speed));
@@ -315,24 +315,29 @@ int main() {
 
     sdlManager->renderClear();
 
-    if (isoMapSector->squareIntersects(camera->getPosition(), screenDimensions)) {
-      isoMapSector->render(screenDimensions, camera->getPosition());
+    if (isoMapSector->squareIntersects(camera->getPosition(),
+                                       screenDimensions)) {
+      isoMapSector->render(screenDimensions);
     }
 
-    if (isoMapSector2->squareIntersects(camera->getPosition(), screenDimensions)) {
-      isoMapSector2->render(screenDimensions, camera->getPosition());
+    if (isoMapSector2->squareIntersects(camera->getPosition(),
+                                        screenDimensions)) {
+      isoMapSector2->render(screenDimensions);
     }
 
-    if (isoMapSector3->squareIntersects(camera->getPosition(), screenDimensions)) {
-      isoMapSector3->render(screenDimensions, camera->getPosition());
+    if (isoMapSector3->squareIntersects(camera->getPosition(),
+                                        screenDimensions)) {
+      isoMapSector3->render(screenDimensions);
     }
 
-    if (isoMapSector4->squareIntersects(camera->getPosition(), screenDimensions)) {
-      isoMapSector4->render(screenDimensions, camera->getPosition());
+    if (isoMapSector4->squareIntersects(camera->getPosition(),
+                                        screenDimensions)) {
+      isoMapSector4->render(screenDimensions);
     }
 
-    if (isoMapSector5->squareIntersects(camera->getPosition(), screenDimensions)) {
-      isoMapSector5->render(screenDimensions, camera->getPosition());
+    if (isoMapSector5->squareIntersects(camera->getPosition(),
+                                        screenDimensions)) {
+      isoMapSector5->render(screenDimensions);
     }
 
     /* Render player sprite with SpriteSheet */
@@ -352,7 +357,10 @@ int main() {
     SDL_RenderDrawRect(sdlManager->getRenderer(), &playerRect);
 
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 255, 255, 255, 255);
-    renderText(font, sdlManager, str(boost::format("%1$+5d %2$+5d") % round(camera->getPosition().first) % round(camera->getPosition().second)));
+    renderText(font, sdlManager,
+               str(boost::format("%1$+5d %2$+5d") %
+                   round(camera->getPosition().first) %
+                   round(camera->getPosition().second)));
 
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
