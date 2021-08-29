@@ -43,6 +43,8 @@ public:
 
   bool targetIntersects(IntersectTarget *intersectTarget);
 
+  bool isVisible();
+
   std::pair<float, float> getBottomLeft();
 
   std::pair<float, float> getDimensions();

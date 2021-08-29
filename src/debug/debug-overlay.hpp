@@ -7,17 +7,18 @@
 
 #include "../map/camera.hpp"
 #include "../render/sdl-manager.hpp"
+#include "../text/text-renderer.hpp"
 
 class DebugOverlay {
 private:
   std::shared_ptr<SDLManager> _sdlManager;
   std::shared_ptr<Camera> _camera;
-  TTF_Font *_font;
+  TextRenderer _textRenderer;
 
   void renderText(std::string text);
 
 public:
-  DebugOverlay(std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera);
+  DebugOverlay(std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera, TextRenderer &textRenderer);
 
   void render();
 };

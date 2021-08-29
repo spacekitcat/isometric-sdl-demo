@@ -260,19 +260,24 @@ int main() {
     sdlManager->renderClear();
     
     Sprite *playerSprite = playerSpriteSelector.selectSprite(spriteState);
-    if (isoMapSector->targetIntersects(playerSprite)) {
+    // if (isoMapSector->targetIntersects(playerSprite)) {
+    //   isoMapSector->render(sdlManager->getWindowDimensions());
+    // }
+
+
+    if (isoMapSector->isVisible()) {
       isoMapSector->render(sdlManager->getWindowDimensions());
     }
 
-    if (isoMapSector->squareIntersects(camera->getPosition(),
-                                       std::make_pair<int, int>(128, 128))) {
-      isoMapSector->render(sdlManager->getWindowDimensions());
-    }
+    // if (isoMapSector->squareIntersects(camera->getPosition(),
+    //                                    std::make_pair<int, int>(128, 128))) {
+    //   isoMapSector->render(sdlManager->getWindowDimensions());
+    // }
 
-    if (isoMapSector2->squareIntersects(camera->getPosition(),
-                                        std::make_pair<int, int>(128, 128))) {
-      isoMapSector2->render(sdlManager->getWindowDimensions());
-    }
+    // if (isoMapSector2->squareIntersects(camera->getPosition(),
+    //                                     std::make_pair<int, int>(128, 128))) {
+    //   isoMapSector2->render(sdlManager->getWindowDimensions());
+    // }
 
     // if (isoMapSector3->squareIntersects(camera->getPosition(),
     //                                     std::make_pair<int, int>(128, 128))) {
