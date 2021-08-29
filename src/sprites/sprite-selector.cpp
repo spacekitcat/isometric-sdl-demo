@@ -8,6 +8,7 @@ void SpriteSelector::registerDirectionSprite(SpriteStateDirectionEnum direction,
                                              Sprite *sprite) {
   this->_sprites.insert(
       std::pair<SpriteStateDirectionEnum, Sprite *>(direction, sprite));
+  sprite->setRenderBoundingBox(true);
 }
 
 Sprite *SpriteSelector::selectSprite(SpriteState spriteState) {

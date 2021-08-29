@@ -18,6 +18,7 @@ private:
   std::shared_ptr<SDLManager> _sdlManager;
   SDL_Surface *_spritesheetSurface;
   SDL_Texture *_spritesheetTexture;
+  bool _drawBoundingBox;
 
   void updateSpriteFrame(int index, SDL_Rect *clippingFrame);
 
@@ -43,6 +44,8 @@ public:
   float getFrameWidth();
 
   float getFrameHeight();
+
+  void setRenderBoundingBox(bool render);
 };
 
 #endif

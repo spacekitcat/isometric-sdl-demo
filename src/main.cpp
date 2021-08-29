@@ -86,7 +86,7 @@ int main() {
   auto spriteRegistry = injector.create<SpriteRegistry>();
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
-
+    
     spriteRegistry.loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot225.png",
         "tank_idle_rot225", &playerSpriteMetadata);
@@ -154,12 +154,12 @@ int main() {
       std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
                      spriteRegistry.getSprite("1")->getFrameHeight()));
 
-  // IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
-  //     sdlManager, camera, spriteRegistry,
-  //     std::make_pair(0.0, sdlManager->getWindowDimensions().second),
-  //     std::make_pair(200, 200),
-  //     std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-  //                    spriteRegistry.getSprite("1")->getFrameHeight()));
+  IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
+      sdlManager, camera, spriteRegistry, coordinateMapper,
+      std::make_pair(0.0, sdlManager->getWindowDimensions().second),
+      std::make_pair(600, 600),
+      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
+                     spriteRegistry.getSprite("1")->getFrameHeight()));
 
   // IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
   //     sdlManager, camera, spriteRegistry,
@@ -260,27 +260,27 @@ int main() {
     sdlManager->renderClear();
 
     if (isoMapSector->squareIntersects(camera->getPosition(),
-                                       sdlManager->getWindowDimensions())) {
+                                       std::make_pair<int, int>(128, 128))) {
       isoMapSector->render(sdlManager->getWindowDimensions());
     }
 
-    // if (isoMapSector2->squareIntersects(camera->getPosition(),
-    //                                     sdlManager->getWindowDimensions())) {
-    //   isoMapSector2->render(sdlManager->getWindowDimensions());
-    // }
+    if (isoMapSector2->squareIntersects(camera->getPosition(),
+                                        std::make_pair<int, int>(128, 128))) {
+      isoMapSector2->render(sdlManager->getWindowDimensions());
+    }
 
     // if (isoMapSector3->squareIntersects(camera->getPosition(),
-    //                                     sdlManager->getWindowDimensions())) {
+    //                                     std::make_pair<int, int>(128, 128))) {
     //   isoMapSector3->render(sdlManager->getWindowDimensions());
     // }
 
     // if (isoMapSector4->squareIntersects(camera->getPosition(),
-    //                                     sdlManager->getWindowDimensions())) {
+    //                                     std::make_pair<int, int>(128, 128))) {
     //   isoMapSector4->render(sdlManager->getWindowDimensions());
     // }
 
     // if (isoMapSector5->squareIntersects(camera->getPosition(),
-    //                                     sdlManager->getWindowDimensions())) {
+    //                                     std::make_pair<int, int>(128, 128))) {
     //   isoMapSector5->render(sdlManager->getWindowDimensions());
     // }
 
@@ -289,16 +289,6 @@ int main() {
     if (playerSprite != NULL) {
       playerSprite->renderTick(&playerPositioningRect);
     }
-
-    SDL_Rect playerRect = {
-        .x = playerPositioningRect.x,
-        .y = playerPositioningRect.y,
-        .w = playerPositioningRect.w,
-        .h = -playerPositioningRect.h,
-    };
-
-    SDL_SetRenderDrawColor(sdlManager->getRenderer(), 255, 255, 255, 255);
-    SDL_RenderDrawRect(sdlManager->getRenderer(), &playerRect);
 
     debugOverlay.render();
 

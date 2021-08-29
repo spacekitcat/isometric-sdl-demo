@@ -7,9 +7,9 @@
 IsometricTileMapSector::IsometricTileMapSector(
     std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera,
     SpriteRegistry &spriteRegistry, CoordinateMapper &coordinateMapper,
-    std::pair<float, float> bottomLeft,
-    std::pair<float, float> dimensions,
-    std::pair<float, float> tileDimensions) : _coordinateMapper(coordinateMapper) {
+    std::pair<float, float> bottomLeft, std::pair<float, float> dimensions,
+    std::pair<float, float> tileDimensions)
+    : _coordinateMapper(coordinateMapper) {
   _sdlManager = sdlManager;
   _camera = camera;
 
@@ -33,32 +33,35 @@ IsometricTileMapSector::IsometricTileMapSector(
 }
 
 bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
-  return point.first >= this->_bottomLeft.first &&
-         point.first <= this->_bottomLeft.first + this->_dimensions.first &&
-         point.second >= -this->_bottomLeft.second &&
-         point.second <= -this->_bottomLeft.second + this->_dimensions.second;
+  float padding = 100;
+
+  return point.first >= _bottomLeft.first - padding &&
+         point.first <= _bottomLeft.first + this->_dimensions.first + padding &&
+         point.second >= -(_bottomLeft.second + padding) &&
+         point.second <= -_bottomLeft.second + this->_dimensions.second + padding;
 }
 
 bool IsometricTileMapSector::squareIntersects(
-    std::pair<float, float> point, std::pair<float, float> dimensions) {
+    std::pair<float, float> principlePoint,
+    std::pair<float, float> dimensions) {
 
-  if (_drawBoundingBox) {
-    SDL_Rect rectangleRect = {
-        .x = point.first,
-        .y = point.second,
-        .w = 10,
-        .h = 10,
-    };
-    SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 0, 255, 0, 255);
-    SDL_RenderDrawRect(_sdlManager->getRenderer(), &rectangleRect);
-  }
+  std::pair<float, float> bottomLeftPoint =
+      std::make_pair(principlePoint.first, principlePoint.second);
 
-  return this->pointIntersects(point) ||
-         this->pointIntersects(PairOperators::addPair(point, dimensions)) ||
-         this->pointIntersects(PairOperators::addPair(
-             point, std::make_pair(dimensions.first, 0))) ||
-         this->pointIntersects(PairOperators::addPair(
-             point, std::make_pair(0, dimensions.second)));
+  std::pair<float, float> bottomRightPoint = std::make_pair(
+      principlePoint.first + dimensions.first, principlePoint.second);
+
+  std::pair<float, float> topLeftPoint = std::make_pair(
+      principlePoint.first, principlePoint.second + dimensions.second);
+
+  std::pair<float, float> topRightPoint =
+      std::make_pair(principlePoint.first + dimensions.first,
+                     principlePoint.second + dimensions.second);
+
+  return this->pointIntersects(bottomLeftPoint) ||
+         this->pointIntersects(bottomRightPoint) ||
+         this->pointIntersects(topLeftPoint) ||
+         this->pointIntersects(topRightPoint);
 }
 
 std::pair<float, float> IsometricTileMapSector::getBottomLeft() {
@@ -82,8 +85,7 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
   std::pair<float, float> isoBottomLeft = this->getBottomLeft();
   std::pair<float, float> dim = this->getDimensions();
   std::pair<float, float> isoBottomLeftCent = PairOperators::addPair(
-      _coordinateMapper.fromWorldToScreen(
-          _camera->getPosition()),
+      _coordinateMapper.fromWorldToScreen(_camera->getPosition()),
       isoBottomLeft);
 
   SDL_FRect tilePositionRect = {
@@ -123,7 +125,7 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
         .w = this->getDimensions().first,
         .h = -this->getDimensions().second,
     };
-    SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 0, 255, 0, 255);
     SDL_RenderDrawRect(_sdlManager->getRenderer(), &rectangleRect);
   }
 }

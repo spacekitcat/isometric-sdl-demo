@@ -18,6 +18,9 @@ public:
 
   std::pair<float, float>
   fromWorldToScreen(std::pair<float, float> worldPosition);
+
+  float fromWorldXToScreenX(float worldX);
+  float fromWorldYToScreenY(float worldY);
 };
 
 #endif // SDL2APPLICATION4_COORDINATE_MAPPER_HPP
