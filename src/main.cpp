@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include <boost/di.hpp>
+#include <boost/format.hpp>
 
 #include "./util/pair-operators.hpp"
 #include "debug/debug-draw-utils.hpp"
@@ -19,6 +20,7 @@
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
+#include "map/camera.hpp"
 
 namespace di = boost::di;
 
@@ -52,7 +54,7 @@ void renderText(TTF_Font *font, std::shared_ptr<SDLManager> sdlManager,
       SDL_CreateTextureFromSurface(sdlManager->getRenderer(), text_surface_bg);
 
   SDL_Rect dest = {
-      .x = 100, .y = 100, .w = text_surface_bg->w, .h = text_surface_bg->h};
+      .x = 100, .y = 25, .w = text_surface_bg->w, .h = text_surface_bg->h};
   SDL_RenderCopy(sdlManager->getRenderer(), tex, NULL, &dest);
 
   // SDL_DestroyTexture(tex);
@@ -80,8 +82,10 @@ int main() {
   }
 
   const auto injector = di::make_injector(
-      di::bind<SDLManager>().to<SDLManager>().in(di::singleton));
+      di::bind<SDLManager>().to<SDLManager>().in(di::singleton),
+      di::bind<Camera>().to<Camera>().in(di::singleton));
   auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
+  auto camera = injector.create<std::shared_ptr<Camera>>();
 
   // END: SDL Setup area
 
@@ -111,7 +115,7 @@ int main() {
   }
 
   TTF_Font *font;
-  font = TTF_OpenFont("./assets/OpenSans-Regular.ttf", 8);
+  font = TTF_OpenFont("./assets/fonts/Lato-Bold.ttf", 18);
   // TTF_SetFontOutline(font, 1);
 
   if (!font) {
@@ -228,12 +232,10 @@ int main() {
       std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
                      spriteRegistry.getSprite("1")->getFrameHeight()));
 
-  std::pair<float, float> cameraPosition = std::make_pair(0, 0);
-
   SDL_FRect playerPositioningRect = {
       .x =
           CoordinateMapper::worldToScreen(
-              cameraPosition, screenDimensions,
+              camera->getPosition(), screenDimensions,
               std::make_pair(
                   spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
                   spriteRegistry.getSprite("tank_idle_rot225")
@@ -241,7 +243,7 @@ int main() {
               .first,
       .y =
           CoordinateMapper::worldToScreen(
-              cameraPosition, screenDimensions,
+              camera->getPosition(), screenDimensions,
               std::make_pair(
                   spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
                   spriteRegistry.getSprite("tank_idle_rot225")
@@ -283,32 +285,28 @@ int main() {
 
       switch (spriteState.direction) {
       case NorthWest:
-        cameraPosition.first -= calculateHorizontalVectorComponent(speed);
-        cameraPosition.second -= calculateVerticalVectorComponent(-speed);
+        camera->applyDelta(std::make_pair(-calculateHorizontalVectorComponent(speed), -calculateVerticalVectorComponent(-speed)));
         break;
       case NorthEast:
-        cameraPosition.first += calculateHorizontalVectorComponent(speed);
-        cameraPosition.second -= calculateVerticalVectorComponent(-speed);
+        camera->applyDelta(std::make_pair(+calculateHorizontalVectorComponent(speed), -calculateVerticalVectorComponent(-speed)));
         break;
       case SouthEast:
-        cameraPosition.first += calculateHorizontalVectorComponent(speed);
-        cameraPosition.second -= calculateVerticalVectorComponent(speed);
+        camera->applyDelta(std::make_pair(+calculateHorizontalVectorComponent(speed), -calculateVerticalVectorComponent(speed)));
         break;
       case SouthWest:
-        cameraPosition.first -= calculateHorizontalVectorComponent(speed);
-        cameraPosition.second -= calculateVerticalVectorComponent(speed);
+        camera->applyDelta(std::make_pair(-calculateHorizontalVectorComponent(speed), -calculateVerticalVectorComponent(speed)));
         break;
       case South:
-        cameraPosition.second -= speed;
+        camera->applyDelta(std::make_pair(0, -speed));
         break;
       case North:
-        cameraPosition.second += speed;
+        camera->applyDelta(std::make_pair(0, +speed));
         break;
       case East:
-        cameraPosition.first += speed;
+        camera->applyDelta(std::make_pair(+speed, 0));
         break;
       case West:
-        cameraPosition.first -= speed;
+        camera->applyDelta(std::make_pair(-speed, 0));
         break;
       case Idle:
         break;
@@ -317,24 +315,24 @@ int main() {
 
     sdlManager->renderClear();
 
-    if (isoMapSector->squareIntersects(cameraPosition, screenDimensions)) {
-      isoMapSector->render(screenDimensions, cameraPosition);
+    if (isoMapSector->squareIntersects(camera->getPosition(), screenDimensions)) {
+      isoMapSector->render(screenDimensions, camera->getPosition());
     }
 
-    if (isoMapSector2->squareIntersects(cameraPosition, screenDimensions)) {
-      isoMapSector2->render(screenDimensions, cameraPosition);
+    if (isoMapSector2->squareIntersects(camera->getPosition(), screenDimensions)) {
+      isoMapSector2->render(screenDimensions, camera->getPosition());
     }
 
-    if (isoMapSector3->squareIntersects(cameraPosition, screenDimensions)) {
-      isoMapSector3->render(screenDimensions, cameraPosition);
+    if (isoMapSector3->squareIntersects(camera->getPosition(), screenDimensions)) {
+      isoMapSector3->render(screenDimensions, camera->getPosition());
     }
 
-    if (isoMapSector4->squareIntersects(cameraPosition, screenDimensions)) {
-      isoMapSector4->render(screenDimensions, cameraPosition);
+    if (isoMapSector4->squareIntersects(camera->getPosition(), screenDimensions)) {
+      isoMapSector4->render(screenDimensions, camera->getPosition());
     }
 
-    if (isoMapSector5->squareIntersects(cameraPosition, screenDimensions)) {
-      isoMapSector5->render(screenDimensions, cameraPosition);
+    if (isoMapSector5->squareIntersects(camera->getPosition(), screenDimensions)) {
+      isoMapSector5->render(screenDimensions, camera->getPosition());
     }
 
     /* Render player sprite with SpriteSheet */
@@ -354,9 +352,7 @@ int main() {
     SDL_RenderDrawRect(sdlManager->getRenderer(), &playerRect);
 
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 255, 255, 255, 255);
-    TTF_SetFontOutline(font, 1);
-    SDL_Color textBgColor = {0, 0, 0};
-    renderText(font, sdlManager, "Job priority: 100 / 200");
+    renderText(font, sdlManager, str(boost::format("%1$+5d %2$+5d") % round(camera->getPosition().first) % round(camera->getPosition().second)));
 
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
