@@ -7,9 +7,10 @@
 #include <SDL_image.h>
 
 #include "../render/sdl-manager.hpp"
-#include "./sprite-metadata.hpp"
+#include "../sprites/sprite-metadata.hpp"
+#include "../map/intersect-target.hpp"
 
-class Sprite {
+class Sprite : public IntersectTarget {
 private:
   int _animationInterval;
   int _currentFrame;
@@ -46,6 +47,8 @@ public:
   float getFrameHeight();
 
   void setRenderBoundingBox(bool render);
+
+  std::pair<float, float> getDimensions();
 };
 
 #endif

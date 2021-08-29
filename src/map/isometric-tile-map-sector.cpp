@@ -129,3 +129,7 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
     SDL_RenderDrawRect(_sdlManager->getRenderer(), &rectangleRect);
   }
 }
+
+bool IsometricTileMapSector::targetIntersects(IntersectTarget *intersectTarget) {
+  return false;
+}

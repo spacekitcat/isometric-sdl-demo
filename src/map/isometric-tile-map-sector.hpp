@@ -10,6 +10,7 @@
 #include "../sprites/sprite-registry.hpp"
 #include "../map/camera.hpp"
 #include "../map/coordinate-mapper.hpp"
+#include "../map/intersect-target.hpp"
 
 class IsometricTileMapSector {
 private:
@@ -39,6 +40,8 @@ public:
 
   bool squareIntersects(std::pair<float, float> point,
                         std::pair<float, float> dimensions);
+
+  bool targetIntersects(IntersectTarget *intersectTarget);
 
   std::pair<float, float> getBottomLeft();
 

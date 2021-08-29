@@ -258,6 +258,11 @@ int main() {
     }
 
     sdlManager->renderClear();
+    
+    Sprite *playerSprite = playerSpriteSelector.selectSprite(spriteState);
+    if (isoMapSector->targetIntersects(playerSprite)) {
+      isoMapSector->render(sdlManager->getWindowDimensions());
+    }
 
     if (isoMapSector->squareIntersects(camera->getPosition(),
                                        std::make_pair<int, int>(128, 128))) {
@@ -285,7 +290,6 @@ int main() {
     // }
 
     /* Render player sprite with SpriteSheet */
-    Sprite *playerSprite = playerSpriteSelector.selectSprite(spriteState);
     if (playerSprite != NULL) {
       playerSprite->renderTick(&playerPositioningRect);
     }
