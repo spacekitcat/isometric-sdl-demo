@@ -11,12 +11,14 @@
 #include "../map/camera.hpp"
 #include "../map/coordinate-mapper.hpp"
 #include "../map/intersect-target.hpp"
+#include "../text/text-renderer.hpp"
 
 class IsometricTileMapSector {
 private:
   std::shared_ptr<SDLManager> _sdlManager;
   std::shared_ptr<Camera> _camera;
   CoordinateMapper &_coordinateMapper;
+  TextRenderer &_textRenderer;
   std::pair<float, float> _position;
   std::pair<float, float> _bottomLeft;
   std::pair<float, float> _dimensions;
@@ -30,6 +32,7 @@ public:
                          std::shared_ptr<Camera> camera,
                          SpriteRegistry &spriteRegistry,
                          CoordinateMapper &coordinateMapper,
+                         TextRenderer &textRenderer,
                          std::pair<float, float> topLeft,
                          std::pair<float, float> dimensions,
                          std::pair<float, float> tileDimensions);

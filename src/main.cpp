@@ -59,6 +59,7 @@ int main() {
   auto camera = injector.create<std::shared_ptr<Camera>>();
   auto debugOverlay = injector.create<DebugOverlay>();
   auto coordinateMapper = injector.create<CoordinateMapper>();
+  auto textRenderer = injector.create<TextRenderer>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area
@@ -149,13 +150,13 @@ int main() {
 
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
-      sdlManager, camera, spriteRegistry, coordinateMapper,
+      sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
       std::make_pair(0.0, 0.0), std::make_pair(600, 600),
       std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
                      spriteRegistry.getSprite("1")->getFrameHeight()));
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
-      sdlManager, camera, spriteRegistry, coordinateMapper,
+      sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
       std::make_pair(0.0, sdlManager->getWindowDimensions().second),
       std::make_pair(600, 600),
       std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
@@ -182,6 +183,7 @@ int main() {
   //     std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
   //                    spriteRegistry.getSprite("1")->getFrameHeight()));
 
+  // coord mapper probably isn't required here. It's just centering.
   SDL_FRect playerPositioningRect = {
       .x = coordinateMapper.fromWorldToScreen(camera->getPosition()).first,
       .y = coordinateMapper.fromWorldToScreen(camera->getPosition()).second,

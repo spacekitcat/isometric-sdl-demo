@@ -24,3 +24,11 @@ float CoordinateMapper::fromWorldYToScreenY(float worldY) {
   return worldY + (_sdlManager->getWindowDimensions().second / 2) -
          (_playerSpriteDimensions.second / 2);
 }
+
+std::pair<float, float>
+CoordinateMapper::fromWorldToScreenAbs(std::pair<float, float> worldPosition) {
+
+  return PairOperators::addPair(
+      this->fromWorldToScreen(_camera->getPosition()),
+      worldPosition);
+}

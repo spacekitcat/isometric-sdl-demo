@@ -11,11 +11,7 @@ DebugOverlay::DebugOverlay(std::shared_ptr<SDLManager> sdlManager,
 
 void DebugOverlay::render() {
   SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 255, 255, 255, 255);
-  renderText(
+  _textRenderer.renderText(
       str(boost::format("%1$+5d %2$+5d") % round(_camera->getPosition().first) %
-          round(_camera->getPosition().second)));
-}
-
-void DebugOverlay::renderText(std::string text) {
-  _textRenderer.renderText(text);
+          round(_camera->getPosition().second)), std::make_pair(100, 50));
 }

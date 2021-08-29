@@ -15,8 +15,6 @@ private:
   std::shared_ptr<Camera> _camera;
   TextRenderer _textRenderer;
 
-  void renderText(std::string text);
-
 public:
   DebugOverlay(std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera, TextRenderer &textRenderer);
 

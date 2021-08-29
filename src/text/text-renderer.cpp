@@ -14,7 +14,11 @@ TextRenderer::TextRenderer(std::shared_ptr<SDLManager> sdlManager) {
   assert(_font != nullptr);
 }
 
-void TextRenderer::renderText(std::string text) {
+TextRenderer::~TextRenderer() {
+  //delete _font;
+}
+
+void TextRenderer::renderText(std::string text, std::pair<float, float> position) {
   // Black outline (background)
   TTF_SetFontOutline(_font, 1);
   SDL_Color textBgColor = {0, 0, 0};
@@ -36,7 +40,7 @@ void TextRenderer::renderText(std::string text) {
       SDL_CreateTextureFromSurface(_sdlManager->getRenderer(), text_surface_bg);
 
   SDL_Rect dest = {
-      .x = 100, .y = 25, .w = text_surface_bg->w, .h = text_surface_bg->h};
+      .x = position.first, .y = position.second, .w = text_surface_bg->w, .h = text_surface_bg->h};
   SDL_RenderCopy(_sdlManager->getRenderer(), tex, NULL, &dest);
 
   SDL_DestroyTexture(tex);

@@ -7,9 +7,9 @@
 IsometricTileMapSector::IsometricTileMapSector(
     std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera,
     SpriteRegistry &spriteRegistry, CoordinateMapper &coordinateMapper,
-    std::pair<float, float> bottomLeft, std::pair<float, float> dimensions,
-    std::pair<float, float> tileDimensions)
-    : _coordinateMapper(coordinateMapper) {
+    TextRenderer &textRenderer, std::pair<float, float> bottomLeft,
+    std::pair<float, float> dimensions, std::pair<float, float> tileDimensions)
+    : _coordinateMapper(coordinateMapper), _textRenderer(textRenderer) {
   _sdlManager = sdlManager;
   _camera = camera;
 
@@ -38,7 +38,8 @@ bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
   return point.first >= _bottomLeft.first - padding &&
          point.first <= _bottomLeft.first + this->_dimensions.first + padding &&
          point.second >= -(_bottomLeft.second + padding) &&
-         point.second <= -_bottomLeft.second + this->_dimensions.second + padding;
+         point.second <=
+             -_bottomLeft.second + this->_dimensions.second + padding;
 }
 
 bool IsometricTileMapSector::squareIntersects(
@@ -82,11 +83,9 @@ std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
 
 void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
 
-  std::pair<float, float> isoBottomLeft = this->getBottomLeft();
   std::pair<float, float> dim = this->getDimensions();
-  std::pair<float, float> isoBottomLeftCent = PairOperators::addPair(
-      _coordinateMapper.fromWorldToScreen(_camera->getPosition()),
-      isoBottomLeft);
+  std::pair<float, float> isoBottomLeftCent =
+      _coordinateMapper.fromWorldToScreenAbs(this->getBottomLeft());
 
   SDL_FRect tilePositionRect = {
       .x = 0,
@@ -127,13 +126,17 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
     };
     SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 0, 255, 0, 255);
     SDL_RenderDrawRect(_sdlManager->getRenderer(), &rectangleRect);
+    _textRenderer.renderText(
+        str(boost::format("%1$+5d%2$+5d") %
+            round(this->getBottomLeft().first) %
+            round(this->getBottomLeft().second)),
+        _coordinateMapper.fromWorldToScreenAbs(std::make_pair(0, 0)));
   }
 }
 
-bool IsometricTileMapSector::targetIntersects(IntersectTarget *intersectTarget) {
+bool IsometricTileMapSector::targetIntersects(
+    IntersectTarget *intersectTarget) {
   return false;
 }
 
-bool IsometricTileMapSector::isVisible() {
-  return true;
-}
+bool IsometricTileMapSector::isVisible() { return true; }

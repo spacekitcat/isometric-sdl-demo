@@ -5,6 +5,7 @@
 
 #include "../map/camera.hpp"
 #include "../render/sdl-manager.hpp"
+#include "../util/pair-operators.hpp"
 
 class CoordinateMapper {
 private:
@@ -18,6 +19,10 @@ public:
 
   std::pair<float, float>
   fromWorldToScreen(std::pair<float, float> worldPosition);
+
+
+  std::pair<float, float>
+  fromWorldToScreenAbs(std::pair<float, float> worldPosition);
 
   float fromWorldXToScreenX(float worldX);
   float fromWorldYToScreenY(float worldY);

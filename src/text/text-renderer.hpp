@@ -14,8 +14,9 @@ class TextRenderer {
     
     public:
         TextRenderer(std::shared_ptr<SDLManager> sdlManager);
+        ~TextRenderer();
 
-        void renderText(std::string text);
+        void renderText(std::string text, std::pair<float, float> position);
 };
 
 #endif //SDL2APPLICATION4_TEXT_RENDERER_HPP
