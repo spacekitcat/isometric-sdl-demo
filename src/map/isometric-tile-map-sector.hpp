@@ -9,11 +9,13 @@
 #include "../render/sdl-manager.hpp"
 #include "../sprites/sprite-registry.hpp"
 #include "../map/camera.hpp"
+#include "../map/coordinate-mapper.hpp"
 
 class IsometricTileMapSector {
 private:
   std::shared_ptr<SDLManager> _sdlManager;
   std::shared_ptr<Camera> _camera;
+  CoordinateMapper &_coordinateMapper;
   std::pair<float, float> _position;
   std::pair<float, float> _bottomLeft;
   std::pair<float, float> _dimensions;
@@ -26,6 +28,7 @@ public:
   IsometricTileMapSector(std::shared_ptr<SDLManager> sdlManager,
                          std::shared_ptr<Camera> camera,
                          SpriteRegistry &spriteRegistry,
+                         CoordinateMapper &coordinateMapper,
                          std::pair<float, float> topLeft,
                          std::pair<float, float> dimensions,
                          std::pair<float, float> tileDimensions);

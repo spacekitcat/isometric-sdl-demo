@@ -32,11 +32,7 @@ float calculateVerticalVectorComponent(float vectorMagnitude) {
   return vectorMagnitude * sin(26.6 * PI / 180.0);
 }
 
-
-
 int main() {
-  std::pair<int, int> screenDimensions(1024, 768);
-
   // BEGIN: SDL Setup area
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -62,6 +58,7 @@ int main() {
   auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
   auto camera = injector.create<std::shared_ptr<Camera>>();
   auto debugOverlay = injector.create<DebugOverlay>();
+  auto coordinateMapper = injector.create<CoordinateMapper>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area
@@ -152,52 +149,42 @@ int main() {
 
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
-      sdlManager, camera, spriteRegistry, std::make_pair(0.0, 0.0),
-      screenDimensions,
+      sdlManager, camera, spriteRegistry, coordinateMapper,
+      std::make_pair(0.0, 0.0), std::make_pair(600, 600),
       std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
                      spriteRegistry.getSprite("1")->getFrameHeight()));
 
-  IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
-      sdlManager, camera, spriteRegistry,
-      std::make_pair(0.0, screenDimensions.second), screenDimensions,
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
+  // IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
+  //     sdlManager, camera, spriteRegistry,
+  //     std::make_pair(0.0, sdlManager->getWindowDimensions().second),
+  //     std::make_pair(200, 200),
+  //     std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
+  //                    spriteRegistry.getSprite("1")->getFrameHeight()));
 
-  IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
-      sdlManager, camera, spriteRegistry,
-      std::make_pair(0.0, -screenDimensions.second), screenDimensions,
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
+  // IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
+  //     sdlManager, camera, spriteRegistry,
+  //     std::make_pair(0.0, -sdlManager->getWindowDimensions().second),
+  //     sdlManager->getWindowDimensions(),
+  //     std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
+  //                    spriteRegistry.getSprite("1")->getFrameHeight()));
 
-  IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
-      sdlManager, camera, spriteRegistry,
-      std::make_pair(screenDimensions.first, 0.0), screenDimensions,
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
+  // IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
+  //     sdlManager, camera, spriteRegistry,
+  //     std::make_pair(sdlManager->getWindowDimensions().first, 0.0),
+  //     sdlManager->getWindowDimensions(),
+  //     std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
+  //                    spriteRegistry.getSprite("1")->getFrameHeight()));
 
-  IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
-      sdlManager, camera, spriteRegistry,
-      std::make_pair(-screenDimensions.first, 0.0), screenDimensions,
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
+  // IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
+  //     sdlManager, camera, spriteRegistry,
+  //     std::make_pair(-sdlManager->getWindowDimensions().first, 0.0),
+  //     sdlManager->getWindowDimensions(),
+  //     std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
+  //                    spriteRegistry.getSprite("1")->getFrameHeight()));
 
   SDL_FRect playerPositioningRect = {
-      .x =
-          CoordinateMapper::worldToScreen(
-              camera->getPosition(), screenDimensions,
-              std::make_pair(
-                  spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
-                  spriteRegistry.getSprite("tank_idle_rot225")
-                      ->getFrameHeight()))
-              .first,
-      .y =
-          CoordinateMapper::worldToScreen(
-              camera->getPosition(), screenDimensions,
-              std::make_pair(
-                  spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
-                  spriteRegistry.getSprite("tank_idle_rot225")
-                      ->getFrameHeight()))
-              .second,
+      .x = coordinateMapper.fromWorldToScreen(camera->getPosition()).first,
+      .y = coordinateMapper.fromWorldToScreen(camera->getPosition()).second,
       .w = spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
       .h = spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
@@ -273,29 +260,29 @@ int main() {
     sdlManager->renderClear();
 
     if (isoMapSector->squareIntersects(camera->getPosition(),
-                                       screenDimensions)) {
-      isoMapSector->render(screenDimensions);
+                                       sdlManager->getWindowDimensions())) {
+      isoMapSector->render(sdlManager->getWindowDimensions());
     }
 
-    if (isoMapSector2->squareIntersects(camera->getPosition(),
-                                        screenDimensions)) {
-      isoMapSector2->render(screenDimensions);
-    }
+    // if (isoMapSector2->squareIntersects(camera->getPosition(),
+    //                                     sdlManager->getWindowDimensions())) {
+    //   isoMapSector2->render(sdlManager->getWindowDimensions());
+    // }
 
-    if (isoMapSector3->squareIntersects(camera->getPosition(),
-                                        screenDimensions)) {
-      isoMapSector3->render(screenDimensions);
-    }
+    // if (isoMapSector3->squareIntersects(camera->getPosition(),
+    //                                     sdlManager->getWindowDimensions())) {
+    //   isoMapSector3->render(sdlManager->getWindowDimensions());
+    // }
 
-    if (isoMapSector4->squareIntersects(camera->getPosition(),
-                                        screenDimensions)) {
-      isoMapSector4->render(screenDimensions);
-    }
+    // if (isoMapSector4->squareIntersects(camera->getPosition(),
+    //                                     sdlManager->getWindowDimensions())) {
+    //   isoMapSector4->render(sdlManager->getWindowDimensions());
+    // }
 
-    if (isoMapSector5->squareIntersects(camera->getPosition(),
-                                        screenDimensions)) {
-      isoMapSector5->render(screenDimensions);
-    }
+    // if (isoMapSector5->squareIntersects(camera->getPosition(),
+    //                                     sdlManager->getWindowDimensions())) {
+    //   isoMapSector5->render(sdlManager->getWindowDimensions());
+    // }
 
     /* Render player sprite with SpriteSheet */
     Sprite *playerSprite = playerSpriteSelector.selectSprite(spriteState);
