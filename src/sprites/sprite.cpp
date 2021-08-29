@@ -1,6 +1,4 @@
 #include "sprite.hpp"
-#include <SDL.h>
-#include <SDL_image.h>
 
 Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager) {
 

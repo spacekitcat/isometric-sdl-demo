@@ -4,6 +4,8 @@
 #include <SDL.h>
 #include <iostream>
 #include <math.h>
+#include <SDL_image.h>
+
 #include "../render/sdl-manager.hpp"
 #include "./sprite-metadata.hpp"
 

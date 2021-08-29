@@ -1,5 +1,4 @@
 #include "sprite-selector.hpp"
-#include <iostream>
 
 SpriteSelector::SpriteSelector() {}
 
