@@ -21,7 +21,7 @@ private:
   TextRenderer &_textRenderer;
   std::pair<float, float> _position;
   std::pair<float, float> _bottomLeft;
-  std::pair<float, float> _dimensions;
+  std::pair<float, float> _sectorDimensions;
   std::pair<int, int> _tilesPerAxis;
   bool _drawBoundingBox;
   SpriteRegistry _spriteRegistry;
@@ -34,7 +34,7 @@ public:
                          CoordinateMapper &coordinateMapper,
                          TextRenderer &textRenderer,
                          std::pair<float, float> topLeft,
-                         std::pair<float, float> dimensions);
+                         std::pair<float, float> sectorDimensions);
 
   ~IsometricTileMapSector();
 
