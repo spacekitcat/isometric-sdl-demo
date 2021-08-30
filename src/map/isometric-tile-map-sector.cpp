@@ -38,10 +38,10 @@ bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
   float padding = 100;
 
   return point.first >= _bottomLeft.first - padding &&
-         point.first <= _bottomLeft.first + this->_dimensions.first + padding &&
+         point.first <= _bottomLeft.first + _dimensions.first + padding &&
          point.second >= -(_bottomLeft.second + padding) &&
          point.second <=
-             -_bottomLeft.second + this->_dimensions.second + padding;
+             -_bottomLeft.second + _dimensions.second + padding;
 }
 
 bool IsometricTileMapSector::squareIntersects(
@@ -61,78 +61,78 @@ bool IsometricTileMapSector::squareIntersects(
       std::make_pair(principlePoint.first + dimensions.first,
                      principlePoint.second + dimensions.second);
 
-  return this->pointIntersects(bottomLeftPoint) ||
-         this->pointIntersects(bottomRightPoint) ||
-         this->pointIntersects(topLeftPoint) ||
-         this->pointIntersects(topRightPoint);
+  return pointIntersects(bottomLeftPoint) ||
+         pointIntersects(bottomRightPoint) ||
+         pointIntersects(topLeftPoint) ||
+         pointIntersects(topRightPoint);
 }
 
 std::pair<float, float> IsometricTileMapSector::getBottomLeft() {
-  return this->_bottomLeft;
+  return _bottomLeft;
 }
 
 std::pair<float, float> IsometricTileMapSector::getDimensions() {
-  return this->_dimensions;
+  return _dimensions;
 }
 
 int IsometricTileMapSector::getTile(int x, int y) {
-  return this->_tileMap[y * this->_tilesPerAxis.first + x];
+  return _tileMap[y * _tilesPerAxis.first + x];
 }
 
 std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
-  return this->_tilesPerAxis;
+  return _tilesPerAxis;
 }
 
 void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
 
-  std::pair<float, float> dim = this->getDimensions();
+  std::pair<float, float> dim = getDimensions();
   std::pair<float, float> isoBottomLeftCent =
-      _coordinateMapper.worldToScreen(this->getBottomLeft());
+      _coordinateMapper.worldToScreen(getBottomLeft());
 
   SDL_FRect tilePositionRect = {
       .x = 0,
       .y = isoBottomLeftCent.second,
-      .w = this->_spriteRegistry.getSprite("1")->getFrameWidth(),
-      .h = this->_spriteRegistry.getSprite("1")->getFrameHeight()};
+      .w = _spriteRegistry.getSprite("1")->getFrameWidth(),
+      .h = _spriteRegistry.getSprite("1")->getFrameHeight()};
 
-  for (int y = 0; y < this->getTilesPerAxis().second; ++y) {
-    for (int x = 0; x < this->getTilesPerAxis().first; ++x) {
+  for (int y = 0; y < getTilesPerAxis().second; ++y) {
+    for (int x = 0; x < getTilesPerAxis().first; ++x) {
       if (y % 2 == 0) {
         tilePositionRect.x =
             isoBottomLeftCent.first +
-            (x * this->_spriteRegistry.getSprite("0")->getFrameWidth());
+            (x * _spriteRegistry.getSprite("0")->getFrameWidth());
       } else {
         // Every other row has a negative offset of half the tile width.
         tilePositionRect.x =
             isoBottomLeftCent.first +
-            (x * this->_spriteRegistry.getSprite("0")->getFrameWidth()) +
-            (this->_spriteRegistry.getSprite("0")->getFrameWidth() / 2);
+            (x * _spriteRegistry.getSprite("0")->getFrameWidth()) +
+            (_spriteRegistry.getSprite("0")->getFrameWidth() / 2);
       }
 
-      if (this->getTile(x, y) == 0) {
-        this->_spriteRegistry.getSprite("0")->renderTick(&tilePositionRect);
+      if (getTile(x, y) == 0) {
+        _spriteRegistry.getSprite("0")->renderTick(&tilePositionRect);
       } else {
-        this->_spriteRegistry.getSprite("1")->renderTick(&tilePositionRect);
+        _spriteRegistry.getSprite("1")->renderTick(&tilePositionRect);
       }
     }
     tilePositionRect.y -=
-        (this->_spriteRegistry.getSprite("0")->getFrameHeight() / 2);
+        (_spriteRegistry.getSprite("0")->getFrameHeight() / 2);
   }
 
-  if (this->_drawBoundingBox) {
+  if (_drawBoundingBox) {
     SDL_Rect rectangleRect = {
         .x = isoBottomLeftCent.first,
         .y = isoBottomLeftCent.second,
-        .w = this->getDimensions().first,
-        .h = -this->getDimensions().second,
+        .w = getDimensions().first,
+        .h = -getDimensions().second,
     };
     SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 0, 255, 0, 255);
     SDL_RenderDrawRect(_sdlManager->getRenderer(), &rectangleRect);
     _textRenderer.renderText(
         str(boost::format("%1$+5d%2$+5d") %
-            round(this->getBottomLeft().first) %
-            round(this->getBottomLeft().second)),
-        _coordinateMapper.worldToScreen(this->getBottomLeft()));
+            round(getBottomLeft().first) %
+            round(getBottomLeft().second)),
+        _coordinateMapper.worldToScreen(getBottomLeft()));
   }
 }
 

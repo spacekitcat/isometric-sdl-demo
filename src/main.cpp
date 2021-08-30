@@ -87,7 +87,7 @@ int main() {
   auto spriteRegistry = injector.create<SpriteRegistry>();
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
-    
+
     spriteRegistry.loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot225.png",
         "tank_idle_rot225", &playerSpriteMetadata);
@@ -150,13 +150,9 @@ int main() {
 
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
-      sdlManager,
-      camera,
-      spriteRegistry,
-      coordinateMapper,
-      textRenderer,
+      sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
       std::make_pair(0.0, 0.0), // TOP LEFT.
-      std::make_pair(600, 600) // DIMENSIONS.
+      std::make_pair(600, 600)  // DIMENSIONS.
   );
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
@@ -256,12 +252,11 @@ int main() {
     }
 
     sdlManager->renderClear();
-    
+
     Sprite *playerSprite = playerSpriteSelector.selectSprite(spriteState);
     // if (isoMapSector->targetIntersects(playerSprite)) {
     //   isoMapSector->render(sdlManager->getWindowDimensions());
     // }
-
 
     if (isoMapSector->isVisible()) {
       isoMapSector->render(sdlManager->getWindowDimensions());
@@ -277,22 +272,26 @@ int main() {
     // }
 
     // if (isoMapSector2->squareIntersects(camera->getPosition(),
-    //                                     std::make_pair<int, int>(128, 128))) {
+    //                                     std::make_pair<int, int>(128, 128)))
+    //                                     {
     //   isoMapSector2->render(sdlManager->getWindowDimensions());
     // }
 
     // if (isoMapSector3->squareIntersects(camera->getPosition(),
-    //                                     std::make_pair<int, int>(128, 128))) {
+    //                                     std::make_pair<int, int>(128, 128)))
+    //                                     {
     //   isoMapSector3->render(sdlManager->getWindowDimensions());
     // }
 
     // if (isoMapSector4->squareIntersects(camera->getPosition(),
-    //                                     std::make_pair<int, int>(128, 128))) {
+    //                                     std::make_pair<int, int>(128, 128)))
+    //                                     {
     //   isoMapSector4->render(sdlManager->getWindowDimensions());
     // }
 
     // if (isoMapSector5->squareIntersects(camera->getPosition(),
-    //                                     std::make_pair<int, int>(128, 128))) {
+    //                                     std::make_pair<int, int>(128, 128)))
+    //                                     {
     //   isoMapSector5->render(sdlManager->getWindowDimensions());
     // }
 
