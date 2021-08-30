@@ -148,32 +148,33 @@ int main() {
   }
   // END: Asset loading
 
+  std::pair<float, float> sectorDimensions = std::make_pair(600, 600);
+
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
       sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
       std::make_pair(0.0, 0.0), // TOP LEFT.
-      std::make_pair(600, 600)  // DIMENSIONS.
-  );
+      sectorDimensions);
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
       sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
-      std::make_pair(0.0, sdlManager->getWindowDimensions().second),
-      std::make_pair(600, 600));
+      std::make_pair(0.0, sdlManager->getWindowDimensions().second), // TOP LEFT.
+      sectorDimensions);
 
   // IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
   //     sdlManager, camera, spriteRegistry,
   //     std::make_pair(0.0, -sdlManager->getWindowDimensions().second),
-  //     sdlManager->getWindowDimensions());
+  //     sectorDimensions);
 
   // IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
   //     sdlManager, camera, spriteRegistry,
   //     std::make_pair(sdlManager->getWindowDimensions().first, 0.0),
-  //     sdlManager->getWindowDimensions());
+  //     sectorDimensions);
 
   // IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
   //     sdlManager, camera, spriteRegistry,
   //     std::make_pair(-sdlManager->getWindowDimensions().first, 0.0),
-  //     sdlManager->getWindowDimensions());
+  //     sectorDimensions);
 
   // coord mapper probably isn't required here. It's just centering.
   SDL_FRect playerPositioningRect = {
