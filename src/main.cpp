@@ -148,8 +148,8 @@ int main() {
   }
   // END: Asset loading
 
-  std::pair<float, float> sectorDimensions = std::make_pair(256, 128);
-  // std::pair<float, float> sectorDimensions = std::make_pair(512, 256);
+  // std::pair<float, float> sectorDimensions = std::make_pair(256, 128);
+  std::pair<float, float> sectorDimensions = std::make_pair(512, 256);
   // std::pair<float, float> sectorDimensions = std::make_pair(768, 384);
   // std::pair<float, float> sectorDimensions = std::make_pair(1024, 512);
   // std::pair<float, float> sectorDimensions = std::make_pair(1280, 640);
@@ -166,7 +166,7 @@ int main() {
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
       sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
-      std::make_pair(0.0, sectorDimensions.second + 15), // TOP LEFT.
+      std::make_pair(0.0, sectorDimensions.second), // TOP LEFT.
       sectorDimensions);
 
   // IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(

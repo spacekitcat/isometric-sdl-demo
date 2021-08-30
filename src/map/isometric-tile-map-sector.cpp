@@ -65,7 +65,7 @@ IsometricTileMapSector::IsometricTileMapSector(
 }
 
 bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
-  float padding = 100;
+  float padding = 200;
 
   return point.first >= _bottomLeft.first - padding &&
          point.first <= _bottomLeft.first + _sectorDimensions.first + padding &&
@@ -168,4 +168,6 @@ bool IsometricTileMapSector::targetIntersects(
   return false;
 }
 
-bool IsometricTileMapSector::isVisible() { return true; }
+bool IsometricTileMapSector::isVisible() { 
+  return this->pointIntersects(_camera->getPosition());
+}
