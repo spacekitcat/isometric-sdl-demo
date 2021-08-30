@@ -150,38 +150,34 @@ int main() {
 
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
-      sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
-      std::make_pair(0.0, 0.0), std::make_pair(600, 600),
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
+      sdlManager,
+      camera,
+      spriteRegistry,
+      coordinateMapper,
+      textRenderer,
+      std::make_pair(0.0, 0.0), // TOP LEFT.
+      std::make_pair(600, 600) // DIMENSIONS.
+  );
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
       sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
       std::make_pair(0.0, sdlManager->getWindowDimensions().second),
-      std::make_pair(600, 600),
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
+      std::make_pair(600, 600));
 
   // IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
   //     sdlManager, camera, spriteRegistry,
   //     std::make_pair(0.0, -sdlManager->getWindowDimensions().second),
-  //     sdlManager->getWindowDimensions(),
-  //     std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-  //                    spriteRegistry.getSprite("1")->getFrameHeight()));
+  //     sdlManager->getWindowDimensions());
 
   // IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
   //     sdlManager, camera, spriteRegistry,
   //     std::make_pair(sdlManager->getWindowDimensions().first, 0.0),
-  //     sdlManager->getWindowDimensions(),
-  //     std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-  //                    spriteRegistry.getSprite("1")->getFrameHeight()));
+  //     sdlManager->getWindowDimensions());
 
   // IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
   //     sdlManager, camera, spriteRegistry,
   //     std::make_pair(-sdlManager->getWindowDimensions().first, 0.0),
-  //     sdlManager->getWindowDimensions(),
-  //     std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-  //                    spriteRegistry.getSprite("1")->getFrameHeight()));
+  //     sdlManager->getWindowDimensions());
 
   // coord mapper probably isn't required here. It's just centering.
   SDL_FRect playerPositioningRect = {

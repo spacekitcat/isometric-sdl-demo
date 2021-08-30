@@ -34,8 +34,7 @@ public:
                          CoordinateMapper &coordinateMapper,
                          TextRenderer &textRenderer,
                          std::pair<float, float> topLeft,
-                         std::pair<float, float> dimensions,
-                         std::pair<float, float> tileDimensions);
+                         std::pair<float, float> dimensions);
 
   ~IsometricTileMapSector();
 

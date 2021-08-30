@@ -8,26 +8,28 @@ IsometricTileMapSector::IsometricTileMapSector(
     std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera,
     SpriteRegistry &spriteRegistry, CoordinateMapper &coordinateMapper,
     TextRenderer &textRenderer, std::pair<float, float> bottomLeft,
-    std::pair<float, float> dimensions, std::pair<float, float> tileDimensions)
+    std::pair<float, float> dimensions)
     : _coordinateMapper(coordinateMapper), _textRenderer(textRenderer) {
   _sdlManager = sdlManager;
   _camera = camera;
 
-  this->_spriteRegistry = spriteRegistry;
-  this->_bottomLeft = bottomLeft;
-  this->_dimensions = dimensions;
-  this->_drawBoundingBox = true;
+  _spriteRegistry = spriteRegistry;
+  _bottomLeft = bottomLeft;
+  _dimensions = dimensions;
+  _drawBoundingBox = true;
 
-  this->_tilesPerAxis =
-      std::make_pair(round(dimensions.first / tileDimensions.first),
-                     round(dimensions.second / (tileDimensions.second / 2)));
-  this->_tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
+  Sprite *sample_tile = _spriteRegistry.getSprite("0");
+
+  _tilesPerAxis =
+      std::make_pair(round(dimensions.first / sample_tile->getFrameWidth()),
+                     round(dimensions.second / (sample_tile->getFrameHeight() / 2)));
+  _tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
   std::random_device r;
   std::default_random_engine e1(r());
   std::uniform_int_distribution<int> uniform_dist(0, 1);
   for (int y = 0; y < _tilesPerAxis.second; y++) {
     for (int x = 0; x < _tilesPerAxis.first; x++) {
-      this->_tileMap[y * this->_tilesPerAxis.first + x] = uniform_dist(e1);
+      _tileMap[y * _tilesPerAxis.first + x] = uniform_dist(e1);
     }
   }
 }
