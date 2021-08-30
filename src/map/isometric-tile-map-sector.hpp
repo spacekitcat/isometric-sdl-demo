@@ -11,6 +11,7 @@
 #include "../map/camera.hpp"
 #include "../map/coordinate-mapper.hpp"
 #include "../text/text-renderer.hpp"
+#include "../state/game-save-state.hpp"
 
 class IsometricTileMapSector {
 private:
@@ -24,6 +25,7 @@ private:
   std::pair<int, int> _tilesPerAxis;
   bool _drawBoundingBox;
   SpriteRegistry _spriteRegistry;
+  GameSaveState _gameSaveState;
   int *_tileMap;
 
 public:
@@ -33,7 +35,7 @@ public:
                          CoordinateMapper &coordinateMapper,
                          TextRenderer &textRenderer,
                          std::pair<float, float> topLeft,
-                         std::pair<float, float> sectorDimensions);
+                         GameSaveState &gameSaveState);
 
   ~IsometricTileMapSector();
 

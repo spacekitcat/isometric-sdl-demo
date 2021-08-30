@@ -19,6 +19,7 @@
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
+#include "state/game-save-state.hpp"
 
 namespace di = boost::di;
 
@@ -148,26 +149,23 @@ int main() {
   }
   // END: Asset loading
 
-  // std::pair<float, float> sectorDimensions = std::make_pair(256, 128);
-  std::pair<float, float> sectorDimensions = std::make_pair(512, 256);
-  // std::pair<float, float> sectorDimensions = std::make_pair(768, 384);
-  // std::pair<float, float> sectorDimensions = std::make_pair(1024, 512);
-  // std::pair<float, float> sectorDimensions = std::make_pair(1280, 640);
-  // std::pair<float, float> sectorDimensions = std::make_pair(1536, 768);
-  // std::pair<float, float> sectorDimensions = std::make_pair(1792, 896);
-  // std::pair<float, float> sectorDimensions = std::make_pair(2048, 1024);
-  // std::pair<float, float> sectorDimensions = std::make_pair(2304, 1152);
+  // TODO: This can't keep changing as it will via DI.
+  // I don't want gameSaveState to be a singleton,
+  // but it will need some mediator singleton to manage
+  // all possible gameState objects.
+  auto gameSaveState = injector.create<GameSaveState>();
 
   // BEGIN: Constant setup and state init
   IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
       sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
       std::make_pair(0.0, 0.0), // TOP LEFT.
-      sectorDimensions);
+      gameSaveState);
 
   IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
       sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
-      std::make_pair(0.0, sectorDimensions.second), // TOP LEFT.
-      sectorDimensions);
+      std::make_pair(0.0,
+                     gameSaveState.getSectorDimensions().second), // TOP LEFT.
+      gameSaveState);
 
   SDL_FRect playerPositioningRect = {
       .x = coordinateMapper.centerInScreenSpace(camera->getPosition()).first,
@@ -175,7 +173,6 @@ int main() {
       .w = spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
       .h = spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
-
   // END: Constant setup and state init
 
   /* Game loop */

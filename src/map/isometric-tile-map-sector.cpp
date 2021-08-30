@@ -8,54 +8,26 @@ IsometricTileMapSector::IsometricTileMapSector(
     std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera,
     SpriteRegistry &spriteRegistry, CoordinateMapper &coordinateMapper,
     TextRenderer &textRenderer, std::pair<float, float> bottomLeft,
-    std::pair<float, float> sectorDimensions)
-    : _coordinateMapper(coordinateMapper), _textRenderer(textRenderer) {
+    GameSaveState &gameSaveState)
+    : _coordinateMapper(coordinateMapper), _textRenderer(textRenderer),
+      _gameSaveState(gameSaveState) {
 
   _sdlManager = sdlManager;
   _camera = camera;
 
   _spriteRegistry = spriteRegistry;
   _bottomLeft = bottomLeft;
-  _sectorDimensions = sectorDimensions;
+  _sectorDimensions = _gameSaveState.getSectorDimensions();
   _drawBoundingBox = true;
 
-  // TODO: Little less hacking please!
-  Sprite *sample_tile = _spriteRegistry.getSprite("0");
-
-  /*  The sector sectorDimensions should be perfectly divisable by the 
-      tile sectorDimensions. Why?
-      
-      Because this map model is isometric, every odd row must have a
-      an offset of sample_tile->getFrameWidth() / 2 for it to align
-      correctly with the even rows above and below it.
-
-      Again owing to the isometric map model, opposite sides (North to
-      South, East to West) must be even where the other is odd.
-
-      The sector generation code will generate a tile for any position
-      beginning inside a sector, it doesn't care if tiles overflow
-      beyond the sector boundary. In the example below, the sector
-      boundary is the same as one tile. 
-
-      (_sectorDimensions.first / sample_tile->getFrameWidth() == 1)
-      (_sectorDimensions.first % sample_tile->getFrameWidth() == 0)
-      
-      The result is that one even and one odd row will be rendered
-      and the odd row will overflow on the North and East sides.
-
-      When more sectors are added to any of the four faces (North, 
-      East, South and West), the tiles will align perfectly. 
-      Like laminate flooring!
-  */
-  assert(fmod(_sectorDimensions.first, sample_tile->getFrameWidth()) == 0);
-  assert(fmod(_sectorDimensions.second, sample_tile->getFrameHeight()) == 0);
-
   _tilesPerAxis = std::make_pair(
-      round(sectorDimensions.first / sample_tile->getFrameWidth()),
-      round(sectorDimensions.second / (sample_tile->getFrameHeight() / 2)));
+      round(_sectorDimensions.first / _gameSaveState.getTileDimensions().first),
+      round(_sectorDimensions.second /
+            (_gameSaveState.getTileDimensions().second / 2)));
   _tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
   std::random_device r;
   std::default_random_engine e1(r());
+  e1.seed(gameSaveState.getGameSeed());
   std::uniform_int_distribution<int> uniform_dist(0, 1);
   for (int y = 0; y < _tilesPerAxis.second; y++) {
     for (int x = 0; x < _tilesPerAxis.first; x++) {
@@ -70,7 +42,8 @@ bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
   return point.first >= _bottomLeft.first - padding &&
          point.first <= _bottomLeft.first + _sectorDimensions.first + padding &&
          point.second >= -(_bottomLeft.second + padding) &&
-         point.second <= -_bottomLeft.second + _sectorDimensions.second + padding;
+         point.second <=
+             -_bottomLeft.second + _sectorDimensions.second + padding;
 }
 
 bool IsometricTileMapSector::squareIntersects(
@@ -163,6 +136,6 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
   }
 }
 
-bool IsometricTileMapSector::isVisible() { 
+bool IsometricTileMapSector::isVisible() {
   return this->pointIntersects(_camera->getPosition());
 }
