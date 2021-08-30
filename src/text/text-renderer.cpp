@@ -5,7 +5,7 @@ TextRenderer::TextRenderer(std::shared_ptr<SDLManager> sdlManager) {
 
   assert(_sdlManager != nullptr);
 
-  _font = TTF_OpenFont("./assets/fonts/Lato-Bold.ttf", 18);
+  _font = TTF_OpenFont("./assets/fonts/Lato-Bold.ttf", 16);
 
   if (!_font) {
     printf("TTF_OpenFont: %s\n", TTF_GetError());
