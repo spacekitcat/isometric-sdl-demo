@@ -8,9 +8,8 @@
 
 #include "../render/sdl-manager.hpp"
 #include "../sprites/sprite-metadata.hpp"
-#include "../map/intersect-target.hpp"
 
-class Sprite : public IntersectTarget {
+class Sprite {
 private:
   int _animationInterval;
   int _currentFrame;

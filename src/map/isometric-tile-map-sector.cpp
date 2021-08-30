@@ -163,11 +163,6 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
   }
 }
 
-bool IsometricTileMapSector::targetIntersects(
-    IntersectTarget *intersectTarget) {
-  return false;
-}
-
 bool IsometricTileMapSector::isVisible() { 
   return this->pointIntersects(_camera->getPosition());
 }
