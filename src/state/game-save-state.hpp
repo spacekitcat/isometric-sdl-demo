@@ -8,6 +8,7 @@
 class GameSaveState {
 private:
   int _gameSeed;
+  int _renderVisibilityDistance;
   std::pair<float, float> _sectorDimensions;
   std::pair<float, float> _tileDimensions;
   SpriteRegistry _spriteRegistry;
@@ -18,6 +19,7 @@ public:
   int getGameSeed();
   std::pair<float, float> getSectorDimensions();
   std::pair<float, float> getTileDimensions();
+  int getRenderVisibilityDistance();
 };
 
 #endif // SDL2APPLICATION4_GAME_SAVE_STATE_HPP

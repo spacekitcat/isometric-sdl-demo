@@ -2,7 +2,9 @@
 #include <SDL_keyboard.h>
 #include <SDL_mixer.h>
 #include <iomanip>
+#include <list>
 #include <math.h>
+#include <memory>
 #include <sstream>
 
 #include <boost/di.hpp>
@@ -155,25 +157,23 @@ int main() {
   // all possible gameState objects.
   auto gameSaveState = injector.create<GameSaveState>();
 
-  // BEGIN: Constant setup and state init
-  IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
-      sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
-      std::make_pair(0.0, 0.0), // TOP LEFT.
-      gameSaveState);
-
-  IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
-      sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
-      std::make_pair(0.0,
-                     gameSaveState.getSectorDimensions().second), // TOP LEFT.
-      gameSaveState);
-
+  // BEGIN: MAP GEN
+  std::list<std::shared_ptr<IsometricTileMapSector>> sectors;
+  for (int i = -1; i <= 1; ++i) {
+    for (int j = -1; j <= 1; ++j) {
+      sectors.push_back(std::make_shared<IsometricTileMapSector>(
+          sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
+          std::make_pair(i * gameSaveState.getSectorDimensions().first, j * gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
+          gameSaveState));
+    }
+  }
   SDL_FRect playerPositioningRect = {
       .x = coordinateMapper.centerInScreenSpace(camera->getPosition()).first,
       .y = coordinateMapper.centerInScreenSpace(camera->getPosition()).second,
       .w = spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
       .h = spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
-  // END: Constant setup and state init
+  // END: MAP GEN
 
   /* Game loop */
   while (true) {
@@ -243,17 +243,15 @@ int main() {
 
     sdlManager->renderClear();
 
-    Sprite *playerSprite = playerSpriteSelector.selectSprite(spriteState);
-
-    if (isoMapSector->isVisible()) {
-      isoMapSector->render(sdlManager->getWindowDimensions());
-    }
-
-    if (isoMapSector2->isVisible()) {
-      isoMapSector2->render(sdlManager->getWindowDimensions());
+    /* Render map sectors */
+    for (auto sector : sectors) {
+      if (sector->isVisible()) {
+        sector->render(sdlManager->getWindowDimensions());
+      }
     }
 
     /* Render player sprite with SpriteSheet */
+    Sprite *playerSprite = playerSpriteSelector.selectSprite(spriteState);
     if (playerSprite != NULL) {
       playerSprite->renderTick(&playerPositioningRect);
     }

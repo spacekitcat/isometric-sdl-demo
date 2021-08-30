@@ -36,8 +36,12 @@ IsometricTileMapSector::IsometricTileMapSector(
   }
 }
 
+IsometricTileMapSector::~IsometricTileMapSector() {
+
+}
+
 bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
-  float padding = 200;
+  float padding = _gameSaveState.getRenderVisibilityDistance();
 
   return point.first >= _bottomLeft.first - padding &&
          point.first <= _bottomLeft.first + _sectorDimensions.first + padding &&
