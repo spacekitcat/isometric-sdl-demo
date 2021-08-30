@@ -185,8 +185,8 @@ int main() {
 
   // coord mapper probably isn't required here. It's just centering.
   SDL_FRect playerPositioningRect = {
-      .x = coordinateMapper.fromWorldToScreen(camera->getPosition()).first,
-      .y = coordinateMapper.fromWorldToScreen(camera->getPosition()).second,
+      .x = coordinateMapper.centerInScreenSpace(camera->getPosition()).first,
+      .y = coordinateMapper.centerInScreenSpace(camera->getPosition()).second,
       .w = spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
       .h = spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
@@ -269,6 +269,10 @@ int main() {
 
     if (isoMapSector->isVisible()) {
       isoMapSector->render(sdlManager->getWindowDimensions());
+    }
+
+    if (isoMapSector2->isVisible()) {
+      isoMapSector2->render(sdlManager->getWindowDimensions());
     }
 
     // if (isoMapSector->squareIntersects(camera->getPosition(),

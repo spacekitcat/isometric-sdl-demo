@@ -18,7 +18,7 @@ public:
                    std::shared_ptr<Camera> camera);
 
   std::pair<float, float>
-  fromWorldToScreen(std::pair<float, float> worldPosition);
+  centerInScreenSpace(std::pair<float, float> worldPosition);
 
 
   std::pair<float, float>

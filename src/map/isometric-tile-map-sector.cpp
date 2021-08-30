@@ -130,7 +130,7 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
         str(boost::format("%1$+5d%2$+5d") %
             round(this->getBottomLeft().first) %
             round(this->getBottomLeft().second)),
-        _coordinateMapper.fromWorldToScreenAbs(std::make_pair(0, 0)));
+        _coordinateMapper.fromWorldToScreenAbs(this->getBottomLeft()));
   }
 }
 
