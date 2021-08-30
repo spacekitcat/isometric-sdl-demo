@@ -169,22 +169,6 @@ int main() {
       std::make_pair(0.0, sectorDimensions.second), // TOP LEFT.
       sectorDimensions);
 
-  // IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
-  //     sdlManager, camera, spriteRegistry,
-  //     std::make_pair(0.0, -sdlManager->getWindowDimensions().second),
-  //     sectorDimensions);
-
-  // IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
-  //     sdlManager, camera, spriteRegistry,
-  //     std::make_pair(sdlManager->getWindowDimensions().first, 0.0),
-  //     sectorDimensions);
-
-  // IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
-  //     sdlManager, camera, spriteRegistry,
-  //     std::make_pair(-sdlManager->getWindowDimensions().first, 0.0),
-  //     sectorDimensions);
-
-  // coord mapper probably isn't required here. It's just centering.
   SDL_FRect playerPositioningRect = {
       .x = coordinateMapper.centerInScreenSpace(camera->getPosition()).first,
       .y = coordinateMapper.centerInScreenSpace(camera->getPosition()).second,
@@ -263,9 +247,6 @@ int main() {
     sdlManager->renderClear();
 
     Sprite *playerSprite = playerSpriteSelector.selectSprite(spriteState);
-    // if (isoMapSector->targetIntersects(playerSprite)) {
-    //   isoMapSector->render(sdlManager->getWindowDimensions());
-    // }
 
     if (isoMapSector->isVisible()) {
       isoMapSector->render(sdlManager->getWindowDimensions());
@@ -274,35 +255,6 @@ int main() {
     if (isoMapSector2->isVisible()) {
       isoMapSector2->render(sdlManager->getWindowDimensions());
     }
-
-    // if (isoMapSector->squareIntersects(camera->getPosition(),
-    //                                    std::make_pair<int, int>(128, 128))) {
-    //   isoMapSector->render(sdlManager->getWindowDimensions());
-    // }
-
-    // if (isoMapSector2->squareIntersects(camera->getPosition(),
-    //                                     std::make_pair<int, int>(128, 128)))
-    //                                     {
-    //   isoMapSector2->render(sdlManager->getWindowDimensions());
-    // }
-
-    // if (isoMapSector3->squareIntersects(camera->getPosition(),
-    //                                     std::make_pair<int, int>(128, 128)))
-    //                                     {
-    //   isoMapSector3->render(sdlManager->getWindowDimensions());
-    // }
-
-    // if (isoMapSector4->squareIntersects(camera->getPosition(),
-    //                                     std::make_pair<int, int>(128, 128)))
-    //                                     {
-    //   isoMapSector4->render(sdlManager->getWindowDimensions());
-    // }
-
-    // if (isoMapSector5->squareIntersects(camera->getPosition(),
-    //                                     std::make_pair<int, int>(128, 128)))
-    //                                     {
-    //   isoMapSector5->render(sdlManager->getWindowDimensions());
-    // }
 
     /* Render player sprite with SpriteSheet */
     if (playerSprite != NULL) {
