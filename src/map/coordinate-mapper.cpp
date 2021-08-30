@@ -26,7 +26,7 @@ float CoordinateMapper::fromWorldYToScreenY(float worldY) {
 }
 
 std::pair<float, float>
-CoordinateMapper::fromWorldToScreenAbs(std::pair<float, float> worldPosition) {
+CoordinateMapper::worldToScreen(std::pair<float, float> worldPosition) {
 
   return PairOperators::addPair(
       this->centerInScreenSpace(_camera->getPosition()),

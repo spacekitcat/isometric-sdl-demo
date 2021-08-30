@@ -22,7 +22,7 @@ public:
 
 
   std::pair<float, float>
-  fromWorldToScreenAbs(std::pair<float, float> worldPosition);
+  worldToScreen(std::pair<float, float> worldPosition);
 
   float fromWorldXToScreenX(float worldX);
   float fromWorldYToScreenY(float worldY);

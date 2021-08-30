@@ -85,7 +85,7 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
 
   std::pair<float, float> dim = this->getDimensions();
   std::pair<float, float> isoBottomLeftCent =
-      _coordinateMapper.fromWorldToScreenAbs(this->getBottomLeft());
+      _coordinateMapper.worldToScreen(this->getBottomLeft());
 
   SDL_FRect tilePositionRect = {
       .x = 0,
@@ -130,7 +130,7 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
         str(boost::format("%1$+5d%2$+5d") %
             round(this->getBottomLeft().first) %
             round(this->getBottomLeft().second)),
-        _coordinateMapper.fromWorldToScreenAbs(this->getBottomLeft()));
+        _coordinateMapper.worldToScreen(this->getBottomLeft()));
   }
 }
 
