@@ -1,16 +1,18 @@
 #include <SDL.h>
 #include <SDL_keyboard.h>
 #include <SDL_mixer.h>
-#include <SDL_ttf.h>
 #include <iomanip>
+#include <list>
 #include <math.h>
+#include <memory>
 #include <sstream>
 
 #include <boost/di.hpp>
 
 #include "./util/pair-operators.hpp"
-#include "debug/debug-draw-utils.hpp"
+#include "debug/debug-overlay.hpp"
 #include "input/direction-input-helpers.hpp"
+#include "map/camera.hpp"
 #include "map/coordinate-mapper.hpp"
 #include "map/isometric-tile-map-sector.hpp"
 #include "render/sdl-manager.hpp"
@@ -19,6 +21,7 @@
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
+#include "state/game-save-state.hpp"
 
 namespace di = boost::di;
 
@@ -33,8 +36,6 @@ float calculateVerticalVectorComponent(float vectorMagnitude) {
 }
 
 int main() {
-  std::pair<int, int> screenDimensions(1024, 768);
-
   // BEGIN: SDL Setup area
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -49,10 +50,19 @@ int main() {
     return 1;
   }
 
-  const auto injector = di::make_injector(
-      di::bind<SDLManager>().to<SDLManager>().in(di::singleton));
-  auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
+  if (TTF_Init() != 0) {
+    std::cout << "TF_Init: " << TTF_GetError();
+    exit(2);
+  }
 
+  const auto injector = di::make_injector(
+      di::bind<SDLManager>().to<SDLManager>().in(di::singleton),
+      di::bind<Camera>().to<Camera>().in(di::singleton));
+  auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
+  auto camera = injector.create<std::shared_ptr<Camera>>();
+  auto debugOverlay = injector.create<DebugOverlay>();
+  auto coordinateMapper = injector.create<CoordinateMapper>();
+  auto textRenderer = injector.create<TextRenderer>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area
@@ -141,68 +151,29 @@ int main() {
   }
   // END: Asset loading
 
-  // BEGIN: Constant setup and state init
-  IsometricTileMapSector *isoMapSector = new IsometricTileMapSector(
-      sdlManager, spriteRegistry, std::make_pair(0.0, 0.0), screenDimensions,
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
+  // TODO: This can't keep changing as it will via DI.
+  // I don't want gameSaveState to be a singleton,
+  // but it will need some mediator singleton to manage
+  // all possible gameState objects.
+  auto gameSaveState = injector.create<GameSaveState>();
 
-  IsometricTileMapSector *isoMapSector2 = new IsometricTileMapSector(
-      sdlManager,
-
-      spriteRegistry, std::make_pair(0.0, screenDimensions.second),
-      screenDimensions,
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
-
-  IsometricTileMapSector *isoMapSector3 = new IsometricTileMapSector(
-      sdlManager,
-
-      spriteRegistry, std::make_pair(0.0, -screenDimensions.second),
-      screenDimensions,
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
-
-  IsometricTileMapSector *isoMapSector4 = new IsometricTileMapSector(
-      sdlManager,
-
-      spriteRegistry, std::make_pair(screenDimensions.first, 0.0),
-      screenDimensions,
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
-
-  IsometricTileMapSector *isoMapSector5 = new IsometricTileMapSector(
-      sdlManager,
-
-      spriteRegistry, std::make_pair(-screenDimensions.first, 0.0),
-      screenDimensions,
-      std::make_pair(spriteRegistry.getSprite("1")->getFrameWidth(),
-                     spriteRegistry.getSprite("1")->getFrameHeight()));
-
-  std::pair<float, float> cameraPosition = std::make_pair(0, 0);
-
+  // BEGIN: MAP GEN
+  std::list<std::shared_ptr<IsometricTileMapSector>> sectors;
+  for (int i = -1; i <= 1; ++i) {
+    for (int j = -1; j <= 1; ++j) {
+      sectors.push_back(std::make_shared<IsometricTileMapSector>(
+          sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
+          std::make_pair(i * gameSaveState.getSectorDimensions().first, j * gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
+          gameSaveState));
+    }
+  }
   SDL_FRect playerPositioningRect = {
-      .x =
-          CoordinateMapper::worldToScreen(
-              cameraPosition, screenDimensions,
-              std::make_pair(
-                  spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
-                  spriteRegistry.getSprite("tank_idle_rot225")
-                      ->getFrameHeight()))
-              .first,
-      .y =
-          CoordinateMapper::worldToScreen(
-              cameraPosition, screenDimensions,
-              std::make_pair(
-                  spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
-                  spriteRegistry.getSprite("tank_idle_rot225")
-                      ->getFrameHeight()))
-              .second,
+      .x = coordinateMapper.centerInScreenSpace(camera->getPosition()).first,
+      .y = coordinateMapper.centerInScreenSpace(camera->getPosition()).second,
       .w = spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
       .h = spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
-
-  // END: Constant setup and state init
+  // END: MAP GEN
 
   /* Game loop */
   while (true) {
@@ -234,32 +205,36 @@ int main() {
 
       switch (spriteState.direction) {
       case NorthWest:
-        cameraPosition.first -= calculateHorizontalVectorComponent(speed);
-        cameraPosition.second -= calculateVerticalVectorComponent(-speed);
+        camera->applyDelta(
+            std::make_pair(-calculateHorizontalVectorComponent(speed),
+                           -calculateVerticalVectorComponent(-speed)));
         break;
       case NorthEast:
-        cameraPosition.first += calculateHorizontalVectorComponent(speed);
-        cameraPosition.second -= calculateVerticalVectorComponent(-speed);
+        camera->applyDelta(
+            std::make_pair(+calculateHorizontalVectorComponent(speed),
+                           -calculateVerticalVectorComponent(-speed)));
         break;
       case SouthEast:
-        cameraPosition.first += calculateHorizontalVectorComponent(speed);
-        cameraPosition.second -= calculateVerticalVectorComponent(speed);
+        camera->applyDelta(
+            std::make_pair(+calculateHorizontalVectorComponent(speed),
+                           -calculateVerticalVectorComponent(speed)));
         break;
       case SouthWest:
-        cameraPosition.first -= calculateHorizontalVectorComponent(speed);
-        cameraPosition.second -= calculateVerticalVectorComponent(speed);
+        camera->applyDelta(
+            std::make_pair(-calculateHorizontalVectorComponent(speed),
+                           -calculateVerticalVectorComponent(speed)));
         break;
       case South:
-        cameraPosition.second -= speed;
+        camera->applyDelta(std::make_pair(0, -speed));
         break;
       case North:
-        cameraPosition.second += speed;
+        camera->applyDelta(std::make_pair(0, +speed));
         break;
       case East:
-        cameraPosition.first += speed;
+        camera->applyDelta(std::make_pair(+speed, 0));
         break;
       case West:
-        cameraPosition.first -= speed;
+        camera->applyDelta(std::make_pair(-speed, 0));
         break;
       case Idle:
         break;
@@ -268,24 +243,11 @@ int main() {
 
     sdlManager->renderClear();
 
-    if (isoMapSector->squareIntersects(cameraPosition, screenDimensions)) {
-      isoMapSector->render(screenDimensions, cameraPosition);
-    }
-
-    if (isoMapSector2->squareIntersects(cameraPosition, screenDimensions)) {
-      isoMapSector2->render(screenDimensions, cameraPosition);
-    }
-
-    if (isoMapSector3->squareIntersects(cameraPosition, screenDimensions)) {
-      isoMapSector3->render(screenDimensions, cameraPosition);
-    }
-
-    if (isoMapSector4->squareIntersects(cameraPosition, screenDimensions)) {
-      isoMapSector4->render(screenDimensions, cameraPosition);
-    }
-
-    if (isoMapSector5->squareIntersects(cameraPosition, screenDimensions)) {
-      isoMapSector5->render(screenDimensions, cameraPosition);
+    /* Render map sectors */
+    for (auto sector : sectors) {
+      if (sector->isVisible()) {
+        sector->render(sdlManager->getWindowDimensions());
+      }
     }
 
     /* Render player sprite with SpriteSheet */
@@ -294,15 +256,7 @@ int main() {
       playerSprite->renderTick(&playerPositioningRect);
     }
 
-    SDL_Rect playerRect = {
-        .x = playerPositioningRect.x,
-        .y = playerPositioningRect.y,
-        .w = playerPositioningRect.w,
-        .h = -playerPositioningRect.h,
-    };
-
-    SDL_SetRenderDrawColor(sdlManager->getRenderer(), 255, 255, 255, 255);
-    SDL_RenderDrawRect(sdlManager->getRenderer(), &playerRect);
+    debugOverlay.render();
 
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);

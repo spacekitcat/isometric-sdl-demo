@@ -5,116 +5,141 @@
 #include "math.h"
 
 IsometricTileMapSector::IsometricTileMapSector(
-    std::shared_ptr<SDLManager> sdlManager,  SpriteRegistry& spriteRegistry,
-    std::pair<float, float> bottomLeft, std::pair<float, float> dimensions,
-    std::pair<float, float> tileDimensions) {
+    std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera,
+    SpriteRegistry &spriteRegistry, CoordinateMapper &coordinateMapper,
+    TextRenderer &textRenderer, std::pair<float, float> bottomLeft,
+    GameSaveState &gameSaveState)
+    : _coordinateMapper(coordinateMapper), _textRenderer(textRenderer),
+      _gameSaveState(gameSaveState) {
+
   _sdlManager = sdlManager;
+  _camera = camera;
 
-  this->_spriteRegistry = spriteRegistry;
-  this->_bottomLeft = bottomLeft;
-  this->_dimensions = dimensions;
-  this->_drawBoundingBox = true;
+  _spriteRegistry = spriteRegistry;
+  _bottomLeft = bottomLeft;
+  _sectorDimensions = _gameSaveState.getSectorDimensions();
+  _drawBoundingBox = true;
 
-  this->_tilesPerAxis =
-      std::make_pair(round(dimensions.first / tileDimensions.first),
-                     round(dimensions.second / (tileDimensions.second / 2)));
-  this->_tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
+  _tilesPerAxis = std::make_pair(
+      round(_sectorDimensions.first / _gameSaveState.getTileDimensions().first),
+      round(_sectorDimensions.second /
+            (_gameSaveState.getTileDimensions().second / 2)));
+  _tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
   std::random_device r;
   std::default_random_engine e1(r());
+  e1.seed(gameSaveState.getGameSeed());
   std::uniform_int_distribution<int> uniform_dist(0, 1);
   for (int y = 0; y < _tilesPerAxis.second; y++) {
     for (int x = 0; x < _tilesPerAxis.first; x++) {
-      this->_tileMap[y * this->_tilesPerAxis.first + x] = uniform_dist(e1);
+      _tileMap[y * _tilesPerAxis.first + x] = uniform_dist(e1);
     }
   }
+}
+
+IsometricTileMapSector::~IsometricTileMapSector() {
+
 }
 
 bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
-  return point.first >= this->_bottomLeft.first &&
-         point.first <= this->_bottomLeft.first + this->_dimensions.first &&
-         point.second >= -this->_bottomLeft.second &&
-         point.second <= -this->_bottomLeft.second + this->_dimensions.second;
+  float padding = _gameSaveState.getRenderVisibilityDistance();
+
+  return point.first >= _bottomLeft.first - padding &&
+         point.first <= _bottomLeft.first + _sectorDimensions.first + padding &&
+         point.second >= -(_bottomLeft.second + padding) &&
+         point.second <=
+             -_bottomLeft.second + _sectorDimensions.second + padding;
 }
 
 bool IsometricTileMapSector::squareIntersects(
-    std::pair<float, float> point, std::pair<float, float> dimensions) {
-  return this->pointIntersects(point) ||
-         this->pointIntersects(PairOperators::addPair(point, dimensions)) ||
-         this->pointIntersects(PairOperators::addPair(
-             point, std::make_pair(dimensions.first, 0))) ||
-         this->pointIntersects(PairOperators::addPair(
-             point, std::make_pair(0, dimensions.second)));
+    std::pair<float, float> principlePoint,
+    std::pair<float, float> dimensions) {
+
+  std::pair<float, float> bottomLeftPoint =
+      std::make_pair(principlePoint.first, principlePoint.second);
+
+  std::pair<float, float> bottomRightPoint = std::make_pair(
+      principlePoint.first + dimensions.first, principlePoint.second);
+
+  std::pair<float, float> topLeftPoint = std::make_pair(
+      principlePoint.first, principlePoint.second + dimensions.second);
+
+  std::pair<float, float> topRightPoint =
+      std::make_pair(principlePoint.first + dimensions.first,
+                     principlePoint.second + dimensions.second);
+
+  return pointIntersects(bottomLeftPoint) ||
+         pointIntersects(bottomRightPoint) || pointIntersects(topLeftPoint) ||
+         pointIntersects(topRightPoint);
 }
 
 std::pair<float, float> IsometricTileMapSector::getBottomLeft() {
-  return this->_bottomLeft;
+  return _bottomLeft;
 }
 
 std::pair<float, float> IsometricTileMapSector::getDimensions() {
-  return this->_dimensions;
+  return _sectorDimensions;
 }
 
 int IsometricTileMapSector::getTile(int x, int y) {
-  return this->_tileMap[y * this->_tilesPerAxis.first + x];
+  return _tileMap[y * _tilesPerAxis.first + x];
 }
 
 std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
-  return this->_tilesPerAxis;
+  return _tilesPerAxis;
 }
 
-void IsometricTileMapSector::render(
-                                    std::pair<int, int> screenDimensions,
-                                    std::pair<int, int> cameraPosition) {
+void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
 
-  std::pair<float, float> isoBottomLeft = this->getBottomLeft();
-  std::pair<float, float> dim = this->getDimensions();
-  std::pair<float, float> isoBottomLeftCent = PairOperators::addPair(
-      CoordinateMapper::worldToScreen(
-          cameraPosition, screenDimensions,
-          std::make_pair(this->_spriteRegistry.getSprite("tank_idle_rot225")
-                             ->getFrameWidth(),
-                         this->_spriteRegistry.getSprite("tank_idle_rot225")
-                             ->getFrameHeight())),
-      isoBottomLeft);
+  std::pair<float, float> dim = getDimensions();
+  std::pair<float, float> bottomLeftPointScreenCoords =
+      _coordinateMapper.worldToScreen(getBottomLeft());
 
   SDL_FRect tilePositionRect = {
       .x = 0,
-      .y = isoBottomLeftCent.second,
-      .w = this->_spriteRegistry.getSprite("1")->getFrameWidth(),
-      .h = this->_spriteRegistry.getSprite("1")->getFrameHeight()};
+      .y = bottomLeftPointScreenCoords.second,
+      .w = _spriteRegistry.getSprite("1")->getFrameWidth(),
+      .h = _spriteRegistry.getSprite("1")->getFrameHeight()};
 
-  for (int y = 0; y < this->getTilesPerAxis().second; ++y) {
-    for (int x = 0; x < this->getTilesPerAxis().first; ++x) {
+  for (int y = 0; y < getTilesPerAxis().second; ++y) {
+    for (int x = 0; x < getTilesPerAxis().first; ++x) {
       if (y % 2 == 0) {
         tilePositionRect.x =
-            isoBottomLeftCent.first +
-            (x * this->_spriteRegistry.getSprite("0")->getFrameWidth());
+            bottomLeftPointScreenCoords.first +
+            (x * _spriteRegistry.getSprite("0")->getFrameWidth());
       } else {
         // Every other row has a negative offset of half the tile width.
         tilePositionRect.x =
-            isoBottomLeftCent.first +
-            (x * this->_spriteRegistry.getSprite("0")->getFrameWidth()) +
-            (this->_spriteRegistry.getSprite("0")->getFrameWidth() / 2);
+            bottomLeftPointScreenCoords.first +
+            (x * _spriteRegistry.getSprite("0")->getFrameWidth()) +
+            (_spriteRegistry.getSprite("0")->getFrameWidth() / 2);
       }
 
-      if (this->getTile(x, y) == 0) {
-        this->_spriteRegistry.getSprite("0")->renderTick(&tilePositionRect);
+      if (getTile(x, y) == 0) {
+        _spriteRegistry.getSprite("0")->renderTick(&tilePositionRect);
       } else {
-        this->_spriteRegistry.getSprite("1")->renderTick(&tilePositionRect);
+        _spriteRegistry.getSprite("1")->renderTick(&tilePositionRect);
       }
     }
     tilePositionRect.y -=
-        (this->_spriteRegistry.getSprite("0")->getFrameHeight() / 2);
+        (_spriteRegistry.getSprite("0")->getFrameHeight() / 2);
   }
 
-  if (this->_drawBoundingBox) {
+  if (_drawBoundingBox) {
     SDL_Rect rectangleRect = {
-        .x = isoBottomLeftCent.first,
-        .y = isoBottomLeftCent.second,
-        .w = this->getDimensions().first,
-        .h = -this->getDimensions().second,
+        .x = bottomLeftPointScreenCoords.first,
+        .y = bottomLeftPointScreenCoords.second,
+        .w = getDimensions().first,
+        .h = -getDimensions().second,
     };
-    SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 0, 255, 0, 255);
     SDL_RenderDrawRect(_sdlManager->getRenderer(), &rectangleRect);
+    _textRenderer.renderText(
+        str(boost::format("%1$+5d%2$+5d") % round(getBottomLeft().first) %
+            round(getBottomLeft().second)),
+        _coordinateMapper.worldToScreen(getBottomLeft()));
   }
+}
+
+bool IsometricTileMapSector::isVisible() {
+  return this->pointIntersects(_camera->getPosition());
 }

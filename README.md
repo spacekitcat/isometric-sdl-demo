@@ -4,7 +4,7 @@ Isometric concept game.
 
 ![An application window with the title "SDL2Application4 (isometric demo).](./doc_assets/runtime_example_1.png)
 
-# Build
+# Development
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ brew install sdl2_image
 brew install catch2
 ```
 
-## Build (cmake)
+## Build
 
 ```sh
 mkdir build && cd build
@@ -27,6 +27,17 @@ cmake --build .
 ```
 
 (`cmake --build .` can be substituted with `make`)
+
+## Test
+
+This project only has a couple basic tests at the moment. I've setup the test runner to leave the door open to tests, but it's hard to do TDD in a project
+that's subject to as much change as this experimental game. I'm only doing
+tests for classes that are likely to remain fairly static.
+
+(Run [build steps](#build) first). Starting directory is the root.
+```sh
+make test -C ./build
+```
 
 ## Assets
 

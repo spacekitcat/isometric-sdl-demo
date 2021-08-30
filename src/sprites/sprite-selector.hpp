@@ -1,9 +1,11 @@
 #ifndef SDL2APPLICATION4_SPRITE_SELECTOR_HPP
 #define SDL2APPLICATION4_SPRITE_SELECTOR_HPP
 
+#include <iostream>
+#include <map>
+
 #include "sprite-state.hpp"
 #include "sprite.hpp"
-#include <map>
 
 class SpriteSelector {
 private:

@@ -18,6 +18,7 @@ if [ ! -d $build_path ]; then
 fi
 
 echo "Generating build"
+VERBOSE=1
 cmake -S . -B $build_path
 
 echo "Running build"

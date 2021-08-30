@@ -1,9 +1,7 @@
 #include "sprite.hpp"
-#include <SDL.h>
-#include <SDL_image.h>
 
 Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager) {
-
+  _drawBoundingBox = false;
   _spritesheetSurface = nullptr;
   _spritesheetTexture = nullptr;
   _sdlManager = sdlManager;
@@ -73,6 +71,18 @@ void Sprite::render(float xPosition, float yPosition, int frame) {
 
   SDL_RenderCopyF(_sdlManager->getRenderer(), _spritesheetTexture,
                   &clippingRect, &positionRect);
+
+  if (_drawBoundingBox) {
+    SDL_Rect playerRect = {
+        .x = xPosition,
+        .y = yPosition,
+        .w = this->getFrameWidth(),
+        .h = -this->getFrameHeight(),
+    };
+
+    SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 255, 255, 255, 255);
+    SDL_RenderDrawRect(_sdlManager->getRenderer(), &playerRect);
+  }
 }
 
 void Sprite::renderTick(SDL_FRect *position) {
@@ -90,3 +100,7 @@ int Sprite::getRowCount() { return _rows; }
 float Sprite::getFrameWidth() { return _spritesheetSurface->w / _columns; }
 
 float Sprite::getFrameHeight() { return _spritesheetSurface->h / _rows; }
+
+void Sprite::setRenderBoundingBox(bool render) { _drawBoundingBox = render; }
+
+std::pair<float, float> Sprite::getDimensions() { return std::make_pair(this->getFrameWidth(), this->getFrameHeight()); }
