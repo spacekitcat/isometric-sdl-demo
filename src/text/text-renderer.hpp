@@ -7,14 +7,16 @@
 
 #include "../render/sdl-manager.hpp"
 #include "../textures/texture-wrapper.hpp"
+#include "../textures/texture-wrapper-factory.hpp"
 
 class TextRenderer {
     private:
         std::shared_ptr<SDLManager> _sdlManager;
+        TextureWrapperFactory &_textureWrapperFactory;
         TTF_Font *_font;
     
     public:
-        TextRenderer(std::shared_ptr<SDLManager> sdlManager);
+        TextRenderer(std::shared_ptr<SDLManager> sdlManager, TextureWrapperFactory &textureWrapperFactory);
         ~TextRenderer();
 
         void renderText(std::string text, std::pair<float, float> position);

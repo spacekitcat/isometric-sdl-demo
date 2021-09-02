@@ -1,6 +1,8 @@
 #include "sprite.hpp"
 
-Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager) {
+Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager,
+               TextureWrapperFactory &textureWrapperFactory)
+    : _textureWrapperFactory(textureWrapperFactory) {
   _drawBoundingBox = false;
   _spritesheetSurface = nullptr;
   _textureWrapper = nullptr;
@@ -15,26 +17,18 @@ Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager) {
 Sprite::~Sprite() {
   free(_spritesheetSurface);
   _spritesheetSurface = nullptr;
-
-  delete _textureWrapper;
 }
 
 void Sprite::setSpritesheet(std::string spritesheetPath,
                             struct SpriteMetadata *metadata) {
-  if (_textureWrapper != NULL) {
-    delete _textureWrapper;
-  }
-
   try {
     _spritesheetSurface = loadGameImageAsset(spritesheetPath);
   } catch (const std::runtime_error &ex) {
     throw;
   }
 
-  SDL_Texture *spriteSheetTexture = SDL_CreateTextureFromSurface(_sdlManager->getRenderer(),
-                                                     _spritesheetSurface);
-  _textureWrapper = new TextureWrapper(spriteSheetTexture);
-  
+  _textureWrapper = _textureWrapperFactory.createTexture(_spritesheetSurface);
+
   this->_columns = metadata->columns;
   this->_rows = metadata->rows;
   SDL_SetColorKey(_spritesheetSurface, SDL_TRUE,
@@ -105,4 +99,6 @@ float Sprite::getFrameHeight() { return _spritesheetSurface->h / _rows; }
 
 void Sprite::setRenderBoundingBox(bool render) { _drawBoundingBox = render; }
 
-std::pair<float, float> Sprite::getDimensions() { return std::make_pair(this->getFrameWidth(), this->getFrameHeight()); }
+std::pair<float, float> Sprite::getDimensions() {
+  return std::make_pair(this->getFrameWidth(), this->getFrameHeight());
+}

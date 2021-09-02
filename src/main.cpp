@@ -163,7 +163,9 @@ int main() {
     for (int j = -1; j <= 1; ++j) {
       sectors.push_back(std::make_shared<IsometricTileMapSector>(
           sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
-          std::make_pair(i * gameSaveState.getSectorDimensions().first, j * gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
+          std::make_pair(
+              i * gameSaveState.getSectorDimensions().first,
+              j * gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
           gameSaveState));
     }
   }

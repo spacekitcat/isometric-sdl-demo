@@ -4,17 +4,14 @@
 #include <SDL.h>
 #include <cassert>
 
-class TextureWrapper  
-{
-	private:
-		SDL_Texture *_texture;
+class TextureWrapper {
+private:
+  SDL_Texture *_texture;
 
-	public:
+public:
+  TextureWrapper(SDL_Texture *texture);
+  ~TextureWrapper();
 
-		TextureWrapper(SDL_Texture *texture);
-		~TextureWrapper();
-
-		SDL_Texture* getSdlTexture();
-
+  SDL_Texture *getSdlTexture();
 };
 #endif

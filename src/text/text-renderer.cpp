@@ -1,6 +1,8 @@
 #include "text-renderer.hpp"
 
-TextRenderer::TextRenderer(std::shared_ptr<SDLManager> sdlManager) {
+TextRenderer::TextRenderer(std::shared_ptr<SDLManager> sdlManager,
+                           TextureWrapperFactory &textureWrapperFactory)
+    : _textureWrapperFactory(textureWrapperFactory) {
   _sdlManager = sdlManager;
 
   assert(_sdlManager != nullptr);
@@ -15,10 +17,11 @@ TextRenderer::TextRenderer(std::shared_ptr<SDLManager> sdlManager) {
 }
 
 TextRenderer::~TextRenderer() {
-  //delete _font;
+  // delete _font;
 }
 
-void TextRenderer::renderText(std::string text, std::pair<float, float> position) {
+void TextRenderer::renderText(std::string text,
+                              std::pair<float, float> position) {
   // Black outline (background)
   TTF_SetFontOutline(_font, 1);
   SDL_Color textBgColor = {0, 0, 0};
@@ -35,16 +38,12 @@ void TextRenderer::renderText(std::string text, std::pair<float, float> position
   SDL_Rect offset = {.x = 1, .y = 1};
   SDL_BlitSurface(text_surface_fg, NULL, text_surface_bg, &offset);
 
-  // Text conversion
-  SDL_Texture *tex =
-      SDL_CreateTextureFromSurface(_sdlManager->getRenderer(), text_surface_bg);
-
-  TextureWrapper *p = new TextureWrapper(tex);
-  SDL_Rect dest = {
-      .x = position.first, .y = position.second, .w = text_surface_bg->w, .h = text_surface_bg->h};
+  auto p = _textureWrapperFactory.createTexture(text_surface_bg);
+  SDL_Rect dest = {.x = position.first,
+                   .y = position.second,
+                   .w = text_surface_bg->w,
+                   .h = text_surface_bg->h};
   SDL_RenderCopy(_sdlManager->getRenderer(), p->getSdlTexture(), NULL, &dest);
-
-  delete(p);
 
   SDL_FreeSurface(text_surface_bg);
   SDL_FreeSurface(text_surface_fg);

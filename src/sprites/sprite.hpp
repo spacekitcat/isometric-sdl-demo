@@ -9,6 +9,7 @@
 #include "../render/sdl-manager.hpp"
 #include "../sprites/sprite-metadata.hpp"
 #include "../textures/texture-wrapper.hpp"
+#include "../textures/texture-wrapper-factory.hpp"
 
 class Sprite {
 private:
@@ -18,15 +19,17 @@ private:
   int _rows;
   std::shared_ptr<SDLManager> _sdlManager;
   SDL_Surface *_spritesheetSurface;
-  TextureWrapper *_textureWrapper;
+  std::shared_ptr<TextureWrapper> _textureWrapper;
   bool _drawBoundingBox;
+  
+  TextureWrapperFactory &_textureWrapperFactory;
 
   void updateSpriteFrame(int index, SDL_Rect *clippingFrame);
 
   SDL_Surface *loadGameImageAsset(std::string path);
 
 public:
-  Sprite(std::shared_ptr<SDLManager> sdlManager);
+  Sprite(std::shared_ptr<SDLManager> sdlManager, TextureWrapperFactory &textureWrapperFactory);
 
   ~Sprite();
 

@@ -10,12 +10,11 @@ IsometricTileMapSector::IsometricTileMapSector(
     TextRenderer &textRenderer, std::pair<float, float> bottomLeft,
     GameSaveState &gameSaveState)
     : _coordinateMapper(coordinateMapper), _textRenderer(textRenderer),
-      _gameSaveState(gameSaveState) {
+      _gameSaveState(gameSaveState), _spriteRegistry(spriteRegistry) {
 
   _sdlManager = sdlManager;
   _camera = camera;
 
-  _spriteRegistry = spriteRegistry;
   _bottomLeft = bottomLeft;
   _sectorDimensions = _gameSaveState.getSectorDimensions();
   _drawBoundingBox = true;
