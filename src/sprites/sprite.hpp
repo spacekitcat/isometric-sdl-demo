@@ -8,6 +8,7 @@
 
 #include "../render/sdl-manager.hpp"
 #include "../sprites/sprite-metadata.hpp"
+#include "../textures/texture-wrapper.hpp"
 
 class Sprite {
 private:
@@ -17,7 +18,7 @@ private:
   int _rows;
   std::shared_ptr<SDLManager> _sdlManager;
   SDL_Surface *_spritesheetSurface;
-  SDL_Texture *_spritesheetTexture;
+  TextureWrapper *_textureWrapper;
   bool _drawBoundingBox;
 
   void updateSpriteFrame(int index, SDL_Rect *clippingFrame);

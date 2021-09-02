@@ -3,7 +3,7 @@
 Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager) {
   _drawBoundingBox = false;
   _spritesheetSurface = nullptr;
-  _spritesheetTexture = nullptr;
+  _textureWrapper = nullptr;
   _sdlManager = sdlManager;
 
   assert(_sdlManager != nullptr);
@@ -16,14 +16,14 @@ Sprite::~Sprite() {
   free(_spritesheetSurface);
   _spritesheetSurface = nullptr;
 
-  free(_spritesheetTexture);
-  _spritesheetTexture = nullptr;
+  delete _textureWrapper;
 }
 
 void Sprite::setSpritesheet(std::string spritesheetPath,
                             struct SpriteMetadata *metadata) {
-  _spritesheetSurface = nullptr;
-  _spritesheetTexture = nullptr;
+  if (_textureWrapper != NULL) {
+    delete _textureWrapper;
+  }
 
   try {
     _spritesheetSurface = loadGameImageAsset(spritesheetPath);
@@ -31,8 +31,10 @@ void Sprite::setSpritesheet(std::string spritesheetPath,
     throw;
   }
 
-  _spritesheetTexture = SDL_CreateTextureFromSurface(_sdlManager->getRenderer(),
+  SDL_Texture *spriteSheetTexture = SDL_CreateTextureFromSurface(_sdlManager->getRenderer(),
                                                      _spritesheetSurface);
+  _textureWrapper = new TextureWrapper(spriteSheetTexture);
+  
   this->_columns = metadata->columns;
   this->_rows = metadata->rows;
   SDL_SetColorKey(_spritesheetSurface, SDL_TRUE,
@@ -69,7 +71,7 @@ void Sprite::render(float xPosition, float yPosition, int frame) {
   positionRect.y = yPosition - this->getFrameHeight();
   this->updateSpriteFrame(frame, &clippingRect);
 
-  SDL_RenderCopyF(_sdlManager->getRenderer(), _spritesheetTexture,
+  SDL_RenderCopyF(_sdlManager->getRenderer(), _textureWrapper->getSdlTexture(),
                   &clippingRect, &positionRect);
 
   if (_drawBoundingBox) {
