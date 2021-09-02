@@ -42,7 +42,7 @@ void TextRenderer::renderText(std::string text, std::pair<float, float> position
   TextureWrapper *p = new TextureWrapper(tex);
   SDL_Rect dest = {
       .x = position.first, .y = position.second, .w = text_surface_bg->w, .h = text_surface_bg->h};
-  SDL_RenderCopy(_sdlManager->getRenderer(), tex, NULL, &dest);
+  SDL_RenderCopy(_sdlManager->getRenderer(), p->getSdlTexture(), NULL, &dest);
 
   delete(p);
 
