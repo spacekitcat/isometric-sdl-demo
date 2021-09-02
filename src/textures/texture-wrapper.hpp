@@ -2,14 +2,16 @@
 #define TEXTUREWRAPPER_H
 
 #include <SDL.h>
+#include <cassert>
 
 class TextureWrapper  
 {
 	private:
+		SDL_Texture *_texture;
 
 	public:
 
-		TextureWrapper();
+		TextureWrapper(SDL_Texture *texture);
 		~TextureWrapper();
 
 };

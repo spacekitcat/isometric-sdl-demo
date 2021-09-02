@@ -6,6 +6,7 @@
 #include <boost/format.hpp>
 
 #include "../render/sdl-manager.hpp"
+#include "../textures/texture-wrapper.hpp"
 
 class TextRenderer {
     private:
