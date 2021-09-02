@@ -14,5 +14,7 @@ class TextureWrapper
 		TextureWrapper(SDL_Texture *texture);
 		~TextureWrapper();
 
+		SDL_Texture* getSdlTexture();
+
 };
 #endif

@@ -11,3 +11,7 @@ TextureWrapper::~TextureWrapper()
 {
 	SDL_DestroyTexture(_texture);
 }
+
+SDL_Texture* TextureWrapper::getSdlTexture() {
+	return _texture;
+}
