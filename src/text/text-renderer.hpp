@@ -19,7 +19,7 @@ class TextRenderer {
         TextRenderer(std::shared_ptr<SDLManager> sdlManager, TextureWrapperFactory &textureWrapperFactory);
         ~TextRenderer();
 
-        void renderText(std::string text, std::pair<float, float> position);
+        std::shared_ptr<TextureWrapper> renderText(std::string text, std::pair<float, float> position);
 };
 
 #endif //SDL2APPLICATION4_TEXT_RENDERER_HPP

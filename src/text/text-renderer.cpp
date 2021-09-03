@@ -20,7 +20,7 @@ TextRenderer::~TextRenderer() {
   // delete _font;
 }
 
-void TextRenderer::renderText(std::string text,
+std::shared_ptr<TextureWrapper> TextRenderer::renderText(std::string text,
                               std::pair<float, float> position) {
   // Black outline (background)
   TTF_SetFontOutline(_font, 1);
@@ -38,13 +38,15 @@ void TextRenderer::renderText(std::string text,
   SDL_Rect offset = {.x = 1, .y = 1};
   SDL_BlitSurface(text_surface_fg, NULL, text_surface_bg, &offset);
 
-  auto p = _textureWrapperFactory.createTexture(text_surface_bg);
+  auto renderedTexture = _textureWrapperFactory.createTexture(text_surface_bg);
   SDL_Rect dest = {.x = position.first,
                    .y = position.second,
                    .w = text_surface_bg->w,
                    .h = text_surface_bg->h};
-  SDL_RenderCopy(_sdlManager->getRenderer(), p->getSdlTexture(), NULL, &dest);
+  SDL_RenderCopy(_sdlManager->getRenderer(), renderedTexture->getSdlTexture(), NULL, &dest);
 
   SDL_FreeSurface(text_surface_bg);
   SDL_FreeSurface(text_surface_fg);
+
+  return renderedTexture;
 }
