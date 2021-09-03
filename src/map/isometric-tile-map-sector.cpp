@@ -1,13 +1,9 @@
 #include "isometric-tile-map-sector.hpp"
 
-#include "../util/pair-operators.hpp"
-#include "coordinate-mapper.hpp"
-#include "math.h"
-
 IsometricTileMapSector::IsometricTileMapSector(
     std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera,
     SpriteRegistry &spriteRegistry, CoordinateMapper &coordinateMapper,
-    TextRenderer &textRenderer, std::pair<float, float> bottomLeft,
+    CachedTextRenderer &textRenderer, std::pair<float, float> bottomLeft,
     GameSaveState &gameSaveState)
     : _coordinateMapper(coordinateMapper), _textRenderer(textRenderer),
       _gameSaveState(gameSaveState), _spriteRegistry(spriteRegistry) {

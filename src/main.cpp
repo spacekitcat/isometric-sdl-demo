@@ -62,7 +62,7 @@ int main() {
   auto camera = injector.create<std::shared_ptr<Camera>>();
   auto debugOverlay = injector.create<DebugOverlay>();
   auto coordinateMapper = injector.create<CoordinateMapper>();
-  auto textRenderer = injector.create<TextRenderer>();
+  auto textRenderer = injector.create<CachedTextRenderer>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area

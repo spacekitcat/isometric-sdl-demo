@@ -5,12 +5,15 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#include "math.h"
 
+#include "../map/coordinate-mapper.hpp"
+#include "../util/pair-operators.hpp"
 #include "../render/sdl-manager.hpp"
 #include "../sprites/sprite-registry.hpp"
 #include "../map/camera.hpp"
 #include "../map/coordinate-mapper.hpp"
-#include "../text/text-renderer.hpp"
+#include "../text/cached-text-renderer.hpp"
 #include "../state/game-save-state.hpp"
 
 class IsometricTileMapSector {
@@ -18,7 +21,7 @@ private:
   std::shared_ptr<SDLManager> _sdlManager;
   std::shared_ptr<Camera> _camera;
   CoordinateMapper &_coordinateMapper;
-  TextRenderer &_textRenderer;
+  CachedTextRenderer &_textRenderer;
   std::pair<float, float> _position;
   std::pair<float, float> _bottomLeft;
   std::pair<float, float> _sectorDimensions;
@@ -33,7 +36,7 @@ public:
                          std::shared_ptr<Camera> camera,
                          SpriteRegistry &spriteRegistry,
                          CoordinateMapper &coordinateMapper,
-                         TextRenderer &textRenderer,
+                         CachedTextRenderer &textRenderer,
                          std::pair<float, float> topLeft,
                          GameSaveState &gameSaveState);
 

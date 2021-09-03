@@ -7,19 +7,19 @@
 
 #include "../map/camera.hpp"
 #include "../render/sdl-manager.hpp"
-#include "../text/text-renderer.hpp"
+#include "../text/cached-text-renderer.hpp"
 #include "../state/game-save-state.hpp"
 
 class DebugOverlay {
 private:
   std::shared_ptr<SDLManager> _sdlManager;
   std::shared_ptr<Camera> _camera;
-  TextRenderer _textRenderer;
+  CachedTextRenderer _textRenderer;
   GameSaveState _gameSaveState;
 
 public:
   DebugOverlay(std::shared_ptr<SDLManager> sdlManager,
-               std::shared_ptr<Camera> camera, TextRenderer &textRenderer,
+               std::shared_ptr<Camera> camera, CachedTextRenderer &textRenderer,
                GameSaveState &gameSaveState);
 
   void render();

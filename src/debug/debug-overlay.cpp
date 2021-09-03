@@ -2,7 +2,7 @@
 
 DebugOverlay::DebugOverlay(std::shared_ptr<SDLManager> sdlManager,
                            std::shared_ptr<Camera> camera,
-                           TextRenderer &textRenderer,
+                           CachedTextRenderer &textRenderer,
                            GameSaveState &gameSaveState)
     : _textRenderer(textRenderer), _gameSaveState(gameSaveState) {
   _sdlManager = sdlManager;
