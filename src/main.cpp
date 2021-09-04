@@ -263,7 +263,7 @@ int main() {
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
     SDL_RenderPresent(sdlManager->getRenderer());
-    SDL_Delay(10);
+    SDL_Delay(20);
   }
 
   return 0;
