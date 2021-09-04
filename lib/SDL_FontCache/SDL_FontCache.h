@@ -1,15 +1,15 @@
 /*
-SDL_FontCache v0.10.0: A font cache for SDL and SDL_ttf
+SDL_FontCache v0.0.1: A font cache for SDL and SDL_ttf
 by Jonathan Dearborn
 Dedicated to the memory of Florian Hufsky
 
 License:
     The short:
-    Use it however you'd like, but keep the copyright and license notice
+    Use it however you'd like, but keep the copyright and license notice 
     whenever these files or parts of them are distributed in uncompiled form.
-
+    
     The long:
-Copyright (c) 2019 Jonathan Dearborn
+Copyright (c) 2015 Jonathan Dearborn
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -86,7 +86,7 @@ typedef struct FC_Scale
 {
     float x;
     float y;
-
+    
 } FC_Scale;
 
 typedef struct FC_Effect
@@ -94,7 +94,7 @@ typedef struct FC_Effect
     FC_AlignEnum alignment;
     FC_Scale scale;
     SDL_Color color;
-
+    
 } FC_Effect;
 
 // Opaque type
@@ -105,10 +105,27 @@ typedef struct FC_GlyphData
 {
     SDL_Rect rect;
     int cache_level;
-
+    
 } FC_GlyphData;
 
+/*
+ * Color/Texture setting
+ */
+typedef struct FC_Style
+{
+	// basic
+	Uint32 fontSize;
+	int style;
+	Uint16 outline;
+	SDL_Color color;
+	SDL_Color outline_color;
 
+	// advanced
+	Uint32 *texture;
+	Uint16 textureWidth, textureHeight;
+	FC_Font *fallback;
+	int thickness;
+} FC_Style;
 
 
 // Object creation
@@ -132,20 +149,19 @@ FC_Font* FC_CreateFont(void);
 #ifdef FC_USE_SDL_GPU
 Uint8 FC_LoadFont(FC_Font* font, const char* filename_ttf, Uint32 pointSize, SDL_Color color, int style);
 
-Uint8 FC_LoadFontFromTTF(FC_Font* font, TTF_Font* ttf, SDL_Color color);
+Uint8 FC_LoadFontFromStyle(FC_Font* font, const char* filename_ttf, FC_Style* style);
 
-Uint8 FC_LoadFont_RW(FC_Font* font, SDL_RWops* file_rwops_ttf, Uint8 own_rwops, Uint32 pointSize, SDL_Color color, int style);
+Uint8 FC_LoadFont_RW(FC_Font* font, SDL_RWops* file_rwops_ttf, Uint8 own_rwops, FC_Style* style);
+
+Uint8 FC_LoadFontFromTTF(FC_Font* font, TTF_Font* ttf, TTF_Font *ttf_outline, FC_Style* style);
 #else
 Uint8 FC_LoadFont(FC_Font* font, SDL_Renderer* renderer, const char* filename_ttf, Uint32 pointSize, SDL_Color color, int style);
 
-Uint8 FC_LoadFontFromTTF(FC_Font* font, SDL_Renderer* renderer, TTF_Font* ttf, SDL_Color color);
+Uint8 FC_LoadFontFromStyle(FC_Font* font, SDL_Renderer* renderer, const char* filename_ttf, FC_Style* style);
 
-Uint8 FC_LoadFont_RW(FC_Font* font, SDL_Renderer* renderer, SDL_RWops* file_rwops_ttf, Uint8 own_rwops, Uint32 pointSize, SDL_Color color, int style);
-#endif
+Uint8 FC_LoadFont_RW(FC_Font* font, SDL_Renderer* renderer, SDL_RWops* file_rwops_ttf, Uint8 own_rwops, FC_Style* style);
 
-#ifndef FC_USE_SDL_GPU
-// note: handle SDL event types SDL_RENDER_TARGETS_RESET(>= SDL 2.0.2) and SDL_RENDER_DEVICE_RESET(>= SDL 2.0.4)
-void FC_ResetFontFromRendererReset(FC_Font* font, SDL_Renderer* renderer, Uint32 evType);
+Uint8 FC_LoadFontFromTTF(FC_Font* font, SDL_Renderer* renderer, TTF_Font* ttf, FC_Style* style);
 #endif
 
 void FC_ClearFont(FC_Font* font);
@@ -156,11 +172,11 @@ void FC_FreeFont(FC_Font* font);
 
 // Built-in loading strings
 
-char* FC_GetStringASCII(void);
+const char* FC_GetStringASCII(void);
 
-char* FC_GetStringLatin1(void);
+const char* FC_GetStringLatin1(void);
 
-char* FC_GetStringASCII_Latin1(void);
+const char* FC_GetStringASCII_Latin1(void);
 
 
 // UTF-8 to SDL_FontCache codepoint conversion
@@ -171,6 +187,8 @@ Returns the Uint32 codepoint (not UTF-32) parsed from the given UTF-8 string.
 \param advance_pointer If true, the source pointer will be incremented to skip the extra bytes from multibyte codepoints.
 */
 Uint32 FC_GetCodepointFromUTF8(const char** c, Uint8 advance_pointer);
+
+Uint16 FC_GetCodepoint16FromUTF8(const char** c);
 
 /*!
 Parses the given codepoint and stores the UTF-8 bytes in 'result'.  The result is NULL terminated.
@@ -215,17 +233,8 @@ void U8_strdel(char* string, int position);
 /*! Sets the string from which to load the initial glyphs.  Use this if you need upfront loading for any reason (such as lack of render-target support). */
 void FC_SetLoadingString(FC_Font* font, const char* string);
 
-/*! Returns the size of the internal buffer which is used for unpacking variadic text data.  This buffer is shared by all FC_Fonts. */
-unsigned int FC_GetBufferSize(void);
-
 /*! Changes the size of the internal buffer which is used for unpacking variadic text data.  This buffer is shared by all FC_Fonts. */
 void FC_SetBufferSize(unsigned int size);
-
-/*! Returns the width of a single horizontal tab in multiples of the width of a space (default: 4) */
-unsigned int FC_GetTabWidth(void);
-
-/*! Changes the width of a horizontal tab in multiples of the width of a space (default: 4) */
-void FC_SetTabWidth(unsigned int width_in_spaces);
 
 void FC_SetRenderCallback(FC_Rect (*callback)(FC_Image* src, FC_Rect* srcrect, FC_Target* dest, float x, float y, float xscale, float yscale));
 
@@ -244,24 +253,17 @@ FC_Image* FC_GetGlyphCacheLevel(FC_Font* font, int cache_level);
 /*! Sets a cache source texture for rendering.  New cache levels must be sequential. */
 Uint8 FC_SetGlyphCacheLevel(FC_Font* font, int cache_level, FC_Image* cache_texture);
 
-/*! Copies the given surface to the given cache level as a texture.  New cache levels must be sequential. */
-Uint8 FC_UploadGlyphCache(FC_Font* font, int cache_level, SDL_Surface* data_surface);
-
-
-/*! Returns the number of codepoints that are stored in the font's glyph data map. */
-unsigned int FC_GetNumCodepoints(FC_Font* font);
-
-/*! Copies the stored codepoints into the given array. */
-void FC_GetCodepoints(FC_Font* font, Uint32* result);
-
 /*! Stores the glyph data for the given codepoint in 'result'.  Returns 0 if the codepoint was not found in the cache. */
 Uint8 FC_GetGlyphData(FC_Font* font, FC_GlyphData* result, Uint32 codepoint);
 
 /*! Sets the glyph data for the given codepoint.  Duplicates are not checked.  Returns a pointer to the stored data. */
 FC_GlyphData* FC_SetGlyphData(FC_Font* font, Uint32 codepoint, FC_GlyphData glyph_data);
 
+FC_GlyphData* FC_SetTextureGlyph(SDL_Texture *texture, SDL_Rect *src, Uint32 codepoint, FC_GlyphData glyph_data);
+
 
 // Rendering
+SDL_Surface* FC_GetSurface(FC_Font* font, const char* source_string);
 
 FC_Rect FC_Draw(FC_Font* font, FC_Target* dest, float x, float y, const char* formatted_text, ...);
 FC_Rect FC_DrawAlign(FC_Font* font, FC_Target* dest, float x, float y, FC_AlignEnum align, const char* formatted_text, ...);
@@ -301,14 +303,9 @@ int FC_GetLineSpacing(FC_Font* font);
 Uint16 FC_GetMaxWidth(FC_Font* font);
 SDL_Color FC_GetDefaultColor(FC_Font* font);
 
-FC_Rect FC_GetBounds(FC_Font* font, float x, float y, FC_AlignEnum align, FC_Scale scale, const char* formatted_text, ...);
-
 Uint8 FC_InRect(float x, float y, FC_Rect input_rect);
 // Given an offset (x,y) from the text draw position (the upper-left corner), returns the character position (UTF-8 index)
 Uint16 FC_GetPositionFromOffset(FC_Font* font, float x, float y, int column_width, FC_AlignEnum align, const char* formatted_text, ...);
-
-// Returns the number of characters in the new wrapped text written into `result`.
-int FC_GetWrappedText(FC_Font* font, char* result, int max_result_size, Uint16 width, const char* formatted_text, ...);
 
 // Setters
 
@@ -316,6 +313,9 @@ void FC_SetFilterMode(FC_Font* font, FC_FilterEnum filter);
 void FC_SetSpacing(FC_Font* font, int LetterSpacing);
 void FC_SetLineSpacing(FC_Font* font, int LineSpacing);
 void FC_SetDefaultColor(FC_Font* font, SDL_Color color);
+void FC_SetFallback(FC_Font *font, FC_Font *fallback);
+void FC_SetAlphaMod(FC_Font *font, Uint8 a);
+void FC_SetColorMod(FC_Font *font, Uint8 r, Uint8 g, Uint8 b);
 
 
 #ifdef __cplusplus
