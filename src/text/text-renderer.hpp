@@ -6,11 +6,13 @@
 #include <boost/format.hpp>
 
 #include "../render/sdl-manager.hpp"
+#include "../../lib/SDL_FontCache/SDL_FontCache.h"
 
 class TextRenderer {
     private:
         std::shared_ptr<SDLManager> _sdlManager;
-        TTF_Font *_font;
+        FC_Font *_backgroundFont;
+        FC_Font *_foregroundFont;
     
     public:
         TextRenderer(std::shared_ptr<SDLManager> sdlManager);
