@@ -18,7 +18,6 @@ void DebugOverlay::render() {
                                round(_camera->getPosition().first) %
                                round(_camera->getPosition().second)),
                            std::make_pair(16, 8));
-
   _textRenderer.renderText(
       str(boost::format("seed: %1$+5d") % _gameSaveState.getGameSeed()),
       std::make_pair(160, 8));
@@ -35,7 +34,6 @@ void DebugOverlay::render() {
           round(_gameSaveState.getTileDimensions().second)),
       std::make_pair(320, 24));
 
-  _textRenderer.renderText(
-      str(boost::format("Rover's Revenge")),
-      std::make_pair(890, 8));
+  _textRenderer.renderText(str(boost::format("Rover's Revenge")),
+                           std::make_pair(850, 8));
 }

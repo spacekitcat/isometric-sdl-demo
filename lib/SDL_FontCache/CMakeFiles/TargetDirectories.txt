@@ -1,0 +1,3 @@
+/Users/lisaburton/Documents/code/isometric-sdl-demo/lib/SDL_FontCache/CMakeFiles/rebuild_cache.dir
+/Users/lisaburton/Documents/code/isometric-sdl-demo/lib/SDL_FontCache/CMakeFiles/edit_cache.dir
+/Users/lisaburton/Documents/code/isometric-sdl-demo/lib/SDL_FontCache/CMakeFiles/FontCache.dir
