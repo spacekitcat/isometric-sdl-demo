@@ -19,7 +19,7 @@ GameSaveState::GameSaveState(SpriteRegistry &spriteRegistry)
   _tileDimensions = std::make_pair(256, 128);
 
   /*
-    The sector sectorDimensions should be perfectly divisable by the
+    The sector sectorDimensions should be perfectly divisible by the
     tile sectorDimensions. Why?
 
     Because this map model is isometric, every odd row must have a

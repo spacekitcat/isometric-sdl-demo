@@ -12,6 +12,7 @@
 #include "./util/pair-operators.hpp"
 #include "debug/debug-overlay.hpp"
 #include "input/direction-input-helpers.hpp"
+#include "map-generator/deterministic-prng.hpp"
 #include "map/camera.hpp"
 #include "map/coordinate-mapper.hpp"
 #include "map/isometric-tile-map-sector.hpp"
@@ -57,7 +58,9 @@ int main() {
 
   const auto injector = di::make_injector(
       di::bind<SDLManager>().to<SDLManager>().in(di::singleton),
-      di::bind<Camera>().to<Camera>().in(di::singleton));
+      di::bind<Camera>().to<Camera>().in(di::singleton),
+      di::bind<DeterministicPrng>().to<DeterministicPrng>().in(di::singleton));
+
   auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
   auto camera = injector.create<std::shared_ptr<Camera>>();
   auto debugOverlay = injector.create<DebugOverlay>();
@@ -88,6 +91,7 @@ int main() {
 
   auto playerSpriteSelector = injector.create<SpriteSelector>();
   auto spriteRegistry = injector.create<SpriteRegistry>();
+  auto prng = injector.create<std::shared_ptr<DeterministicPrng>>();
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
 
@@ -166,7 +170,7 @@ int main() {
           std::make_pair(
               i * gameSaveState.getSectorDimensions().first,
               j * gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
-          gameSaveState));
+          gameSaveState, prng));
     }
   }
   SDL_FRect playerPositioningRect = {
