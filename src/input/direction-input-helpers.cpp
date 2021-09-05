@@ -17,23 +17,19 @@ bool DirectionInputHelpers::isWestPressed(const Uint8 *state) {
 }
 
 bool DirectionInputHelpers::isNorthWestPressed(const Uint8 *state) {
-  return isNorthPressed(state) &&
-         isWestPressed(state);
+  return isNorthPressed(state) && isWestPressed(state);
 }
 
 bool DirectionInputHelpers::isNorthEastPressed(const Uint8 *state) {
-  return isNorthPressed(state) &&
-         isEastPressed(state);
+  return isNorthPressed(state) && isEastPressed(state);
 }
 
 bool DirectionInputHelpers::isSouthWestPressed(const Uint8 *state) {
-  return isSouthPressed(state) &&
-         isWestPressed(state);
+  return isSouthPressed(state) && isWestPressed(state);
 }
 
 bool DirectionInputHelpers::isSouthEastPressed(const Uint8 *state) {
-  return isSouthPressed(state) &&
-         isEastPressed(state);
+  return isSouthPressed(state) && isEastPressed(state);
 }
 
 bool DirectionInputHelpers::noKeysPressed(const Uint8 *state) {
@@ -47,7 +43,8 @@ bool DirectionInputHelpers::noKeysPressed(const Uint8 *state) {
            DirectionInputHelpers::isWestPressed(state));
 }
 
-SpriteStateDirectionEnum DirectionInputHelpers::getInputDirection(const Uint8 *state) {
+SpriteStateDirectionEnum
+DirectionInputHelpers::getInputDirection(const Uint8 *state) {
   if (DirectionInputHelpers::isNorthWestPressed(state)) {
     return NorthWest;
   } else if (DirectionInputHelpers::isNorthEastPressed(state)) {

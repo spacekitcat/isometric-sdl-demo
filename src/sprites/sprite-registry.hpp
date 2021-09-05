@@ -1,26 +1,24 @@
-#ifndef SDL2APPLICATION4_SPRITE_REGISTRY_HPP
-#define SDL2APPLICATION4_SPRITE_REGISTRY_HPP
+#pragma once
 
-#include <unordered_map>
 #include <map>
+#include <unordered_map>
 
+#include "../render/sdl-manager.hpp"
 #include "sprite-metadata.hpp"
 #include "sprite.hpp"
-#include "../render/sdl-manager.hpp"
 
 class SpriteRegistry {
 private:
   std::shared_ptr<SDLManager> _sdlManager;
-  std::map<std::string, Sprite*> _tileRegistry;
+  std::map<std::string, Sprite *> _tileRegistry;
 
 public:
   SpriteRegistry();
 
   SpriteRegistry(std::shared_ptr<SDLManager> sdlManager);
 
-  void loadSprite(const std::string& path, const std::string& asKey, struct SpriteMetadata *metadata);
+  void loadSprite(const std::string &path, const std::string &asKey,
+                  struct SpriteMetadata *metadata);
 
-  Sprite* getSprite(const std::string& key);
+  Sprite *getSprite(const std::string &key);
 };
-
-#endif

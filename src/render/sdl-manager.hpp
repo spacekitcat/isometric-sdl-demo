@@ -1,28 +1,24 @@
-#ifndef SDL2APPLICATION4_SDL_MANAGER_HPP
-#define SDL2APPLICATION4_SDL_MANAGER_HPP
+#pragma once
 
-#include <iostream>
 #include <SDL.h>
+#include <iostream>
 
 class SDLManager {
 private:
-    std::pair<int, int> _screenDimensions;
+  std::pair<int, int> _screenDimensions;
 
-    SDL_Window *_window;
+  SDL_Window *_window;
 
-    SDL_Renderer *_renderer;
+  SDL_Renderer *_renderer;
 
 public:
   SDLManager();
 
   std::pair<int, int> getWindowDimensions();
 
-  SDL_Window* getWindow();
+  SDL_Window *getWindow();
 
-  SDL_Renderer* getRenderer();
+  SDL_Renderer *getRenderer();
 
   void renderClear();
 };
-
-
-#endif //SDL2APPLICATION4_SDL_MANAGER_HPP

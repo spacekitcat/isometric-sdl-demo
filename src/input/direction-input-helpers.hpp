@@ -1,8 +1,7 @@
-#ifndef SDL2APPLICATION4_DIRECTION_INPUT_HELPERS_HPP
-#define SDL2APPLICATION4_DIRECTION_INPUT_HELPERS_HPP
+#pragma once
 
-#include <SDL.h>
 #include "../sprites/sprite-state.hpp"
+#include <SDL.h>
 
 class DirectionInputHelpers {
 public:
@@ -25,8 +24,4 @@ public:
   static bool noKeysPressed(const Uint8 *state);
 
   static SpriteStateDirectionEnum getInputDirection(const Uint8 *state);
-
 };
-
-
-#endif //SDL2APPLICATION4_DIRECTION_INPUT_HELPERS_HPP

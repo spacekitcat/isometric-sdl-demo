@@ -1,5 +1,4 @@
-#ifndef SDL2APPLICATION4_COORDINATE_MAPPER_HPP
-#define SDL2APPLICATION4_COORDINATE_MAPPER_HPP
+#pragma once
 
 #include <iostream>
 
@@ -20,12 +19,8 @@ public:
   std::pair<float, float>
   centerInScreenSpace(std::pair<float, float> worldPosition);
 
-
-  std::pair<float, float>
-  worldToScreen(std::pair<float, float> worldPosition);
+  std::pair<float, float> worldToScreen(std::pair<float, float> worldPosition);
 
   float worldXToScreenX(float worldX);
   float worldYToScreenY(float worldY);
 };
-
-#endif // SDL2APPLICATION4_COORDINATE_MAPPER_HPP

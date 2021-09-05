@@ -1,5 +1,4 @@
-#ifndef SDL2APPLICATION4_GAME_SAVE_STATE_HPP
-#define SDL2APPLICATION4_GAME_SAVE_STATE_HPP
+#pragma once
 
 #include <iostream>
 
@@ -21,5 +20,3 @@ public:
   std::pair<float, float> getTileDimensions();
   int getRenderVisibilityDistance();
 };
-
-#endif // SDL2APPLICATION4_GAME_SAVE_STATE_HPP

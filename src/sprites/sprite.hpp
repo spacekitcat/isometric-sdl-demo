@@ -1,10 +1,9 @@
-#ifndef SPRITE_H
-#define SPRITE_H
+#pragma once
 
 #include <SDL.h>
+#include <SDL_image.h>
 #include <iostream>
 #include <math.h>
-#include <SDL_image.h>
 
 #include "../render/sdl-manager.hpp"
 #include "../sprites/sprite-metadata.hpp"
@@ -29,7 +28,8 @@ public:
 
   ~Sprite();
 
-  void setSpritesheet(std::string spriteSheetPath, struct SpriteMetadata *metadata);
+  void setSpritesheet(std::string spriteSheetPath,
+                      struct SpriteMetadata *metadata);
 
   void render(float xPosition, float yPosition, int frame);
 
@@ -49,5 +49,3 @@ public:
 
   std::pair<float, float> getDimensions();
 };
-
-#endif

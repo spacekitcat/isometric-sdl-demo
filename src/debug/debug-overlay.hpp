@@ -1,5 +1,4 @@
-#ifndef SDL2APPLICATION4_DEBUG_OVERLAY_HPP
-#define SDL2APPLICATION4_DEBUG_OVERLAY_HPP
+#pragma once
 
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -7,8 +6,8 @@
 
 #include "../map/camera.hpp"
 #include "../render/sdl-manager.hpp"
-#include "../text/text-renderer.hpp"
 #include "../state/game-save-state.hpp"
+#include "../text/text-renderer.hpp"
 
 class DebugOverlay {
 private:
@@ -24,5 +23,3 @@ public:
 
   void render();
 };
-
-#endif // SDL2APPLICATION4_DEBUG_OVERLAY_HPP
