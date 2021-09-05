@@ -12,6 +12,7 @@
 #include "./util/pair-operators.hpp"
 #include "debug/debug-overlay.hpp"
 #include "input/direction-input-helpers.hpp"
+#include "map-generator/deterministic-prng.hpp"
 #include "map/camera.hpp"
 #include "map/coordinate-mapper.hpp"
 #include "map/isometric-tile-map-sector.hpp"
@@ -88,6 +89,7 @@ int main() {
 
   auto playerSpriteSelector = injector.create<SpriteSelector>();
   auto spriteRegistry = injector.create<SpriteRegistry>();
+  auto prng = injector.create<DeterministicPrng>();
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
 
