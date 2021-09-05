@@ -54,7 +54,7 @@ public:
 
   std::pair<int, int> getTilesPerAxis();
 
-  void render(std::pair<int, int> screenDimensions);
+  void render(std::pair<int, int> screenDimensions, bool debug);
 };
 
 #endif // SDL2APPLICATION4_ISOMETRIC_TILE_MAP_SECTOR_HPP

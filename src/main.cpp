@@ -163,7 +163,9 @@ int main() {
     for (int j = -1; j <= 1; ++j) {
       sectors.push_back(std::make_shared<IsometricTileMapSector>(
           sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
-          std::make_pair(i * gameSaveState.getSectorDimensions().first, j * gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
+          std::make_pair(
+              i * gameSaveState.getSectorDimensions().first,
+              j * gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
           gameSaveState));
     }
   }
@@ -175,6 +177,7 @@ int main() {
   SpriteState spriteState = {.direction = North};
   // END: MAP GEN
 
+  bool debug = false;
   /* Game loop */
   while (true) {
     SDL_Event event;
@@ -191,6 +194,9 @@ int main() {
         case SDLK_ESCAPE:
         case SDLK_q:
           return 0;
+          break;
+        case SDLK_F12:
+          debug = !debug;
           break;
         }
       }
@@ -246,7 +252,7 @@ int main() {
     /* Render map sectors */
     for (auto sector : sectors) {
       if (sector->isVisible()) {
-        sector->render(sdlManager->getWindowDimensions());
+        sector->render(sdlManager->getWindowDimensions(), debug);
       }
     }
 
@@ -256,7 +262,9 @@ int main() {
       playerSprite->renderTick(&playerPositioningRect);
     }
 
-    debugOverlay.render();
+    if (debug) {
+      debugOverlay.render();
+    }
 
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
