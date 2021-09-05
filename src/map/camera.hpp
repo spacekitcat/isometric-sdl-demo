@@ -1,5 +1,4 @@
-#ifndef SDL2APPLICATION4_CAMERA_HPP
-#define SDL2APPLICATION4_CAMERA_HPP
+#pragma once
 
 #include <iostream>
 
@@ -12,6 +11,3 @@ public:
 
   void applyDelta(std::pair<float, float> delta);
 };
-
-
-#endif //SDL2APPLICATION4_CAMERA_HPP

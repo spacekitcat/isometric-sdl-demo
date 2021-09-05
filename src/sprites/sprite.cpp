@@ -103,4 +103,6 @@ float Sprite::getFrameHeight() { return _spritesheetSurface->h / _rows; }
 
 void Sprite::setRenderBoundingBox(bool render) { _drawBoundingBox = render; }
 
-std::pair<float, float> Sprite::getDimensions() { return std::make_pair(this->getFrameWidth(), this->getFrameHeight()); }
+std::pair<float, float> Sprite::getDimensions() {
+  return std::make_pair(this->getFrameWidth(), this->getFrameHeight());
+}

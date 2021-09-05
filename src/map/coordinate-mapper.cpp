@@ -10,9 +10,8 @@ CoordinateMapper::CoordinateMapper(std::shared_ptr<SDLManager> sdlManager,
 std::pair<float, float>
 CoordinateMapper::centerInScreenSpace(std::pair<float, float> worldPosition) {
 
-  return std::make_pair<float, float>(
-      worldXToScreenX(worldPosition.first),
-      worldYToScreenY(worldPosition.second));
+  return std::make_pair<float, float>(worldXToScreenX(worldPosition.first),
+                                      worldYToScreenY(worldPosition.second));
 }
 
 float CoordinateMapper::worldXToScreenX(float worldX) {
@@ -29,6 +28,5 @@ std::pair<float, float>
 CoordinateMapper::worldToScreen(std::pair<float, float> worldPosition) {
 
   return PairOperators::addPair(
-      this->centerInScreenSpace(_camera->getPosition()),
-      worldPosition);
+      this->centerInScreenSpace(_camera->getPosition()), worldPosition);
 }

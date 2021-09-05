@@ -1,17 +1,16 @@
-#ifndef SDL2APPLICATION4_ISOMETRIC_TILE_MAP_SECTOR_HPP
-#define SDL2APPLICATION4_ISOMETRIC_TILE_MAP_SECTOR_HPP
+#pragma once
 
 #include <SDL.h>
 #include <iostream>
 #include <random>
 #include <vector>
 
-#include "../render/sdl-manager.hpp"
-#include "../sprites/sprite-registry.hpp"
 #include "../map/camera.hpp"
 #include "../map/coordinate-mapper.hpp"
-#include "../text/text-renderer.hpp"
+#include "../render/sdl-manager.hpp"
+#include "../sprites/sprite-registry.hpp"
 #include "../state/game-save-state.hpp"
+#include "../text/text-renderer.hpp"
 
 class IsometricTileMapSector {
 private:
@@ -56,5 +55,3 @@ public:
 
   void render(std::pair<int, int> screenDimensions, bool debug);
 };
-
-#endif // SDL2APPLICATION4_ISOMETRIC_TILE_MAP_SECTOR_HPP
