@@ -36,9 +36,7 @@ IsometricTileMapSector::IsometricTileMapSector(
   }
 }
 
-IsometricTileMapSector::~IsometricTileMapSector() {
-
-}
+IsometricTileMapSector::~IsometricTileMapSector() {}
 
 bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
   float padding = _gameSaveState.getRenderVisibilityDistance();
@@ -88,7 +86,8 @@ std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
   return _tilesPerAxis;
 }
 
-void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
+void IsometricTileMapSector::render(std::pair<int, int> screenDimensions,
+                                    bool debug) {
 
   std::pair<float, float> dim = getDimensions();
   std::pair<float, float> bottomLeftPointScreenCoords =
@@ -133,10 +132,12 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
     };
     SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 0, 255, 0, 255);
     SDL_RenderDrawRect(_sdlManager->getRenderer(), &rectangleRect);
-    _textRenderer.renderText(
-        str(boost::format("%1$+5d%2$+5d") % round(getBottomLeft().first) %
-            round(getBottomLeft().second)),
-        _coordinateMapper.worldToScreen(getBottomLeft()));
+    if (debug) {
+      _textRenderer.renderText(
+          str(boost::format("%1$+5d%2$+5d") % round(getBottomLeft().first) %
+              round(getBottomLeft().second)),
+          _coordinateMapper.worldToScreen(getBottomLeft()));
+    }
   }
 }
 
