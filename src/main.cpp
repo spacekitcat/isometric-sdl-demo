@@ -58,7 +58,9 @@ int main() {
 
   const auto injector = di::make_injector(
       di::bind<SDLManager>().to<SDLManager>().in(di::singleton),
-      di::bind<Camera>().to<Camera>().in(di::singleton));
+      di::bind<Camera>().to<Camera>().in(di::singleton),
+      di::bind<DeterministicPrng>().to<DeterministicPrng>().in(di::singleton));
+
   auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
   auto camera = injector.create<std::shared_ptr<Camera>>();
   auto debugOverlay = injector.create<DebugOverlay>();
@@ -89,7 +91,7 @@ int main() {
 
   auto playerSpriteSelector = injector.create<SpriteSelector>();
   auto spriteRegistry = injector.create<SpriteRegistry>();
-  auto prng = injector.create<DeterministicPrng>();
+  auto prng = injector.create<std::shared_ptr<DeterministicPrng>>();
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
 
@@ -168,7 +170,7 @@ int main() {
           std::make_pair(
               i * gameSaveState.getSectorDimensions().first,
               j * gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
-          gameSaveState));
+          gameSaveState, prng));
     }
   }
   SDL_FRect playerPositioningRect = {

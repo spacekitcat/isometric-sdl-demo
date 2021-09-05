@@ -1,16 +1,15 @@
 #include "isometric-tile-map-sector.hpp"
-
 #include "../util/pair-operators.hpp"
 #include "coordinate-mapper.hpp"
-#include "math.h"
 
 IsometricTileMapSector::IsometricTileMapSector(
     std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera,
     SpriteRegistry &spriteRegistry, CoordinateMapper &coordinateMapper,
     TextRenderer &textRenderer, std::pair<float, float> bottomLeft,
-    GameSaveState &gameSaveState)
+    GameSaveState &gameSaveState,
+    std::shared_ptr<DeterministicPrng> deterministicPrng)
     : _coordinateMapper(coordinateMapper), _textRenderer(textRenderer),
-      _gameSaveState(gameSaveState) {
+      _gameSaveState(gameSaveState), _deterministicPrng(deterministicPrng) {
 
   _sdlManager = sdlManager;
   _camera = camera;
@@ -25,13 +24,12 @@ IsometricTileMapSector::IsometricTileMapSector(
       round(_sectorDimensions.second /
             (_gameSaveState.getTileDimensions().second / 2)));
   _tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
-  std::random_device r;
-  std::default_random_engine e1(r());
-  e1.seed(gameSaveState.getGameSeed());
-  std::uniform_int_distribution<int> uniform_dist(0, 1);
+
   for (int y = 0; y < _tilesPerAxis.second; y++) {
     for (int x = 0; x < _tilesPerAxis.first; x++) {
-      _tileMap[y * _tilesPerAxis.first + x] = uniform_dist(e1);
+      int rnd = _deterministicPrng->generateNextRandomNumber(0, 1);
+      std::cout << rnd << std::endl;
+      _tileMap[y * _tilesPerAxis.first + x] = rnd;
     }
   }
 }

@@ -1,10 +1,8 @@
 #pragma once
 
 #include <SDL.h>
-#include <iostream>
-#include <random>
-#include <vector>
 
+#include "../map-generator/deterministic-prng.hpp"
 #include "../map/camera.hpp"
 #include "../map/coordinate-mapper.hpp"
 #include "../render/sdl-manager.hpp"
@@ -16,6 +14,7 @@ class IsometricTileMapSector {
 private:
   std::shared_ptr<SDLManager> _sdlManager;
   std::shared_ptr<Camera> _camera;
+  std::shared_ptr<DeterministicPrng> _deterministicPrng;
   CoordinateMapper &_coordinateMapper;
   TextRenderer &_textRenderer;
   std::pair<float, float> _position;
@@ -24,7 +23,7 @@ private:
   std::pair<int, int> _tilesPerAxis;
   bool _drawBoundingBox;
   SpriteRegistry _spriteRegistry;
-  GameSaveState _gameSaveState;
+  GameSaveState &_gameSaveState;
   int *_tileMap;
 
 public:
@@ -34,7 +33,8 @@ public:
                          CoordinateMapper &coordinateMapper,
                          TextRenderer &textRenderer,
                          std::pair<float, float> topLeft,
-                         GameSaveState &gameSaveState);
+                         GameSaveState &gameSaveState,
+                         std::shared_ptr<DeterministicPrng> deterministicPrng);
 
   ~IsometricTileMapSector();
 
