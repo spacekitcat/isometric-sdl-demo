@@ -11,6 +11,13 @@ SDLManager::SDLManager() {
   _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
 }
 
+SDLManager::~SDLManager() {
+  std::cout << "Destroying SDLManager" << std::endl;
+  SDL_DestroyRenderer(_renderer);
+  SDL_DestroyWindow(_window);
+  SDL_Quit();
+}
+
 std::pair<int, int> SDLManager::getWindowDimensions() {
   return _screenDimensions;
 }

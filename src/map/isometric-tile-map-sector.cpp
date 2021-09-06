@@ -30,7 +30,6 @@ IsometricTileMapSector::IsometricTileMapSector(
   for (int y = 0; y < _tilesPerAxis.second; y++) {
     for (int x = 0; x < _tilesPerAxis.first; x++) {
       int rnd = _deterministicPrng->generateNextRandomNumber(0, 1);
-      std::cout << rnd << std::endl;
       _tileMap[y * _tilesPerAxis.first + x] = rnd;
     }
   }

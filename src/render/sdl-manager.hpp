@@ -13,6 +13,7 @@ private:
 
 public:
   SDLManager();
+  ~SDLManager();
 
   std::pair<int, int> getWindowDimensions();
 

@@ -187,7 +187,8 @@ int main() {
   /* Game loop */
   camera->setTarget(&player);
   long int lastFrameTicks = SDL_GetTicks();
-  while (true) {
+  bool running = true;
+  while (running) {
     SDL_Event event;
 
     /* Process events and session control level */
@@ -201,8 +202,7 @@ int main() {
         switch (event.key.keysym.sym) {
         case SDLK_ESCAPE:
         case SDLK_q:
-          return 0;
-          break;
+          running = false;
         case SDLK_F12:
           configuration->setIsDebugMode(!configuration->getIsDebugMode());
           break;
