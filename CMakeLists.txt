@@ -31,6 +31,7 @@ add_subdirectory(lib/SDL_FontCache)
 add_executable(
   SDL2Test
   src/Main.cpp
+  src/player/player.cpp
   src/map/Camera.cpp
   src/render/sdl-manager.cpp
   src/text/text-renderer.cpp
@@ -52,7 +53,11 @@ target_link_libraries(SDL2Test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_
 # BEGIN: Test setup
 add_executable(
   tests
-  src/test/test.cpp
+  src/test/test-main.cpp
+  src/test/pair-operators/add-pair.cpp
+  src/test/pair-operators/divide-pair-by.cpp
+  src/test/pair-operators/multiply-pair-by.cpp
+  src/player/player.cpp
   src/render/sdl-manager.cpp
   src/sprites/sprite.cpp
   src/util/pair-operators.cpp

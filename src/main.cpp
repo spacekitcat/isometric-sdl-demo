@@ -66,6 +66,7 @@ int main() {
   auto debugOverlay = injector.create<DebugOverlay>();
   auto coordinateMapper = injector.create<CoordinateMapper>();
   auto textRenderer = injector.create<TextRenderer>();
+  auto player = injector.create<Player>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area
@@ -183,6 +184,8 @@ int main() {
 
   bool debug = false;
   /* Game loop */
+  camera->setTarget(&player);
+  long int lastFrameTicks = SDL_GetTicks();
   while (true) {
     SDL_Event event;
 
@@ -206,7 +209,7 @@ int main() {
       }
     }
 
-    const int speed = 2;
+    const int speed = 400;
     /* Read and process input control keys */
     const Uint8 *keyState = SDL_GetKeyboardState(NULL);
     if (!DirectionInputHelpers::noKeysPressed(keyState)) {
@@ -215,40 +218,43 @@ int main() {
 
       switch (spriteState.direction) {
       case NorthWest:
-        camera->applyDelta(
+        player.setVelocity(
             std::make_pair(-calculateHorizontalVectorComponent(speed),
                            -calculateVerticalVectorComponent(-speed)));
         break;
       case NorthEast:
-        camera->applyDelta(
+        player.setVelocity(
             std::make_pair(+calculateHorizontalVectorComponent(speed),
                            -calculateVerticalVectorComponent(-speed)));
         break;
       case SouthEast:
-        camera->applyDelta(
+        player.setVelocity(
             std::make_pair(+calculateHorizontalVectorComponent(speed),
                            -calculateVerticalVectorComponent(speed)));
         break;
       case SouthWest:
-        camera->applyDelta(
+        player.setVelocity(
             std::make_pair(-calculateHorizontalVectorComponent(speed),
                            -calculateVerticalVectorComponent(speed)));
         break;
       case South:
-        camera->applyDelta(std::make_pair(0, -speed));
+        player.setVelocity(std::make_pair(0, -speed));
         break;
       case North:
-        camera->applyDelta(std::make_pair(0, +speed));
+        player.setVelocity(std::make_pair(0, +speed));
         break;
       case East:
-        camera->applyDelta(std::make_pair(+speed, 0));
+        player.setVelocity(std::make_pair(+speed, 0));
         break;
       case West:
-        camera->applyDelta(std::make_pair(-speed, 0));
+        player.setVelocity(std::make_pair(-speed, 0));
         break;
       case Idle:
+        player.setVelocity(std::make_pair(0, 0));
         break;
       }
+    } else {
+      player.setVelocity(std::make_pair(0, 0));
     }
 
     sdlManager->renderClear();
@@ -269,11 +275,14 @@ int main() {
     if (debug) {
       debugOverlay.render();
     }
+    player.update(SDL_GetTicks() - lastFrameTicks);
+    camera->update(SDL_GetTicks() - lastFrameTicks);
+    lastFrameTicks = SDL_GetTicks();
 
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
     SDL_RenderPresent(sdlManager->getRenderer());
-    SDL_Delay(10);
+    SDL_Delay(16);
   }
 
   return 0;

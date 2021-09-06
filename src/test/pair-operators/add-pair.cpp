@@ -1,9 +1,7 @@
-#define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-
 #include <iostream>
 
-#include "../util/pair-operators.hpp"
+#include "../../util/pair-operators.hpp"
 
 TEST_CASE("Adds two pairs positive number pairs correctly",
           "[Util::PairOperators::addPair]") {
