@@ -1,7 +1,7 @@
 #include "configuration.hpp"
 
 Configuration::Configuration() {
-  _targetFps = 60;
+  _targetFps = 70;
   _isDebugMode = false;
 }
 

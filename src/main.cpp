@@ -273,11 +273,12 @@ int main() {
       playerSprite->renderTick(&playerPositioningRect);
     }
 
+    long int tickInterval = SDL_GetTicks() - lastFrameTicks;
     if (configuration.getIsDebugMode()) {
-      debugOverlay.render();
+      debugOverlay.render(tickInterval);
     }
-    player.update(SDL_GetTicks() - lastFrameTicks);
-    camera->update(SDL_GetTicks() - lastFrameTicks);
+    player.update(tickInterval);
+    camera->update(tickInterval);
     lastFrameTicks = SDL_GetTicks();
 
     /* redraw */
