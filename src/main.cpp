@@ -282,7 +282,6 @@ int main() {
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
     SDL_RenderPresent(sdlManager->getRenderer());
-    SDL_Delay(1000 / configuration->getTargetFps());
   }
 
   return 0;
