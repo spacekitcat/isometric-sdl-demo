@@ -59,7 +59,8 @@ int main() {
   const auto injector = di::make_injector(
       di::bind<SDLManager>().to<SDLManager>().in(di::singleton),
       di::bind<Camera>().to<Camera>().in(di::singleton),
-      di::bind<DeterministicPrng>().to<DeterministicPrng>().in(di::singleton));
+      di::bind<DeterministicPrng>().to<DeterministicPrng>().in(di::singleton),
+      di::bind<Configuration>().to<Configuration>().in(di::singleton));
 
   auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
   auto camera = injector.create<std::shared_ptr<Camera>>();
@@ -67,7 +68,7 @@ int main() {
   auto coordinateMapper = injector.create<CoordinateMapper>();
   auto textRenderer = injector.create<TextRenderer>();
   auto player = injector.create<Player>();
-  auto configuration = injector.create<Configuration>();
+  auto configuration = injector.create<std::shared_ptr<Configuration>>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area
@@ -203,7 +204,7 @@ int main() {
           return 0;
           break;
         case SDLK_F12:
-          configuration.setIsDebugMode(!configuration.getIsDebugMode());
+          configuration->setIsDebugMode(!configuration->getIsDebugMode());
           break;
         }
       }
@@ -263,7 +264,7 @@ int main() {
     for (auto sector : sectors) {
       if (sector->isVisible()) {
         sector->render(sdlManager->getWindowDimensions(),
-                       configuration.getIsDebugMode());
+                       configuration->getIsDebugMode());
       }
     }
 
@@ -274,7 +275,7 @@ int main() {
     }
 
     long int tickInterval = SDL_GetTicks() - lastFrameTicks;
-    if (configuration.getIsDebugMode()) {
+    if (configuration->getIsDebugMode()) {
       debugOverlay.render(tickInterval);
     }
     player.update(tickInterval);
@@ -284,7 +285,7 @@ int main() {
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
     SDL_RenderPresent(sdlManager->getRenderer());
-    SDL_Delay(1000 / configuration.getTargetFps());
+    SDL_Delay(1000 / configuration->getTargetFps());
   }
 
   return 0;
