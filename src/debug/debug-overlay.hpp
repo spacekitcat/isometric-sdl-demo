@@ -21,5 +21,5 @@ public:
                std::shared_ptr<Camera> camera, TextRenderer &textRenderer,
                GameSaveState &gameSaveState);
 
-  void render();
+  void render(long int ticks);
 };
