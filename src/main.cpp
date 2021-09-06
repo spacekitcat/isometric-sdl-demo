@@ -173,7 +173,7 @@ int main() {
           std::make_pair(
               i * gameSaveState.getSectorDimensions().first,
               j * gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
-          gameSaveState, prng));
+          gameSaveState, prng, configuration));
     }
   }
   SDL_FRect playerPositioningRect = {
@@ -263,8 +263,7 @@ int main() {
     /* Render map sectors */
     for (auto sector : sectors) {
       if (sector->isVisible()) {
-        sector->render(sdlManager->getWindowDimensions(),
-                       configuration->getIsDebugMode());
+        sector->render(sdlManager->getWindowDimensions());
       }
     }
 
@@ -275,9 +274,7 @@ int main() {
     }
 
     long int tickInterval = SDL_GetTicks() - lastFrameTicks;
-    if (configuration->getIsDebugMode()) {
-      debugOverlay.render(tickInterval);
-    }
+    debugOverlay.render(tickInterval);
     player.update(tickInterval);
     camera->update(tickInterval);
     lastFrameTicks = SDL_GetTicks();

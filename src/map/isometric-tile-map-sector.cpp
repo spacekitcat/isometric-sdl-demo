@@ -7,9 +7,11 @@ IsometricTileMapSector::IsometricTileMapSector(
     SpriteRegistry &spriteRegistry, CoordinateMapper &coordinateMapper,
     TextRenderer &textRenderer, std::pair<float, float> bottomLeft,
     GameSaveState &gameSaveState,
-    std::shared_ptr<DeterministicPrng> deterministicPrng)
+    std::shared_ptr<DeterministicPrng> deterministicPrng,
+    std::shared_ptr<Configuration> configuration)
     : _coordinateMapper(coordinateMapper), _textRenderer(textRenderer),
-      _gameSaveState(gameSaveState), _deterministicPrng(deterministicPrng) {
+      _gameSaveState(gameSaveState), _deterministicPrng(deterministicPrng),
+      _configuration(configuration) {
 
   _sdlManager = sdlManager;
   _camera = camera;
@@ -84,8 +86,7 @@ std::pair<int, int> IsometricTileMapSector::getTilesPerAxis() {
   return _tilesPerAxis;
 }
 
-void IsometricTileMapSector::render(std::pair<int, int> screenDimensions,
-                                    bool debug) {
+void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
 
   std::pair<float, float> dim = getDimensions();
   std::pair<float, float> bottomLeftPointScreenCoords =
@@ -128,9 +129,10 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions,
         .w = getDimensions().first,
         .h = -getDimensions().second,
     };
-    SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 0, 255, 0, 255);
-    SDL_RenderDrawRect(_sdlManager->getRenderer(), &rectangleRect);
-    if (debug) {
+    if (_configuration->getIsDebugMode()) {
+      SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 0, 255, 0, 255);
+      SDL_RenderDrawRect(_sdlManager->getRenderer(), &rectangleRect);
+
       _textRenderer.renderText(
           str(boost::format("%1$+5d%2$+5d") % round(getBottomLeft().first) %
               round(getBottomLeft().second)),
