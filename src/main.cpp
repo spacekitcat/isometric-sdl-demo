@@ -10,6 +10,7 @@
 #include <boost/di.hpp>
 
 #include "./util/pair-operators.hpp"
+#include "config/configuration.hpp"
 #include "debug/debug-overlay.hpp"
 #include "input/direction-input-helpers.hpp"
 #include "map-generator/deterministic-prng.hpp"
@@ -22,7 +23,6 @@
 #include "sprites/sprite-selector.hpp"
 #include "sprites/sprite-state.hpp"
 #include "sprites/sprite.hpp"
-#include "state/game-save-state.hpp"
 
 namespace di = boost::di;
 
@@ -67,6 +67,7 @@ int main() {
   auto coordinateMapper = injector.create<CoordinateMapper>();
   auto textRenderer = injector.create<TextRenderer>();
   auto player = injector.create<Player>();
+  auto configuration = injector.create<Configuration>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area
@@ -182,7 +183,6 @@ int main() {
   SpriteState spriteState = {.direction = North};
   // END: MAP GEN
 
-  bool debug = false;
   /* Game loop */
   camera->setTarget(&player);
   long int lastFrameTicks = SDL_GetTicks();
@@ -203,7 +203,7 @@ int main() {
           return 0;
           break;
         case SDLK_F12:
-          debug = !debug;
+          configuration.setIsDebugMode(!configuration.getIsDebugMode());
           break;
         }
       }
@@ -262,7 +262,8 @@ int main() {
     /* Render map sectors */
     for (auto sector : sectors) {
       if (sector->isVisible()) {
-        sector->render(sdlManager->getWindowDimensions(), debug);
+        sector->render(sdlManager->getWindowDimensions(),
+                       configuration.getIsDebugMode());
       }
     }
 
@@ -272,7 +273,7 @@ int main() {
       playerSprite->renderTick(&playerPositioningRect);
     }
 
-    if (debug) {
+    if (configuration.getIsDebugMode()) {
       debugOverlay.render();
     }
     player.update(SDL_GetTicks() - lastFrameTicks);
@@ -282,7 +283,7 @@ int main() {
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
     SDL_RenderPresent(sdlManager->getRenderer());
-    SDL_Delay(16);
+    SDL_Delay(1000 / configuration.getTargetFps());
   }
 
   return 0;

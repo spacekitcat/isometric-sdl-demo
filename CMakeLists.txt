@@ -34,6 +34,7 @@ add_executable(
   src/player/player.cpp
   src/map/Camera.cpp
   src/render/sdl-manager.cpp
+  src/config/configuration.cpp
   src/text/text-renderer.cpp
   src/state/game-save-state.cpp
   src/debug/debug-overlay.cpp
