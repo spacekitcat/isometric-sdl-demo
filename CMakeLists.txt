@@ -64,7 +64,9 @@ add_executable(
   src/test/sector-spatial-utils/from-key-to-integer-pair.cpp
   src/test/sector-spatial-utils/get-neighbours.cpp
   src/map/sector-spatial-utils.cpp
+  src/test/world-to-map-sector-index/get-map-index.cpp
   src/map/world-to-map-sector-index.cpp
+  src/config/configuration.cpp
   src/player/player.cpp
   src/render/sdl-manager.cpp
   src/sprites/sprite.cpp
