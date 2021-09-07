@@ -34,6 +34,7 @@ add_executable(
   src/player/player.cpp
   src/map/sector-spatial-utils.cpp
   src/map/Camera.cpp
+  src/map/world-to-map-sector-index.cpp
   src/render/sdl-manager.cpp
   src/config/configuration.cpp
   src/text/text-renderer.cpp
@@ -63,6 +64,7 @@ add_executable(
   src/test/sector-spatial-utils/from-key-to-integer-pair.cpp
   src/test/sector-spatial-utils/get-neighbours.cpp
   src/map/sector-spatial-utils.cpp
+  src/map/world-to-map-sector-index.cpp
   src/player/player.cpp
   src/render/sdl-manager.cpp
   src/sprites/sprite.cpp
