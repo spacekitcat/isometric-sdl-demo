@@ -1,13 +1,13 @@
+#include "leveldb/db.h"
 #include <SDL.h>
 #include <SDL_keyboard.h>
 #include <SDL_mixer.h>
+#include <boost/di.hpp>
 #include <iomanip>
 #include <list>
 #include <math.h>
 #include <memory>
 #include <sstream>
-
-#include <boost/di.hpp>
 
 #include "./util/pair-operators.hpp"
 #include "config/configuration.hpp"
@@ -37,6 +37,18 @@ float calculateVerticalVectorComponent(float vectorMagnitude) {
 }
 
 int main() {
+  leveldb::DB *db;
+  leveldb::Options options;
+  options.create_if_missing = true;
+  leveldb::Status status = leveldb::DB::Open(options, "./test-map-db", &db);
+  assert(status.ok());
+
+  db->Put(leveldb::WriteOptions(), "0,0", "F");
+
+  std::string value;
+  leveldb::Status s = db->Get(leveldb::ReadOptions(), "0,0", &value);
+  std::cout << value << std::endl;
+
   // BEGIN: SDL Setup area
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());

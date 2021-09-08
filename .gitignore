@@ -3,3 +3,4 @@ render-build-temp
 .DS_Store
 cmake-build-debug
 .idea
+test-map-db

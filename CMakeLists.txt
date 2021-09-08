@@ -19,6 +19,7 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_MIXER REQUIRED)
 find_package(SDL2_ttf REQUIRED)
+find_package(LevelDB REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${SDL2_INCLUDE_DIRS})
@@ -49,7 +50,15 @@ add_executable(
   src/sprites/sprite-registry.cpp
   src/map-generator/deterministic-prng.cpp)
 
-target_link_libraries(SDL2Test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2TTF_LIBRARY} ${Boost_LIBRARIES} FontCache)
+target_link_libraries(
+  SDL2Test
+  ${LevelDB_LIBRARIES}
+  ${SDL2_LIBRARIES}
+  ${SDL2_IMAGE_LIBRARIES}
+  ${SDL2_MIXER_LIBRARIES}
+  ${SDL2TTF_LIBRARY}
+  ${Boost_LIBRARIES}
+  FontCache)
 
 # BEGIN: Test setup
 add_executable(
@@ -65,7 +74,11 @@ add_executable(
   src/state/game-save-state.cpp
   src/map-generator/deterministic-prng.cpp)
 
-target_link_libraries(tests PRIVATE Catch2::Catch2 ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(
+  tests PRIVATE Catch2::Catch2
+  ${SDL2_LIBRARIES}
+  ${SDL2_IMAGE_LIBRARIES}
+  ${Boost_LIBRARIES})
 
 include(CTest)
 include(Catch)
