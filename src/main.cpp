@@ -1,13 +1,13 @@
+#include "rocksdb/db.h"
 #include <SDL.h>
 #include <SDL_keyboard.h>
 #include <SDL_mixer.h>
+#include <boost/di.hpp>
 #include <iomanip>
 #include <list>
 #include <math.h>
 #include <memory>
 #include <sstream>
-
-#include <boost/di.hpp>
 
 #include "./util/pair-operators.hpp"
 #include "config/configuration.hpp"
@@ -37,6 +37,12 @@ float calculateVerticalVectorComponent(float vectorMagnitude) {
 }
 
 int main() {
+  rocksdb::DB *db;
+  rocksdb::Options options;
+  options.create_if_missing = true;
+  rocksdb::Status status = rocksdb::DB::Open(options, "/tmp/testdb", &db);
+  assert(status.ok());
+
   // BEGIN: SDL Setup area
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
