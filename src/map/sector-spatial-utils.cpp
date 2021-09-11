@@ -10,5 +10,9 @@ SectorSpatialUtils::fromIntegerPairToKey(std::pair<int, int> integerPair) {
 }
 
 std::pair<int, int> SectorSpatialUtils::fromKeyToIntegerPair(std::string key) {
-  return std::make_pair<int, int>(0, 0);
+  std::string delimiter = ",";
+  int xValue = std::stoi(key.substr(0, key.find(delimiter)));
+  int yValue = std::stoi(key.substr(key.find(delimiter) + 1));
+
+  return std::make_pair(xValue, yValue);
 }
