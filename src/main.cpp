@@ -17,6 +17,7 @@
 #include "map/camera.hpp"
 #include "map/coordinate-mapper.hpp"
 #include "map/isometric-tile-map-sector.hpp"
+#include "map/sector-spatial-utils.hpp"
 #include "render/sdl-manager.hpp"
 #include "sprites/sprite-metadata.hpp"
 #include "sprites/sprite-registry.hpp"
@@ -163,19 +164,25 @@ int main() {
   // but it will need some mediator singleton to manage
   // all possible gameState objects.
   auto gameSaveState = injector.create<GameSaveState>();
+  auto sectorSpatialUtils = injector.create<SectorSpatialUtils>();
 
   // BEGIN: MAP GEN
+  auto neighbours =
+      sectorSpatialUtils.getNeighbours(std::make_pair<int, int>(0, 0));
   std::list<std::shared_ptr<IsometricTileMapSector>> sectors;
-  for (int i = -1; i <= 1; ++i) {
-    for (int j = -1; j <= 1; ++j) {
-      sectors.push_back(std::make_shared<IsometricTileMapSector>(
-          sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
-          std::make_pair(
-              i * gameSaveState.getSectorDimensions().first,
-              j * gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
-          gameSaveState, prng, configuration));
-    }
+
+  neighbours.push_back(std::make_pair(0, 0));
+  for (std::list<std::pair<int, int>>::iterator it = neighbours.begin();
+       it != neighbours.end(); ++it) {
+    sectors.push_back(std::make_shared<IsometricTileMapSector>(
+        sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
+        std::make_pair(
+            it->first * gameSaveState.getSectorDimensions().first,
+            it->second *
+                gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
+        gameSaveState, prng, configuration));
   }
+
   SDL_FRect playerPositioningRect = {
       .x = coordinateMapper.centerInScreenSpace(camera->getPosition()).first,
       .y = coordinateMapper.centerInScreenSpace(camera->getPosition()).second,
