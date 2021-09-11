@@ -10,4 +10,5 @@ public:
   ~SectorSpatialUtils();
 
   std::string fromIntegerPairToKey(std::pair<int, int> integerPair);
+  std::pair<int, int> fromKeyToIntegerPair(std::string key);
 };

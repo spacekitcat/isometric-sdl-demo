@@ -60,6 +60,7 @@ add_executable(
   src/test/pair-operators/divide-pair-by.cpp
   src/test/pair-operators/multiply-pair-by.cpp
   src/test/sector-spatial-utils/from-integer-pair-to-key.cpp
+  src/test/sector-spatial-utils/from-key-to-integer-pair.cpp
   src/map/sector-spatial-utils.cpp
   src/player/player.cpp
   src/render/sdl-manager.cpp
