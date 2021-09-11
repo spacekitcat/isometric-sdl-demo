@@ -21,14 +21,14 @@ std::list<std::pair<int, int>>
 SectorSpatialUtils::getNeighbours(std::pair<int, int> integerPair) {
   std::list<std::pair<int, int>> neighbours;
 
-  neighbours.push_back(std::make_pair(0, 0));
-  neighbours.push_back(std::make_pair(0, 0));
-  neighbours.push_back(std::make_pair(0, 0));
-  neighbours.push_back(std::make_pair(0, 0));
-  neighbours.push_back(std::make_pair(0, 0));
-  neighbours.push_back(std::make_pair(0, 0));
-  neighbours.push_back(std::make_pair(0, 0));
-  neighbours.push_back(std::make_pair(0, 0));
+  neighbours.push_back(std::make_pair(-1, 0));
+  neighbours.push_back(std::make_pair(-1, 1));
+  neighbours.push_back(std::make_pair(0, 1));
+  neighbours.push_back(std::make_pair(1, 1));
+  neighbours.push_back(std::make_pair(1, 0));
+  neighbours.push_back(std::make_pair(1, -1));
+  neighbours.push_back(std::make_pair(0, -1));
+  neighbours.push_back(std::make_pair(-1, -1));
 
   return neighbours;
 }
