@@ -35,3 +35,41 @@ TEST_CASE("Correctly gets the neighbours for 0,0",
   REQUIRE(listContains(result, std::make_pair<int, int>(0, -1)));
   REQUIRE(listContains(result, std::make_pair<int, int>(-1, -1)));
 }
+
+TEST_CASE("Correctly gets the neighbours for 100,100",
+          "[Map::SectorSpatialUtils::getNeighbours]") {
+
+  std::pair<int, int> specifiedPair = std::make_pair(100, 100);
+  auto sut = new SectorSpatialUtils();
+
+  auto result = sut->getNeighbours(specifiedPair);
+
+  REQUIRE(result.size() == 8);
+  REQUIRE(listContains(result, std::make_pair<int, int>(99, 100)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(99, 101)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(100, 101)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(101, 101)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(101, 100)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(101, 99)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(100, 99)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(99, 99)));
+}
+
+TEST_CASE("Correctly gets the neighbours for -100,-100",
+          "[Map::SectorSpatialUtils::getNeighbours]") {
+
+  std::pair<int, int> specifiedPair = std::make_pair(-100, -100);
+  auto sut = new SectorSpatialUtils();
+
+  auto result = sut->getNeighbours(specifiedPair);
+
+  REQUIRE(result.size() == 8);
+  REQUIRE(listContains(result, std::make_pair<int, int>(-99, -100)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-99, -101)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-100, -101)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-101, -101)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-101, -100)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-101, -99)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-100, -99)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-99, -99)));
+}
