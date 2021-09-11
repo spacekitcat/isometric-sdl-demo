@@ -16,3 +16,19 @@ std::pair<int, int> SectorSpatialUtils::fromKeyToIntegerPair(std::string key) {
 
   return std::make_pair(xValue, yValue);
 }
+
+std::list<std::pair<int, int>>
+SectorSpatialUtils::getNeighbours(std::pair<int, int> integerPair) {
+  std::list<std::pair<int, int>> neighbours;
+
+  neighbours.push_back(std::make_pair(0, 0));
+  neighbours.push_back(std::make_pair(0, 0));
+  neighbours.push_back(std::make_pair(0, 0));
+  neighbours.push_back(std::make_pair(0, 0));
+  neighbours.push_back(std::make_pair(0, 0));
+  neighbours.push_back(std::make_pair(0, 0));
+  neighbours.push_back(std::make_pair(0, 0));
+  neighbours.push_back(std::make_pair(0, 0));
+
+  return neighbours;
+}
