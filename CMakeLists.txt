@@ -32,6 +32,7 @@ add_executable(
   SDL2Test
   src/Main.cpp
   src/player/player.cpp
+  src/map/sector-spatial-utils.cpp
   src/map/Camera.cpp
   src/render/sdl-manager.cpp
   src/config/configuration.cpp
@@ -58,6 +59,8 @@ add_executable(
   src/test/pair-operators/add-pair.cpp
   src/test/pair-operators/divide-pair-by.cpp
   src/test/pair-operators/multiply-pair-by.cpp
+  src/test/sector-spatial-utils/from-integer-pair-to-key.cpp
+  src/map/sector-spatial-utils.cpp
   src/player/player.cpp
   src/render/sdl-manager.cpp
   src/sprites/sprite.cpp
