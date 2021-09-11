@@ -6,5 +6,5 @@ SectorSpatialUtils::~SectorSpatialUtils() {}
 
 std::string
 SectorSpatialUtils::fromIntegerPairToKey(std::pair<int, int> integerPair) {
-  return "0,0";
+  return str(boost::format("%1%,%2%") % integerPair.first % integerPair.second);
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/format.hpp>
 #include <iostream>
 
 class SectorSpatialUtils {
