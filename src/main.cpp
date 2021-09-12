@@ -18,6 +18,7 @@
 #include "map/coordinate-mapper.hpp"
 #include "map/isometric-tile-map-sector.hpp"
 #include "map/sector-spatial-utils.hpp"
+#include "map/world-to-map-sector-index.hpp"
 #include "render/sdl-manager.hpp"
 #include "sprites/sprite-metadata.hpp"
 #include "sprites/sprite-registry.hpp"
@@ -165,6 +166,7 @@ int main() {
   // all possible gameState objects.
   auto gameSaveState = injector.create<GameSaveState>();
   auto sectorSpatialUtils = injector.create<SectorSpatialUtils>();
+  auto worldToMapSectorIndex = injector.create<WorldToMapSectorIndex>();
 
   // BEGIN: MAP GEN
   auto neighbours =
@@ -177,9 +179,9 @@ int main() {
     sectors.push_back(std::make_shared<IsometricTileMapSector>(
         sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
         std::make_pair(
-            it->first * gameSaveState.getSectorDimensions().first,
+            it->first * configuration->getSectorDimensions().first,
             it->second *
-                gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
+                configuration->getSectorDimensions().second), // BOTTOM LEFT.
         gameSaveState, prng, configuration));
   }
 
