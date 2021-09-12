@@ -18,13 +18,14 @@ IsometricTileMapSector::IsometricTileMapSector(
 
   _spriteRegistry = spriteRegistry;
   _bottomLeft = bottomLeft;
-  _sectorDimensions = _gameSaveState.getSectorDimensions();
+  _sectorDimensions = _configuration->getSectorDimensions();
   _drawBoundingBox = true;
 
-  _tilesPerAxis = std::make_pair(
-      round(_sectorDimensions.first / _gameSaveState.getTileDimensions().first),
-      round(_sectorDimensions.second /
-            (_gameSaveState.getTileDimensions().second / 2)));
+  _tilesPerAxis =
+      std::make_pair(round(_sectorDimensions.first /
+                           _configuration->getTileDimensions().first),
+                     round(_sectorDimensions.second /
+                           (_configuration->getTileDimensions().second / 2)));
   _tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
 
   for (int y = 0; y < _tilesPerAxis.second; y++) {

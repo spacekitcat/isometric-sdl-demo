@@ -24,14 +24,14 @@ void DebugOverlay::render(long int ticks) {
 
     _textRenderer.renderText(
         str(boost::format("sector dimensions: %1$+5d %2$+5d") %
-            round(_gameSaveState.getSectorDimensions().first) %
-            round(_gameSaveState.getSectorDimensions().second)),
+            round(_configuration->getSectorDimensions().first) %
+            round(_configuration->getSectorDimensions().second)),
         std::make_pair(320, 0));
 
     _textRenderer.renderText(
         str(boost::format("       tile dimensions: %1$+5d %2$+5d") %
-            round(_gameSaveState.getTileDimensions().first) %
-            round(_gameSaveState.getTileDimensions().second)),
+            round(_configuration->getTileDimensions().first) %
+            round(_configuration->getTileDimensions().second)),
         std::make_pair(320, 16));
 
     _textRenderer.renderText(str(boost::format("Rover's Revenge")),

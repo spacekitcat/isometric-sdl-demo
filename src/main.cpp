@@ -18,6 +18,7 @@
 #include "map/coordinate-mapper.hpp"
 #include "map/isometric-tile-map-sector.hpp"
 #include "map/sector-spatial-utils.hpp"
+#include "map/world-to-map-sector-index.hpp"
 #include "render/sdl-manager.hpp"
 #include "sprites/sprite-metadata.hpp"
 #include "sprites/sprite-registry.hpp"
@@ -165,21 +166,21 @@ int main() {
   // all possible gameState objects.
   auto gameSaveState = injector.create<GameSaveState>();
   auto sectorSpatialUtils = injector.create<SectorSpatialUtils>();
+  auto worldToMapSectorIndex = injector.create<WorldToMapSectorIndex>();
 
   // BEGIN: MAP GEN
-  auto neighbours =
-      sectorSpatialUtils.getNeighbours(std::make_pair<int, int>(0, 0));
+  auto sectorIndex = worldToMapSectorIndex.getMapIndex(player.getPosition());
+  auto neighbours = sectorSpatialUtils.getNeighbours(sectorIndex);
   std::list<std::shared_ptr<IsometricTileMapSector>> sectors;
-
-  neighbours.push_back(std::make_pair(0, 0));
+  neighbours.push_back(sectorIndex);
   for (std::list<std::pair<int, int>>::iterator it = neighbours.begin();
        it != neighbours.end(); ++it) {
     sectors.push_back(std::make_shared<IsometricTileMapSector>(
         sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
         std::make_pair(
-            it->first * gameSaveState.getSectorDimensions().first,
-            it->second *
-                gameSaveState.getSectorDimensions().second), // BOTTOM LEFT.
+            it->first * configuration->getSectorDimensions().first,
+            -it->second *
+                configuration->getSectorDimensions().second), // BOTTOM LEFT.
         gameSaveState, prng, configuration));
   }
 
