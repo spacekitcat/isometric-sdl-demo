@@ -5,7 +5,7 @@
 #include "../config/configuration.hpp"
 #include "../map-generator/deterministic-prng.hpp"
 #include "../map/camera.hpp"
-#include "../map/coordinate-mapper.hpp"
+#include "../map/screen-coordinate-mapper.hpp"
 #include "../render/sdl-manager.hpp"
 #include "../sprites/sprite-registry.hpp"
 #include "../state/game-save-state.hpp"
@@ -17,7 +17,7 @@ private:
   std::shared_ptr<Camera> _camera;
   std::shared_ptr<DeterministicPrng> _deterministicPrng;
   std::shared_ptr<Configuration> _configuration;
-  CoordinateMapper &_coordinateMapper;
+  ScreenCoordinateMapper &_ScreenCoordinateMapper;
   TextRenderer &_textRenderer;
   std::pair<float, float> _position;
   std::pair<float, float> _bottomLeft;
@@ -32,7 +32,7 @@ public:
   IsometricTileMapSector(std::shared_ptr<SDLManager> sdlManager,
                          std::shared_ptr<Camera> camera,
                          SpriteRegistry &spriteRegistry,
-                         CoordinateMapper &coordinateMapper,
+                         ScreenCoordinateMapper &ScreenCoordinateMapper,
                          TextRenderer &textRenderer,
                          std::pair<float, float> topLeft,
                          GameSaveState &gameSaveState,

@@ -45,7 +45,7 @@ add_executable(
   src/input/direction-input-helpers.cpp
   src/map/isometric-tile-map-sector.cpp
   src/sprites/sprite-registry.cpp
-  src/map/coordinate-mapper.cpp
+  src/map/screen-coordinate-mapper.cpp
   src/util/pair-operators.cpp
   src/debug/debug-draw-utils.cpp
   src/sprites/sprite-registry.cpp

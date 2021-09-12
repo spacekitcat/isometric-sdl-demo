@@ -1,17 +1,17 @@
 #include "isometric-tile-map-sector.hpp"
 #include "../util/pair-operators.hpp"
-#include "coordinate-mapper.hpp"
+#include "screen-coordinate-mapper.hpp"
 
 IsometricTileMapSector::IsometricTileMapSector(
     std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera,
-    SpriteRegistry &spriteRegistry, CoordinateMapper &coordinateMapper,
-    TextRenderer &textRenderer, std::pair<float, float> bottomLeft,
-    GameSaveState &gameSaveState,
+    SpriteRegistry &spriteRegistry,
+    ScreenCoordinateMapper &ScreenCoordinateMapper, TextRenderer &textRenderer,
+    std::pair<float, float> bottomLeft, GameSaveState &gameSaveState,
     std::shared_ptr<DeterministicPrng> deterministicPrng,
     std::shared_ptr<Configuration> configuration)
-    : _coordinateMapper(coordinateMapper), _textRenderer(textRenderer),
-      _gameSaveState(gameSaveState), _deterministicPrng(deterministicPrng),
-      _configuration(configuration) {
+    : _ScreenCoordinateMapper(ScreenCoordinateMapper),
+      _textRenderer(textRenderer), _gameSaveState(gameSaveState),
+      _deterministicPrng(deterministicPrng), _configuration(configuration) {
 
   _sdlManager = sdlManager;
   _camera = camera;
@@ -90,7 +90,7 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
 
   std::pair<float, float> dim = getDimensions();
   std::pair<float, float> bottomLeftPointScreenCoords =
-      _coordinateMapper.worldToScreen(getBottomLeft());
+      _ScreenCoordinateMapper.worldToScreen(getBottomLeft());
 
   SDL_FRect tilePositionRect = {
       .x = 0,
@@ -136,7 +136,7 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
       _textRenderer.renderText(
           str(boost::format("%1$+5d%2$+5d") % round(getBottomLeft().first) %
               round(getBottomLeft().second)),
-          _coordinateMapper.worldToScreen(getBottomLeft()));
+          _ScreenCoordinateMapper.worldToScreen(getBottomLeft()));
     }
   }
 }

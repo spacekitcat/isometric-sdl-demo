@@ -15,8 +15,8 @@
 #include "input/direction-input-helpers.hpp"
 #include "map-generator/deterministic-prng.hpp"
 #include "map/camera.hpp"
-#include "map/coordinate-mapper.hpp"
 #include "map/isometric-tile-map-sector.hpp"
+#include "map/screen-coordinate-mapper.hpp"
 #include "map/sector-spatial-utils.hpp"
 #include "map/world-to-map-sector-index.hpp"
 #include "render/sdl-manager.hpp"
@@ -67,7 +67,7 @@ int main() {
   auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
   auto camera = injector.create<std::shared_ptr<Camera>>();
   auto debugOverlay = injector.create<DebugOverlay>();
-  auto coordinateMapper = injector.create<CoordinateMapper>();
+  auto screenCoordinateMapper = injector.create<ScreenCoordinateMapper>();
   auto textRenderer = injector.create<TextRenderer>();
   auto player = injector.create<Player>();
   auto configuration = injector.create<std::shared_ptr<Configuration>>();
@@ -176,7 +176,8 @@ int main() {
   for (std::list<std::pair<int, int>>::iterator it = neighbours.begin();
        it != neighbours.end(); ++it) {
     sectors.push_back(std::make_shared<IsometricTileMapSector>(
-        sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
+        sdlManager, camera, spriteRegistry, screenCoordinateMapper,
+        textRenderer,
         std::make_pair(
             it->first * configuration->getSectorDimensions().first,
             -it->second *
@@ -185,8 +186,10 @@ int main() {
   }
 
   SDL_FRect playerPositioningRect = {
-      .x = coordinateMapper.centerInScreenSpace(camera->getPosition()).first,
-      .y = coordinateMapper.centerInScreenSpace(camera->getPosition()).second,
+      .x = screenCoordinateMapper.centerInScreenSpace(camera->getPosition())
+               .first,
+      .y = screenCoordinateMapper.centerInScreenSpace(camera->getPosition())
+               .second,
       .w = spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
       .h = spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
