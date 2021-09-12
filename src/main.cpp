@@ -169,18 +169,17 @@ int main() {
   auto worldToMapSectorIndex = injector.create<WorldToMapSectorIndex>();
 
   // BEGIN: MAP GEN
-  auto neighbours =
-      sectorSpatialUtils.getNeighbours(std::make_pair<int, int>(0, 0));
+  auto sectorIndex = worldToMapSectorIndex.getMapIndex(player.getPosition());
+  auto neighbours = sectorSpatialUtils.getNeighbours(sectorIndex);
   std::list<std::shared_ptr<IsometricTileMapSector>> sectors;
-
-  neighbours.push_back(std::make_pair(0, 0));
+  neighbours.push_back(sectorIndex);
   for (std::list<std::pair<int, int>>::iterator it = neighbours.begin();
        it != neighbours.end(); ++it) {
     sectors.push_back(std::make_shared<IsometricTileMapSector>(
         sdlManager, camera, spriteRegistry, coordinateMapper, textRenderer,
         std::make_pair(
             it->first * configuration->getSectorDimensions().first,
-            it->second *
+            -it->second *
                 configuration->getSectorDimensions().second), // BOTTOM LEFT.
         gameSaveState, prng, configuration));
   }
