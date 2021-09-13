@@ -65,7 +65,7 @@ int main() {
       di::bind<Camera>().to<Camera>().in(di::singleton),
       di::bind<DeterministicPrng>().to<DeterministicPrng>().in(di::singleton),
       di::bind<Configuration>().to<Configuration>().in(di::singleton),
-      di::bind<SectorIndex>().to<MapSectorDatabaseHashmapImpl>().in(
+      di::bind<MapSectorDatabase>().to<MapSectorDatabaseHashmapImpl>().in(
           di::singleton));
 
   auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
@@ -75,7 +75,7 @@ int main() {
   auto textRenderer = injector.create<TextRenderer>();
   auto player = injector.create<Player>();
   auto configuration = injector.create<std::shared_ptr<Configuration>>();
-  auto sectorIndexMap = injector.create<std::shared_ptr<SectorIndex>>();
+  auto sectorIndexMap = injector.create<std::shared_ptr<MapSectorDatabase>>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area

@@ -5,11 +5,11 @@
 
 #include "../map/isometric-tile-map-sector.hpp"
 
-class SectorIndex {
+class MapSectorDatabase {
 private:
 public:
-  SectorIndex() {}
-  virtual ~SectorIndex(){};
+  MapSectorDatabase() {}
+  virtual ~MapSectorDatabase(){};
 
   virtual void put(std::string key,
                    std::shared_ptr<IsometricTileMapSector> sector) = 0;

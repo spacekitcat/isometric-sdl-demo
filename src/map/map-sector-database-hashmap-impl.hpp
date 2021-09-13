@@ -6,7 +6,7 @@
 #include "../map/isometric-tile-map-sector.hpp"
 #include "../map/map-sector-database.hpp"
 
-class MapSectorDatabaseHashmapImpl : public SectorIndex {
+class MapSectorDatabaseHashmapImpl : public MapSectorDatabase {
 private:
   std::map<std::string, std::shared_ptr<IsometricTileMapSector>> _map;
 
