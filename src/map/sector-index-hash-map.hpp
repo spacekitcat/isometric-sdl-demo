@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "../map/isometric-tile-map-sector.hpp"
-#include "../map/sector-index.hpp"
+#include "../map/map-sector-database.hpp"
 
 class SectorIndexHashMap : public SectorIndex {
 private:
