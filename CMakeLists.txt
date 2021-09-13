@@ -2,7 +2,7 @@ set(CMAKE_CXX_STANDARD 14)
 add_compile_options(-Wno-narrowing)
 cmake_minimum_required(VERSION 3.7)
 
-project(SDL2Application4)
+project(RoversRevenge)
 
 # https://cmake.org/cmake/help/git-master/module/FindBoost.html
 find_package(Boost REQUIRED)
@@ -29,7 +29,7 @@ include_directories(include/)
 add_subdirectory(lib/SDL_FontCache)
 
 add_executable(
-  SDL2Test
+  RoversRevenge
   src/Main.cpp
   src/player/player.cpp
   src/map/sector-spatial-utils.cpp
@@ -52,11 +52,11 @@ add_executable(
   src/sprites/sprite-registry.cpp
   src/map-generator/deterministic-prng.cpp)
 
-target_link_libraries(SDL2Test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2TTF_LIBRARY} ${Boost_LIBRARIES} FontCache)
+target_link_libraries(RoversRevenge ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2TTF_LIBRARY} ${Boost_LIBRARIES} FontCache)
 
 # BEGIN: Test setup
 add_executable(
-  tests
+  RoversRevengeTests
   src/test/test-main.cpp
   src/test/pair-operators/add-pair.cpp
   src/test/pair-operators/divide-pair-by.cpp
@@ -76,11 +76,11 @@ add_executable(
   src/state/game-save-state.cpp
   src/map-generator/deterministic-prng.cpp)
 
-target_link_libraries(tests PRIVATE Catch2::Catch2 ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(RoversRevengeTests PRIVATE Catch2::Catch2 ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${Boost_LIBRARIES})
 
 include(CTest)
 include(Catch)
-catch_discover_tests(tests)
+catch_discover_tests(RoversRevengeTests)
 
 file(GLOB ASSETS
   "assets/*"
