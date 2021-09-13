@@ -23,7 +23,7 @@ brew install catch2
 mkdir build && cd build
 cmake ..
 cmake --build .
-./SDL2Test
+./RoversRevenge
 ```
 
 (`cmake --build .` can be substituted with `make`)
@@ -77,7 +77,7 @@ cmake ..
 cmake --build .
 rm -r assets
 ln -s ../assets assets
-./SDL2Test
+./RoversRevenge
 ```
 
 Now the assets will always by in sync within the build. All you have to worry about is re-running `make` from the `build` folder.
