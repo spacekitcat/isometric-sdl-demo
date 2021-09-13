@@ -30,7 +30,9 @@ IsometricTileMapSector::IsometricTileMapSector(
 
   for (int y = 0; y < _tilesPerAxis.second; y++) {
     for (int x = 0; x < _tilesPerAxis.first; x++) {
-      int rnd = _deterministicPrng->generateNextRandomNumber(0, 1);
+      // TODO: Centralise this upper bound. I'm think about the best
+      // architecture for making that info available
+      int rnd = _deterministicPrng->generateNextRandomNumber(0, 2);
       _tileMap[y * _tilesPerAxis.first + x] = rnd;
     }
   }
@@ -112,11 +114,9 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
             (_spriteRegistry.getSprite("0")->getFrameWidth() / 2);
       }
 
-      if (getTile(x, y) == 0) {
-        _spriteRegistry.getSprite("0")->renderTick(&tilePositionRect);
-      } else {
-        _spriteRegistry.getSprite("1")->renderTick(&tilePositionRect);
-      }
+      // TODO: Check the tile id exists.
+      _spriteRegistry.getSprite(std::to_string(getTile(x, y)))
+          ->renderTick(&tilePositionRect);
     }
     tilePositionRect.y -=
         (_spriteRegistry.getSprite("0")->getFrameHeight() / 2);

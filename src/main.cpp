@@ -158,7 +158,9 @@ int main() {
 
     spriteRegistry.loadSprite("./assets/desert_tile_0_sheet.png", "0",
                               &tileSpriteMetadata);
-    spriteRegistry.loadSprite("./assets/water_tile_0_sheet.png", "1",
+    spriteRegistry.loadSprite("./assets/desert_tile_0_sheet.png", "1",
+                              &tileSpriteMetadata);
+    spriteRegistry.loadSprite("./assets/water_tile_0_sheet.png", "2",
                               &tileSpriteMetadata);
 
   } catch (const std::runtime_error &ex) {
