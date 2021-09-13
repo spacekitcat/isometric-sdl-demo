@@ -104,6 +104,7 @@ montage water_tile_0_0*.png -tile 10x10 -geometry 256x128+0+0 water_tile_0_sheet
 
 ## TODOS
 
+- Vicinity bug (go right for ages, the boundary goes out of sync or something)
 - Move dynamic map sector gen code out of main, either into the sector db or some intermediate.
 - Wire the sector hashmap into some sort of permissive license Berkeley DB (RocksDB seems good) to provide persistence.
 - Fix project naming scheme.
