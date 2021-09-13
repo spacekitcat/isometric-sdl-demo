@@ -156,9 +156,9 @@ int main() {
 
     struct SpriteMetadata tileSpriteMetadata = {.rows = 3, .columns = 10};
 
-    spriteRegistry.loadSprite("./assets/water_tile_2_sheet.png", "0",
+    spriteRegistry.loadSprite("./assets/desert_tile_0_sheet.png", "0",
                               &tileSpriteMetadata);
-    spriteRegistry.loadSprite("./assets/water_tile_1_sheet.png", "1",
+    spriteRegistry.loadSprite("./assets/water_tile_0_sheet.png", "1",
                               &tileSpriteMetadata);
 
   } catch (const std::runtime_error &ex) {
