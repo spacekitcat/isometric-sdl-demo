@@ -17,6 +17,8 @@
 #include "map/camera.hpp"
 #include "map/isometric-tile-map-sector.hpp"
 #include "map/screen-coordinate-mapper.hpp"
+#include "map/sector-index-hash-map.hpp"
+#include "map/sector-index.hpp"
 #include "map/sector-spatial-utils.hpp"
 #include "map/world-to-map-sector-index.hpp"
 #include "render/sdl-manager.hpp"
@@ -62,7 +64,8 @@ int main() {
       di::bind<SDLManager>().to<SDLManager>().in(di::singleton),
       di::bind<Camera>().to<Camera>().in(di::singleton),
       di::bind<DeterministicPrng>().to<DeterministicPrng>().in(di::singleton),
-      di::bind<Configuration>().to<Configuration>().in(di::singleton));
+      di::bind<Configuration>().to<Configuration>().in(di::singleton),
+      di::bind<SectorIndex>().to<SectorIndexHashMap>().in(di::singleton));
 
   auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
   auto camera = injector.create<std::shared_ptr<Camera>>();
@@ -71,6 +74,7 @@ int main() {
   auto textRenderer = injector.create<TextRenderer>();
   auto player = injector.create<Player>();
   auto configuration = injector.create<std::shared_ptr<Configuration>>();
+  auto sectorIndexMap = injector.create<std::shared_ptr<SectorIndex>>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area
@@ -167,24 +171,6 @@ int main() {
   auto gameSaveState = injector.create<GameSaveState>();
   auto sectorSpatialUtils = injector.create<SectorSpatialUtils>();
   auto worldToMapSectorIndex = injector.create<WorldToMapSectorIndex>();
-
-  // BEGIN: MAP GEN
-  auto sectorIndex = worldToMapSectorIndex.getMapIndex(player.getPosition());
-  auto neighbours = sectorSpatialUtils.getNeighbours(sectorIndex);
-  std::list<std::shared_ptr<IsometricTileMapSector>> sectors;
-  neighbours.push_back(sectorIndex);
-  for (std::list<std::pair<int, int>>::iterator it = neighbours.begin();
-       it != neighbours.end(); ++it) {
-    sectors.push_back(std::make_shared<IsometricTileMapSector>(
-        sdlManager, camera, spriteRegistry, screenCoordinateMapper,
-        textRenderer,
-        std::make_pair(
-            it->first * configuration->getSectorDimensions().first,
-            -it->second *
-                configuration->getSectorDimensions().second), // BOTTOM LEFT.
-        gameSaveState, prng, configuration));
-  }
-
   SDL_FRect playerPositioningRect = {
       .x = screenCoordinateMapper.centerInScreenSpace(camera->getPosition())
                .first,
@@ -193,10 +179,33 @@ int main() {
       .w = spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
       .h = spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight()};
   SpriteState spriteState = {.direction = North};
+
+  camera->setTarget(&player);
+
+  // BEGIN: MAP GEN
+  auto sectorIndex = worldToMapSectorIndex.getMapIndex(player.getPosition());
+  auto neighbours = sectorSpatialUtils.getNeighbours(sectorIndex);
+  // std::list<std::shared_ptr<IsometricTileMapSector>> sectors;
+  neighbours.push_back(sectorIndex);
+  for (std::list<std::pair<int, int>>::iterator it = neighbours.begin();
+       it != neighbours.end(); ++it) {
+    std::cout << it->first << " :: " << it->second << std::endl;
+    auto sectorId = sectorSpatialUtils.fromIntegerPairToKey(*it);
+    sectorIndexMap->put(
+        sectorId,
+        std::make_shared<IsometricTileMapSector>(
+            sdlManager, camera, spriteRegistry, screenCoordinateMapper,
+            textRenderer,
+            std::make_pair(it->first *
+                               configuration->getSectorDimensions().first,
+                           -it->second * configuration->getSectorDimensions()
+                                             .second), // BOTTOM LEFT.
+            gameSaveState, prng, configuration));
+  }
+
   // END: MAP GEN
 
   /* Game loop */
-  camera->setTarget(&player);
   long int lastFrameTicks = SDL_GetTicks();
   bool running = true;
   while (running) {
@@ -271,10 +280,22 @@ int main() {
 
     sdlManager->renderClear();
 
-    /* Render map sectors */
-    for (auto sector : sectors) {
-      if (sector->isVisible()) {
-        sector->render(sdlManager->getWindowDimensions());
+    auto sectorCoords =
+        worldToMapSectorIndex.getMapIndex(camera->getPosition());
+
+    auto neighbours = sectorSpatialUtils.getNeighbours(sectorCoords);
+    neighbours.push_back(
+        worldToMapSectorIndex.getMapIndex(player.getPosition()));
+    for (std::list<std::pair<int, int>>::iterator it = neighbours.begin();
+         it != neighbours.end(); ++it) {
+      auto sectorId = sectorSpatialUtils.fromIntegerPairToKey(*it);
+      auto sector = sectorIndexMap->get(sectorId);
+
+      if (sector != nullptr) {
+        std::cout << sectorId << std::endl;
+        if (sector->isVisible()) {
+          sector->render(sdlManager->getWindowDimensions());
+        }
       }
     }
 
