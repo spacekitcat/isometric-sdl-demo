@@ -75,7 +75,8 @@ int main() {
   auto textRenderer = injector.create<TextRenderer>();
   auto player = injector.create<Player>();
   auto configuration = injector.create<std::shared_ptr<Configuration>>();
-  auto sectorIndexMap = injector.create<std::shared_ptr<MapSectorDatabase>>();
+  auto mapSectorDatabase =
+      injector.create<std::shared_ptr<MapSectorDatabase>>();
   // END: SDL Setup area
 
   // BEGIN: Audio Setup area
@@ -267,7 +268,7 @@ int main() {
     for (std::list<std::pair<int, int>>::iterator it = neighbours.begin();
          it != neighbours.end(); ++it) {
       auto sectorId = sectorSpatialUtils.fromIntegerPairToKey(*it);
-      auto sector = sectorIndexMap->get(sectorId);
+      auto sector = mapSectorDatabase->get(sectorId);
 
       if (sector != nullptr) {
         if (sector->isVisible()) {
@@ -275,7 +276,7 @@ int main() {
         }
       } else {
         auto sectorId = sectorSpatialUtils.fromIntegerPairToKey(*it);
-        sectorIndexMap->put(
+        mapSectorDatabase->put(
             sectorId,
             std::make_shared<IsometricTileMapSector>(
                 sdlManager, camera, spriteRegistry, screenCoordinateMapper,
