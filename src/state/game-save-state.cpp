@@ -3,7 +3,7 @@
 GameSaveState::GameSaveState(SpriteRegistry &spriteRegistry)
     : _spriteRegistry(spriteRegistry) {
   _gameSeed = -9005010;
-  _renderVisibilityDistance = 400;
+  _renderVisibilityDistance = 570;
 }
 
 GameSaveState::~GameSaveState() {}
