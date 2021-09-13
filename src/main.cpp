@@ -16,9 +16,9 @@
 #include "map-generator/deterministic-prng.hpp"
 #include "map/camera.hpp"
 #include "map/isometric-tile-map-sector.hpp"
+#include "map/map-sector-database-hashmap-impl.hpp"
 #include "map/map-sector-database.hpp"
 #include "map/screen-coordinate-mapper.hpp"
-#include "map/sector-index-hash-map.hpp"
 #include "map/sector-spatial-utils.hpp"
 #include "map/world-to-map-sector-index.hpp"
 #include "render/sdl-manager.hpp"
@@ -65,7 +65,8 @@ int main() {
       di::bind<Camera>().to<Camera>().in(di::singleton),
       di::bind<DeterministicPrng>().to<DeterministicPrng>().in(di::singleton),
       di::bind<Configuration>().to<Configuration>().in(di::singleton),
-      di::bind<SectorIndex>().to<SectorIndexHashMap>().in(di::singleton));
+      di::bind<SectorIndex>().to<MapSectorDatabaseHashmapImpl>().in(
+          di::singleton));
 
   auto sdlManager = injector.create<std::shared_ptr<SDLManager>>();
   auto camera = injector.create<std::shared_ptr<Camera>>();
