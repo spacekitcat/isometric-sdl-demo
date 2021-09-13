@@ -3,9 +3,9 @@
 SDLManager::SDLManager() {
   std::cout << "Constructing SDLManager" << std::endl;
   _screenDimensions = std::make_pair<int, int>(1024, 768);
-  _window = SDL_CreateWindow("SDL2Application4 (isometric demo)",
-                             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                             _screenDimensions.first, _screenDimensions.second,
+  _window = SDL_CreateWindow("Rover's Revenge", SDL_WINDOWPOS_UNDEFINED,
+                             SDL_WINDOWPOS_UNDEFINED, _screenDimensions.first,
+                             _screenDimensions.second,
                              SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
   _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);

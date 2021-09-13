@@ -2,7 +2,7 @@
 
 Isometric concept game.
 
-![An application window with the title "SDL2Application4 (isometric demo).](./doc_assets/runtime_example_1.png)
+![An application window with the title "Rover's Revenge".](./doc_assets/runtime_example_1.png)
 
 # Development
 
@@ -104,8 +104,7 @@ montage water_tile_0_0*.png -tile 10x10 -geometry 256x128+0+0 water_tile_0_sheet
 
 ## TODOS
 
-- Sector lookup: A hashmap for sectors with a get and put method. The key is the sector x,y coordinate (integer, from coordinate mapper) converted to a string (it's unique). It should be setup as a shared pointer singleton in the DI container, the sector gen code and render code should be wired into it.
-- Move map sector gen code into sector lookup, whenever you specifiy coordinates that don't exist, it should generate the sector.
+- Move dynamic map sector gen code out of main, either into the sector db or some intermediate.
 - Wire the sector hashmap into some sort of permissive license Berkeley DB (RocksDB seems good) to provide persistence.
 - Fix project naming scheme.
 - Generate univeral binary for OSX.

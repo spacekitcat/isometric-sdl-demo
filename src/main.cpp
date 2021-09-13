@@ -255,6 +255,10 @@ int main() {
     } else {
       player.setVelocity(std::make_pair(0, 0));
     }
+    long int tickInterval = SDL_GetTicks() - lastFrameTicks;
+    player.update(tickInterval);
+    camera->update(tickInterval);
+    lastFrameTicks = SDL_GetTicks();
 
     sdlManager->renderClear();
 
@@ -295,11 +299,7 @@ int main() {
       playerSprite->renderTick(&playerPositioningRect);
     }
 
-    long int tickInterval = SDL_GetTicks() - lastFrameTicks;
     debugOverlay.render(tickInterval);
-    player.update(tickInterval);
-    camera->update(tickInterval);
-    lastFrameTicks = SDL_GetTicks();
 
     /* redraw */
     SDL_SetRenderDrawColor(sdlManager->getRenderer(), 0, 0, 0, 255);
