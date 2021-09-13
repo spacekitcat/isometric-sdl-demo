@@ -8,7 +8,8 @@ SDLManager::SDLManager() {
                              _screenDimensions.second,
                              SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
-  _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+  _renderer = SDL_CreateRenderer(
+      _window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }
 
 SDLManager::~SDLManager() {
