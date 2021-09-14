@@ -2,6 +2,8 @@
 
 #include <SDL.h>
 
+#include "../../lib/PerlinNoise/PerlinNoise.hpp"
+
 #include "../config/configuration.hpp"
 #include "../map-generator/deterministic-prng.hpp"
 #include "../map/camera.hpp"
@@ -10,6 +12,8 @@
 #include "../sprites/sprite-registry.hpp"
 #include "../state/game-save-state.hpp"
 #include "../text/text-renderer.hpp"
+#include "../util/pair-operators.hpp"
+#include "screen-coordinate-mapper.hpp"
 
 class IsometricTileMapSector {
 private:
