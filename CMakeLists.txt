@@ -1,4 +1,4 @@
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-Wno-narrowing)
 cmake_minimum_required(VERSION 3.7)
 
@@ -27,6 +27,7 @@ include_directories(${SDL2TTF_INCLUDE_DIR})
 include_directories(include/)
 
 add_subdirectory(lib/SDL_FontCache)
+add_subdirectory(lib/PerlinNoise)
 
 add_executable(
   RoversRevenge
@@ -52,7 +53,7 @@ add_executable(
   src/sprites/sprite-registry.cpp
   src/map-generator/deterministic-prng.cpp)
 
-target_link_libraries(RoversRevenge ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2TTF_LIBRARY} ${Boost_LIBRARIES} FontCache)
+target_link_libraries(RoversRevenge ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2TTF_LIBRARY} ${Boost_LIBRARIES} FontCache PerlinNoise)
 
 # BEGIN: Test setup
 add_executable(
