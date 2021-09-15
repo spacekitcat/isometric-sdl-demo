@@ -1,8 +1,8 @@
 #include "player.hpp"
 
 Player::Player() {
-  _position.first = 3840;
-  _position.second = 3840;
+  _position.first = 1240;
+  _position.second = 1240;
 }
 
 Player::~Player() {}

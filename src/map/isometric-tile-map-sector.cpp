@@ -26,13 +26,13 @@ IsometricTileMapSector::IsometricTileMapSector(
                            (_configuration->getTileDimensions().second / 2)));
   _tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
 
-  const double frequency = 64;
+  const double frequency = 1;
   const double fx = _tilesPerAxis.first / frequency;
   const double fy = _tilesPerAxis.second / frequency;
-  const double octaves = 1;
+  const double octaves = 16;
 
   const siv::PerlinNoise perlin(
-      _deterministicPrng->generateNextRandomNumber(0, 1000));
+      _deterministicPrng->generateNextRandomNumber(0, 900));
   for (int y = 0; y < _tilesPerAxis.second; y++) {
     for (int x = 0; x < _tilesPerAxis.first; x++) {
       // TODO: Centralise this upper bound. I'm think about the best
@@ -41,9 +41,8 @@ IsometricTileMapSector::IsometricTileMapSector(
       // _tileMap[y * _tilesPerAxis.first + x] = rnd;
       double perlinSample =
           perlin.accumulatedOctaveNoise2D_0_1(x / fx, y / fy, octaves);
-      std::cout << perlinSample << std::endl;
       if (perlinSample > 0.4) {
-        _tileMap[y * _tilesPerAxis.first + x] = 0;
+        _tileMap[y * _tilesPerAxis.first + x] = 1;
       } else {
         _tileMap[y * _tilesPerAxis.first + x] = 2;
       }
