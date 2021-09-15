@@ -32,7 +32,7 @@ IsometricTileMapSector::IsometricTileMapSector(
   const double octaves = 16;
 
   const siv::PerlinNoise perlin(
-      _deterministicPrng->generateNextRandomNumber(0, 900));
+      _deterministicPrng->generateNextRandomNumber(0, 49));
   for (int y = 0; y < _tilesPerAxis.second; y++) {
     for (int x = 0; x < _tilesPerAxis.first; x++) {
       // TODO: Centralise this upper bound. I'm think about the best

@@ -104,7 +104,6 @@ montage water_tile_0_0*.png -tile 10x10 -geometry 256x128+0+0 water_tile_0_sheet
 
 ## TODOS
 
-- The isVisible candidate sectors for rendering has to account to go beyond just the current principle sector and its neighbours, it needs neighbours of neighbours. Cause: ability to zoom out.
 - Aggregation relationship between Player and player's sprite (Player=owner).
 - Draw render visibility box in debug mode.
 - Double check that the Blender positioning of the water tile wasn't modified when the tile was updated last. I suspect it's off by a few pixles somewhere.
