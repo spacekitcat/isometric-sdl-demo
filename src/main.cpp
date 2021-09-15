@@ -281,7 +281,8 @@ int main() {
 
     /* Render / dynamically generate map sectors */
     auto neighbours = sectorSpatialUtils.getNeighbours(
-        worldToMapSectorIndex.getMapIndex(player.getPosition()));
+        worldToMapSectorIndex.getMapIndex(player.getPosition()),
+        1 / camera->getZoom());
 
     neighbours.push_back(
         worldToMapSectorIndex.getMapIndex(player.getPosition()));
