@@ -1,7 +1,10 @@
 #include "camera.hpp"
-#include "../util/pair-operators.hpp"
 
-Camera::Camera() { _targetPlayer = NULL; }
+Camera::Camera(std::shared_ptr<SDLManager> sdlManager)
+    : _sdlManager(sdlManager) {
+  _targetPlayer = NULL;
+  _zoom = .25;
+}
 
 Camera::~Camera() {}
 
@@ -19,3 +22,5 @@ void Camera::update(long int ticks) {
     _position = _targetPlayer->getPosition();
   }
 }
+
+float Camera::getZoom() { return _zoom; }

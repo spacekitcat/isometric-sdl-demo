@@ -2,7 +2,7 @@
 
 Configuration::Configuration() {
   _targetFps = 70;
-  _isDebugMode = false;
+  _isDebugMode = true;
 
   //   _sectorDimensions = std::make_pair(256, 128);
   // _sectorDimensions = std::make_pair(512, 256);

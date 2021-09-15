@@ -271,6 +271,8 @@ int main() {
     neighbours.push_back(
         worldToMapSectorIndex.getMapIndex(player.getPosition()));
 
+    SDL_RenderSetScale(sdlManager->getRenderer(), camera->getZoom(),
+                       camera->getZoom());
     for (std::list<std::pair<int, int>>::iterator it = neighbours.begin();
          it != neighbours.end(); ++it) {
       auto sectorId = sectorSpatialUtils.fromIntegerPairToKey(*it);
@@ -301,6 +303,7 @@ int main() {
       playerSprite->renderTick(&playerPositioningRect);
     }
 
+    SDL_RenderSetScale(sdlManager->getRenderer(), 1, 1);
     debugOverlay.render(tickInterval);
 
     /* redraw */
