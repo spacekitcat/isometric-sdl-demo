@@ -3,7 +3,7 @@
 Camera::Camera(std::shared_ptr<SDLManager> sdlManager)
     : _sdlManager(sdlManager) {
   _targetPlayer = NULL;
-  _zoom = .25;
+  _zoom = .5;
 }
 
 Camera::~Camera() {}
@@ -24,3 +24,7 @@ void Camera::update(long int ticks) {
 }
 
 float Camera::getZoom() { return _zoom; }
+
+void Camera::setZoom(float zoom) {
+  _zoom = std::max(0.25f, std::min(zoom, 1.0f));
+}

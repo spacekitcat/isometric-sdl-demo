@@ -24,6 +24,8 @@ public:
 
   float getZoom();
 
+  void setZoom(float zoom);
+
   void setTarget(Player *player);
 
   void update(long int ticks);
