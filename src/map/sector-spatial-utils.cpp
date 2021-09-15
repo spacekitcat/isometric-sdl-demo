@@ -19,10 +19,15 @@ std::pair<int, int> SectorSpatialUtils::fromKeyToIntegerPair(std::string key) {
 
 std::list<std::pair<int, int>>
 SectorSpatialUtils::getNeighbours(std::pair<int, int> integerPair) {
+  return getNeighbours(integerPair, 1);
+}
+
+std::list<std::pair<int, int>>
+SectorSpatialUtils::getNeighbours(std::pair<int, int> integerPair, int radius) {
   std::list<std::pair<int, int>> neighbours;
 
-  for (int i = -1; i <= 1; ++i) {
-    for (int j = -1; j <= 1; ++j) {
+  for (int i = -radius; i <= radius; ++i) {
+    for (int j = -radius; j <= radius; ++j) {
       if (i == 0 && j == 0)
         continue;
       neighbours.push_back(

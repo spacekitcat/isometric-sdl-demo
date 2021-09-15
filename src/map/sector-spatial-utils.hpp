@@ -14,4 +14,7 @@ public:
   std::pair<int, int> fromKeyToIntegerPair(std::string key);
 
   std::list<std::pair<int, int>> getNeighbours(std::pair<int, int> integerPair);
+
+  std::list<std::pair<int, int>> getNeighbours(std::pair<int, int> integerPair,
+                                               int radius);
 };
