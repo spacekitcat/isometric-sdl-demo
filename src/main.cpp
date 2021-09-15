@@ -176,12 +176,11 @@ int main() {
   auto sectorSpatialUtils = injector.create<SectorSpatialUtils>();
   auto worldToMapSectorIndex = injector.create<WorldToMapSectorIndex>();
   SDL_FRect playerPositioningRect = {
-      .x = screenCoordinateMapper.centerInScreenSpace(camera->getPosition())
-               .first,
-      .y = screenCoordinateMapper.centerInScreenSpace(camera->getPosition())
-               .second,
+      .x = screenCoordinateMapper.worldXToScreenX(0),
+      .y = screenCoordinateMapper.worldYToScreenY(0),
       .w = spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
       .h = spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight()};
+
   SpriteState spriteState = {.direction = North};
 
   camera->setTarget(&player);
@@ -207,6 +206,22 @@ int main() {
           configuration->setIsDebugMode(!configuration->getIsDebugMode());
           break;
         }
+        break;
+      case SDL_MOUSEWHEEL:
+        if (event.wheel.y > 0) {
+          camera->setZoom(camera->getZoom() + 0.25f);
+        } else if (event.wheel.y < 0) {
+          camera->setZoom(camera->getZoom() - 0.25f);
+        }
+
+        playerPositioningRect.x = screenCoordinateMapper.worldXToScreenX(0),
+        playerPositioningRect.y = screenCoordinateMapper.worldYToScreenY(0),
+        playerPositioningRect.w =
+            spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth();
+        playerPositioningRect.h =
+            spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight();
+
+        break;
       }
     }
 
@@ -271,6 +286,8 @@ int main() {
     neighbours.push_back(
         worldToMapSectorIndex.getMapIndex(player.getPosition()));
 
+    SDL_RenderSetScale(sdlManager->getRenderer(), camera->getZoom(),
+                       camera->getZoom());
     for (std::list<std::pair<int, int>>::iterator it = neighbours.begin();
          it != neighbours.end(); ++it) {
       auto sectorId = sectorSpatialUtils.fromIntegerPairToKey(*it);
@@ -301,6 +318,7 @@ int main() {
       playerSprite->renderTick(&playerPositioningRect);
     }
 
+    SDL_RenderSetScale(sdlManager->getRenderer(), 1, 1);
     debugOverlay.render(tickInterval);
 
     /* redraw */
