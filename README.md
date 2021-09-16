@@ -4,6 +4,10 @@ A very early development Real Time Strategy (RTS) game about a very **very** ang
 
 ![An application window with the title "Rover's Revenge".](./doc_assets/runtime_example_1.png)
 
+# Project management
+
+https://bluestickerclub.atlassian.net/jira/software/projects/ROV/boards/1
+
 # Development
 
 ## Prerequisites
@@ -102,14 +106,3 @@ Merge animation frames into spritesheet with ImageMagick:
 montage water_tile_0_0*.png -tile 10x10 -geometry 256x128+0+0 water_tile_0_sheet.png
 ```
 
-## TODOS
-
-- Aggregation relationship between Player and player's sprite (Player=owner).
-- Draw render visibility box in debug mode.
-- Double check that the Blender positioning of the water tile wasn't modified when the tile was updated last. I suspect it's off by a few pixles somewhere.
-- Vicinity bug (go west [where the skies are blue] for ages, the boundary goes out of sync or some nonesense.)
-- Move dynamic map sector gen code out of main, either into the sector db or some intermediate.
-- Wire the sector hashmap into some sort of permissive license Berkeley DB (RocksDB seems good) to provide persistence.
-- Generate univeral binary for OSX.
-- Prove that this can be built on Linux (and update the build/docs as required).
-- Figure out how to build this for Windows.
