@@ -10,17 +10,18 @@ ScreenCoordinateMapper::ScreenCoordinateMapper(
 std::pair<float, float> ScreenCoordinateMapper::centerInScreenSpace(
     std::pair<float, float> worldPosition) {
 
-  return std::make_pair<float, float>(worldXToScreenX(worldPosition.first),
-                                      worldYToScreenY(worldPosition.second));
+  return std::make_pair<float, float>(
+      centerInScreenSpaceX(worldPosition.first),
+      centerInScreenSpaceY(worldPosition.second));
 }
 
-float ScreenCoordinateMapper::worldXToScreenX(float worldX) {
+float ScreenCoordinateMapper::centerInScreenSpaceX(float worldX) {
   return -worldX + ((_sdlManager->getWindowDimensions().first / 2) -
                     (_playerSpriteDimensions.first / 2)) *
                        1 / _camera->getZoom();
 }
 
-float ScreenCoordinateMapper::worldYToScreenY(float worldY) {
+float ScreenCoordinateMapper::centerInScreenSpaceY(float worldY) {
   return worldY + ((_sdlManager->getWindowDimensions().second / 2) -
                    (_playerSpriteDimensions.second / 2)) *
                       1 / _camera->getZoom();
