@@ -63,6 +63,7 @@ int main() {
   const auto injector = di::make_injector(
       di::bind<SDLManager>().to<SDLManager>().in(di::singleton),
       di::bind<Camera>().to<Camera>().in(di::singleton),
+      di::bind<SpriteRegistry>().to<SpriteRegistry>().in(di::singleton),
       di::bind<DeterministicPrng>().to<DeterministicPrng>().in(di::singleton),
       di::bind<Configuration>().to<Configuration>().in(di::singleton),
       di::bind<MapSectorDatabase>().to<MapSectorDatabaseHashmapImpl>().in(
@@ -101,67 +102,67 @@ int main() {
   // BEGIN: Asset loading
 
   auto playerSpriteSelector = injector.create<SpriteSelector>();
-  auto spriteRegistry = injector.create<SpriteRegistry>();
+  auto spriteRegistry = injector.create<std::shared_ptr<SpriteRegistry>>();
   auto prng = injector.create<std::shared_ptr<DeterministicPrng>>();
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
 
-    spriteRegistry.loadSprite(
+    spriteRegistry->loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot225.png",
         "tank_idle_rot225", &playerSpriteMetadata);
     playerSpriteSelector.registerDirectionSprite(
-        North, spriteRegistry.getSprite("tank_idle_rot225"));
+        North, spriteRegistry->getSprite("tank_idle_rot225"));
 
-    spriteRegistry.loadSprite(
+    spriteRegistry->loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot180.png",
         "tank_idle_rot180", &playerSpriteMetadata);
     playerSpriteSelector.registerDirectionSprite(
-        NorthEast, spriteRegistry.getSprite("tank_idle_rot180"));
+        NorthEast, spriteRegistry->getSprite("tank_idle_rot180"));
 
-    spriteRegistry.loadSprite(
+    spriteRegistry->loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot135.png",
         "tank_idle_rot135", &playerSpriteMetadata);
     playerSpriteSelector.registerDirectionSprite(
-        East, spriteRegistry.getSprite("tank_idle_rot135"));
+        East, spriteRegistry->getSprite("tank_idle_rot135"));
 
-    spriteRegistry.loadSprite(
+    spriteRegistry->loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot090.png",
         "tank_idle_rot090", &playerSpriteMetadata);
     playerSpriteSelector.registerDirectionSprite(
-        SouthEast, spriteRegistry.getSprite("tank_idle_rot090"));
+        SouthEast, spriteRegistry->getSprite("tank_idle_rot090"));
 
-    spriteRegistry.loadSprite(
+    spriteRegistry->loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot045.png",
         "tank_idle_rot045", &playerSpriteMetadata);
     playerSpriteSelector.registerDirectionSprite(
-        South, spriteRegistry.getSprite("tank_idle_rot045"));
+        South, spriteRegistry->getSprite("tank_idle_rot045"));
 
-    spriteRegistry.loadSprite(
+    spriteRegistry->loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot000.png",
         "tank_idle_rot000", &playerSpriteMetadata);
     playerSpriteSelector.registerDirectionSprite(
-        SouthWest, spriteRegistry.getSprite("tank_idle_rot000"));
+        SouthWest, spriteRegistry->getSprite("tank_idle_rot000"));
 
-    spriteRegistry.loadSprite(
+    spriteRegistry->loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot315.png",
         "tank_idle_rot315", &playerSpriteMetadata);
     playerSpriteSelector.registerDirectionSprite(
-        West, spriteRegistry.getSprite("tank_idle_rot315"));
+        West, spriteRegistry->getSprite("tank_idle_rot315"));
 
-    spriteRegistry.loadSprite(
+    spriteRegistry->loadSprite(
         "./assets/Rendered spritesheets/tank_idle_rot270.png",
         "tank_idle_rot270", &playerSpriteMetadata);
     playerSpriteSelector.registerDirectionSprite(
-        NorthWest, spriteRegistry.getSprite("tank_idle_rot270"));
+        NorthWest, spriteRegistry->getSprite("tank_idle_rot270"));
 
     struct SpriteMetadata tileSpriteMetadata = {.rows = 3, .columns = 10};
 
-    spriteRegistry.loadSprite("./assets/desert_tile_0_sheet.png", "0",
-                              &tileSpriteMetadata);
-    spriteRegistry.loadSprite("./assets/desert_tile_0_sheet.png", "1",
-                              &tileSpriteMetadata);
-    spriteRegistry.loadSprite("./assets/water_tile_0_sheet.png", "2",
-                              &tileSpriteMetadata);
+    spriteRegistry->loadSprite("./assets/desert_tile_0_sheet.png", "0",
+                               &tileSpriteMetadata);
+    spriteRegistry->loadSprite("./assets/desert_tile_0_sheet.png", "1",
+                               &tileSpriteMetadata);
+    spriteRegistry->loadSprite("./assets/water_tile_0_sheet.png", "2",
+                               &tileSpriteMetadata);
 
   } catch (const std::runtime_error &ex) {
     throw;
@@ -178,8 +179,8 @@ int main() {
   SDL_FRect playerPositioningRect = {
       .x = screenCoordinateMapper.worldXToScreenX(0),
       .y = screenCoordinateMapper.worldYToScreenY(0),
-      .w = spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth(),
-      .h = spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight()};
+      .w = spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
+      .h = spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight()};
 
   SpriteState spriteState = {.direction = North};
 
@@ -217,9 +218,9 @@ int main() {
         playerPositioningRect.x = screenCoordinateMapper.worldXToScreenX(0),
         playerPositioningRect.y = screenCoordinateMapper.worldYToScreenY(0),
         playerPositioningRect.w =
-            spriteRegistry.getSprite("tank_idle_rot225")->getFrameWidth();
+            spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth();
         playerPositioningRect.h =
-            spriteRegistry.getSprite("tank_idle_rot225")->getFrameHeight();
+            spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight();
 
         break;
       }
@@ -314,7 +315,8 @@ int main() {
     }
 
     /* Render player sprite with SpriteSheet */
-    Sprite *playerSprite = playerSpriteSelector.selectSprite(spriteState);
+    std::shared_ptr<Sprite> playerSprite =
+        playerSpriteSelector.selectSprite(spriteState);
     if (playerSprite != NULL) {
       playerSprite->renderTick(&playerPositioningRect);
     }
@@ -327,5 +329,6 @@ int main() {
     SDL_RenderPresent(sdlManager->getRenderer());
   }
 
+  std::cout << "EXIT (return 0)" << std::endl;
   return 0;
 }

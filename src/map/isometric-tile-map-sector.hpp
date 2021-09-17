@@ -28,14 +28,14 @@ private:
   std::pair<float, float> _sectorDimensions;
   std::pair<int, int> _tilesPerAxis;
   bool _drawBoundingBox;
-  SpriteRegistry _spriteRegistry;
+  std::shared_ptr<SpriteRegistry> _spriteRegistry;
   GameSaveState &_gameSaveState;
   int *_tileMap;
 
 public:
   IsometricTileMapSector(std::shared_ptr<SDLManager> sdlManager,
                          std::shared_ptr<Camera> camera,
-                         SpriteRegistry &spriteRegistry,
+                         std::shared_ptr<SpriteRegistry> spriteRegistry,
                          ScreenCoordinateMapper &ScreenCoordinateMapper,
                          TextRenderer &textRenderer,
                          std::pair<float, float> topLeft,

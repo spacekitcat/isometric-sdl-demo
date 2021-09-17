@@ -1,15 +1,16 @@
 #pragma once
 
+#include "../render/sdl-manager.hpp"
+#include "../sprites/sprite-metadata.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
+#include <filesystem>
 #include <iostream>
 #include <math.h>
 
-#include "../render/sdl-manager.hpp"
-#include "../sprites/sprite-metadata.hpp"
-
 class Sprite {
 private:
+  std::string _filename;
   int _animationInterval;
   int _currentFrame;
   int _columns;
