@@ -12,7 +12,7 @@ std::pair<float, float> Camera::getPosition() { return _position; }
 
 void Camera::setPosition(std::pair<float, float> position) {}
 
-void Camera::setTarget(Player *player) {
+void Camera::setTarget(CameraTarget *player) {
   _targetPlayer = player;
   _position = _targetPlayer->getPosition();
 }

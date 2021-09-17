@@ -71,7 +71,10 @@ add_executable(
   src/map/world-to-map-sector-index.cpp
   src/config/configuration.cpp
   src/player/player.cpp
+  src/map/screen-coordinate-mapper.cpp
+  src/sprites/sprite-selector.cpp
   src/render/sdl-manager.cpp
+  src/map/camera.cpp
   src/sprites/sprite.cpp
   src/util/pair-operators.cpp
   src/state/game-save-state.cpp
