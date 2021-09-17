@@ -8,10 +8,10 @@ class GameSaveState {
 private:
   int _gameSeed;
   int _renderVisibilityDistance;
-  SpriteRegistry _spriteRegistry;
+  std::shared_ptr<SpriteRegistry> _spriteRegistry;
 
 public:
-  GameSaveState(SpriteRegistry &spriteRegistry);
+  GameSaveState(std::shared_ptr<SpriteRegistry> spriteRegistry);
   ~GameSaveState();
   int getGameSeed();
   int getRenderVisibilityDistance();

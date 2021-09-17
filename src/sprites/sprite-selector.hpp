@@ -8,14 +8,14 @@
 
 class SpriteSelector {
 private:
-  std::map<SpriteStateDirectionEnum, Sprite *> _sprites;
+  std::map<SpriteStateDirectionEnum, std::shared_ptr<Sprite>> _sprites;
 
 public:
   SpriteSelector();
   ~SpriteSelector();
 
   void registerDirectionSprite(SpriteStateDirectionEnum direction,
-                               Sprite *sprite);
+                               std::shared_ptr<Sprite> sprite);
 
-  Sprite *selectSprite(SpriteState spriteState);
+  std::shared_ptr<Sprite> selectSprite(SpriteState spriteState);
 };

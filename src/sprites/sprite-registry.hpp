@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <map>
 #include <unordered_map>
 
@@ -10,15 +11,16 @@
 class SpriteRegistry {
 private:
   std::shared_ptr<SDLManager> _sdlManager;
-  std::map<std::string, Sprite *> _tileRegistry;
+  std::map<std::string, std::shared_ptr<Sprite>> _tileRegistry;
 
 public:
   SpriteRegistry();
+  ~SpriteRegistry();
 
   SpriteRegistry(std::shared_ptr<SDLManager> sdlManager);
 
   void loadSprite(const std::string &path, const std::string &asKey,
                   struct SpriteMetadata *metadata);
 
-  Sprite *getSprite(const std::string &key);
+  std::shared_ptr<Sprite> getSprite(const std::string &key);
 };

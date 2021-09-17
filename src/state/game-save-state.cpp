@@ -1,6 +1,6 @@
 #include "game-save-state.hpp"
 
-GameSaveState::GameSaveState(SpriteRegistry &spriteRegistry)
+GameSaveState::GameSaveState(std::shared_ptr<SpriteRegistry> spriteRegistry)
     : _spriteRegistry(spriteRegistry) {
   _gameSeed = -7001912;
   _renderVisibilityDistance = 2400;

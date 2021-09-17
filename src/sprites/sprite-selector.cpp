@@ -2,15 +2,19 @@
 
 SpriteSelector::SpriteSelector() {}
 
-SpriteSelector::~SpriteSelector() {}
+SpriteSelector::~SpriteSelector() {
+  std::cout << "Destroying SpriteSelector" << std::endl;
+  this->_sprites.clear();
+}
 
 void SpriteSelector::registerDirectionSprite(SpriteStateDirectionEnum direction,
-                                             Sprite *sprite) {
+                                             std::shared_ptr<Sprite> sprite) {
   this->_sprites.insert(
-      std::pair<SpriteStateDirectionEnum, Sprite *>(direction, sprite));
+      std::pair<SpriteStateDirectionEnum, std::shared_ptr<Sprite>>(direction,
+                                                                   sprite));
   sprite->setRenderBoundingBox(true);
 }
 
-Sprite *SpriteSelector::selectSprite(SpriteState spriteState) {
+std::shared_ptr<Sprite> SpriteSelector::selectSprite(SpriteState spriteState) {
   return this->_sprites[spriteState.direction];
 }

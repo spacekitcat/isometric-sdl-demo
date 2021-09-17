@@ -40,7 +40,6 @@ add_executable(
   src/render/sdl-manager.cpp
   src/config/configuration.cpp
   src/text/text-renderer.cpp
-  src/state/game-save-state.cpp
   src/debug/debug-overlay.cpp
   src/sprites/sprite.cpp
   src/sprites/sprite-selector.cpp
@@ -51,6 +50,7 @@ add_executable(
   src/util/pair-operators.cpp
   src/debug/debug-draw-utils.cpp
   src/sprites/sprite-registry.cpp
+  src/state/game-save-state.cpp
   src/map-generator/deterministic-prng.cpp)
 
 target_link_libraries(RoversRevenge ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2TTF_LIBRARY} ${Boost_LIBRARIES} FontCache PerlinNoise)

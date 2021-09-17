@@ -13,20 +13,36 @@ Sprite::Sprite(std::shared_ptr<SDLManager> sdlManager) {
 }
 
 Sprite::~Sprite() {
-  free(_spritesheetSurface);
-  _spritesheetSurface = nullptr;
+  std::cout << "Destroying Sprite: " << _filename << std::endl;
 
-  free(_spritesheetTexture);
-  _spritesheetTexture = nullptr;
+  if (_spritesheetSurface != nullptr) {
+    SDL_FreeSurface(_spritesheetSurface);
+    _spritesheetSurface = nullptr;
+  }
+
+  if (_spritesheetTexture != nullptr) {
+    SDL_DestroyTexture(_spritesheetTexture);
+    _spritesheetTexture = nullptr;
+  }
 }
 
 void Sprite::setSpritesheet(std::string spritesheetPath,
                             struct SpriteMetadata *metadata) {
-  _spritesheetSurface = nullptr;
-  _spritesheetTexture = nullptr;
+  if (_spritesheetSurface != nullptr) {
+    SDL_FreeSurface(_spritesheetSurface);
+    _spritesheetSurface = nullptr;
+  }
+
+  if (_spritesheetTexture != nullptr) {
+    SDL_DestroyTexture(_spritesheetTexture);
+    _spritesheetTexture = nullptr;
+  }
 
   try {
     _spritesheetSurface = loadGameImageAsset(spritesheetPath);
+
+    // Note the filename (for debugging purposes)
+    _filename = std::filesystem::path(spritesheetPath).filename();
   } catch (const std::runtime_error &ex) {
     throw;
   }
