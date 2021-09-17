@@ -1,6 +1,7 @@
 #include "player.hpp"
 
-Player::Player() {
+Player::Player(ScreenCoordinateMapper &screenCoordinateMapper)
+    : _screenCoordinateMapper(screenCoordinateMapper) {
   _position.first = 1240;
   _position.second = 1240;
 }
@@ -14,8 +15,27 @@ void Player::update(long int ticks) {
 
   _position = PairOperators::addPair(
       _position, PairOperators::multiplyPairBy(_velocity, f));
+
+  _renderPositioningRect.x = _screenCoordinateMapper.worldXToScreenX(0);
+  _renderPositioningRect.y = _screenCoordinateMapper.worldYToScreenY(0);
+
+  // TODO: Move width heigh literal into config
+  _renderPositioningRect.w = 256;
+  _renderPositioningRect.h = 256;
+}
+
+void Player::render(SpriteState &spriteState) {
+  std::shared_ptr<Sprite> playerSprite =
+      _spriteSelector.selectSprite(spriteState);
+  if (playerSprite != NULL) {
+    playerSprite->renderTick(&_renderPositioningRect);
+  }
 }
 
 void Player::setVelocity(std::pair<float, float> velocity) {
   _velocity = velocity;
+}
+
+void Player::setSpriteSelector(SpriteSelector spriteSelector) {
+  _spriteSelector = spriteSelector;
 }

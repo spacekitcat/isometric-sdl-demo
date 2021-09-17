@@ -21,6 +21,7 @@
 #include "map/screen-coordinate-mapper.hpp"
 #include "map/sector-spatial-utils.hpp"
 #include "map/world-to-map-sector-index.hpp"
+#include "player/player.hpp"
 #include "render/sdl-manager.hpp"
 #include "sprites/sprite-metadata.hpp"
 #include "sprites/sprite-registry.hpp"
@@ -74,7 +75,6 @@ int main() {
   auto debugOverlay = injector.create<DebugOverlay>();
   auto screenCoordinateMapper = injector.create<ScreenCoordinateMapper>();
   auto textRenderer = injector.create<TextRenderer>();
-  auto player = injector.create<Player>();
   auto configuration = injector.create<std::shared_ptr<Configuration>>();
   auto mapSectorDatabase =
       injector.create<std::shared_ptr<MapSectorDatabase>>();
@@ -104,6 +104,7 @@ int main() {
   auto playerSpriteSelector = injector.create<SpriteSelector>();
   auto spriteRegistry = injector.create<std::shared_ptr<SpriteRegistry>>();
   auto prng = injector.create<std::shared_ptr<DeterministicPrng>>();
+  auto player = injector.create<Player>();
   try {
     struct SpriteMetadata playerSpriteMetadata = {.rows = 4, .columns = 4};
 
@@ -155,6 +156,7 @@ int main() {
     playerSpriteSelector.registerDirectionSprite(
         NorthWest, spriteRegistry->getSprite("tank_idle_rot270"));
 
+    player.setSpriteSelector(playerSpriteSelector);
     struct SpriteMetadata tileSpriteMetadata = {.rows = 3, .columns = 10};
 
     spriteRegistry->loadSprite("./assets/desert_tile_0_sheet.png", "0",
@@ -176,11 +178,6 @@ int main() {
   auto gameSaveState = injector.create<GameSaveState>();
   auto sectorSpatialUtils = injector.create<SectorSpatialUtils>();
   auto worldToMapSectorIndex = injector.create<WorldToMapSectorIndex>();
-  SDL_FRect playerPositioningRect = {
-      .x = screenCoordinateMapper.worldXToScreenX(0),
-      .y = screenCoordinateMapper.worldYToScreenY(0),
-      .w = spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth(),
-      .h = spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight()};
 
   SpriteState spriteState = {.direction = North};
 
@@ -214,14 +211,6 @@ int main() {
         } else if (event.wheel.y < 0) {
           camera->setZoom(camera->getZoom() - 0.25f);
         }
-
-        playerPositioningRect.x = screenCoordinateMapper.worldXToScreenX(0),
-        playerPositioningRect.y = screenCoordinateMapper.worldYToScreenY(0),
-        playerPositioningRect.w =
-            spriteRegistry->getSprite("tank_idle_rot225")->getFrameWidth();
-        playerPositioningRect.h =
-            spriteRegistry->getSprite("tank_idle_rot225")->getFrameHeight();
-
         break;
       }
     }
@@ -315,11 +304,7 @@ int main() {
     }
 
     /* Render player sprite with SpriteSheet */
-    std::shared_ptr<Sprite> playerSprite =
-        playerSpriteSelector.selectSprite(spriteState);
-    if (playerSprite != NULL) {
-      playerSprite->renderTick(&playerPositioningRect);
-    }
+    player.render(spriteState);
 
     SDL_RenderSetScale(sdlManager->getRenderer(), 1, 1);
     debugOverlay.render(tickInterval);

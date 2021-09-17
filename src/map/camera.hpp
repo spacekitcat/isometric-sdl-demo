@@ -2,7 +2,8 @@
 
 #include <iostream>
 
-#include "../player/player.hpp"
+#include "../map/camera-target.hpp"
+#include "../map/camera.hpp"
 #include "../render/sdl-manager.hpp"
 #include "../util/pair-operators.hpp"
 
@@ -11,7 +12,7 @@ private:
   std::shared_ptr<SDLManager> _sdlManager;
   std::pair<float, float> _position;
   float _zoom;
-  Player *_targetPlayer;
+  CameraTarget *_targetPlayer;
 
 public:
   Camera(std::shared_ptr<SDLManager> sdlManager);
@@ -26,7 +27,7 @@ public:
 
   void setZoom(float zoom);
 
-  void setTarget(Player *player);
+  void setTarget(CameraTarget *player);
 
   void update(long int ticks);
 };
