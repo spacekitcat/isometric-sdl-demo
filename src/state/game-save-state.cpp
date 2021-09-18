@@ -8,8 +8,8 @@ GameSaveState::GameSaveState(std::shared_ptr<SpriteRegistry> spriteRegistry)
 
 GameSaveState::~GameSaveState() {}
 
-int GameSaveState::getGameSeed() { return _gameSeed; }
+int GameSaveState::getGameSeed() const { return _gameSeed; }
 
-int GameSaveState::getRenderVisibilityDistance() {
+int GameSaveState::getRenderVisibilityDistance() const {
   return _renderVisibilityDistance;
 }

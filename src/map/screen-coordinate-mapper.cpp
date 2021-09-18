@@ -5,7 +5,6 @@ ScreenCoordinateMapper::ScreenCoordinateMapper(
     std::shared_ptr<Camera> camera)
     : _configuration(configuration) {
   _camera = camera;
-  _playerSpriteDimensions = std::make_pair(128, 128);
 }
 
 std::pair<float, float> ScreenCoordinateMapper::centerInScreenSpace(

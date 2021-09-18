@@ -1,7 +1,6 @@
 #include "configuration.hpp"
 
 Configuration::Configuration() {
-  _targetFps = 70;
   _isDebugMode = true;
 
   //   _sectorDimensions = std::make_pair(256, 128);
@@ -50,9 +49,7 @@ Configuration::Configuration() {
 
 Configuration::~Configuration() {}
 
-int Configuration::getTargetFps() { return _targetFps; }
-
-bool Configuration::getIsDebugMode() { return _isDebugMode; }
+bool Configuration::getIsDebugMode() const { return _isDebugMode; }
 
 void Configuration::setIsDebugMode(bool enabled) { _isDebugMode = enabled; }
 

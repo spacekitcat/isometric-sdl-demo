@@ -21,7 +21,7 @@ public:
 
   void setPosition(std::pair<float, float> position);
 
-  float getZoom();
+  float getZoom() const;
 
   void setZoom(float zoom);
 

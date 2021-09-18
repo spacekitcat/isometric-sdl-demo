@@ -13,6 +13,6 @@ private:
 public:
   GameSaveState(std::shared_ptr<SpriteRegistry> spriteRegistry);
   ~GameSaveState();
-  int getGameSeed();
-  int getRenderVisibilityDistance();
+  int getGameSeed() const;
+  int getRenderVisibilityDistance() const;
 };

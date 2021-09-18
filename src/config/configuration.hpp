@@ -7,7 +7,6 @@
 
 class Configuration {
 private:
-  int _targetFps;
   bool _isDebugMode;
   std::pair<float, float> _sectorDimensions;
   std::pair<float, float> _tileDimensions;
@@ -17,8 +16,7 @@ public:
   Configuration();
   ~Configuration();
 
-  int getTargetFps();
-  bool getIsDebugMode();
+  bool getIsDebugMode() const;
   void setIsDebugMode(bool enabled);
 
   void setSectorDimensions(std::pair<float, float> sectorDimensions);

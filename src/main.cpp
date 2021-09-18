@@ -32,13 +32,21 @@
 namespace di = boost::di;
 
 #define PI 3.14159265
+#define ISOMETRIC_ANGLE = 26.6
+
+float degreesToRadians(float degrees) {
+  const float radianUnit = 180.0;
+  return degrees * PI / radianUnit;
+}
 
 float calculateHorizontalVectorComponent(float vectorMagnitude) {
-  return vectorMagnitude * cos(26.6 * PI / 180.0);
+  const float angle = 26.6;
+  return vectorMagnitude * cos(degreesToRadians(angle));
 }
 
 float calculateVerticalVectorComponent(float vectorMagnitude) {
-  return vectorMagnitude * sin(26.6 * PI / 180.0);
+  const float angle = 26.6;
+  return vectorMagnitude * sin(degreesToRadians(angle));
 }
 
 int main() {
@@ -48,9 +56,9 @@ int main() {
     return 1;
   }
 
-  int flags = MIX_INIT_MP3 | MIX_INIT_MOD;
-  int initted = Mix_Init(flags);
-  if (initted & !flags) {
+  int audioFlags = MIX_INIT_MP3 | MIX_INIT_MOD;
+  int audioInitState = Mix_Init(audioFlags);
+  if (audioInitState & !audioFlags) {
     printf("Mix_Init: Failed to init required ogg and mod support!\n");
     printf("Mix_Init: %s\n", Mix_GetError());
     return 1;
@@ -86,9 +94,9 @@ int main() {
     exit(2);
   }
 
-  Mix_Chunk *sample;
-  sample = Mix_LoadWAV("./assets/x109.wav");
-  if (!sample) {
+  Mix_Chunk *gameMusic;
+  gameMusic = Mix_LoadWAV("./assets/x109.wav");
+  if (gameMusic == 0) {
     printf("Mix_LoadWAV: %s\n", Mix_GetError());
     // handle error
   }
@@ -96,7 +104,7 @@ int main() {
   // TODO: Put this in config.
   bool playMusic = true;
   if (playMusic) {
-    if (Mix_PlayChannel(-1, sample, 0) == -1) {
+    if (Mix_PlayChannel(-1, gameMusic, 0) == -1) {
       printf("Mix_PlayMusic: %s\n", Mix_GetError());
       // well, there's no music, but most games don't break without music...
     }

@@ -28,8 +28,9 @@ SectorSpatialUtils::getNeighbours(std::pair<int, int> integerPair, int radius) {
 
   for (int i = -radius; i <= radius; ++i) {
     for (int j = -radius; j <= radius; ++j) {
-      if (i == 0 && j == 0)
+      if (i == 0 && j == 0) {
         continue;
+      }
       neighbours.push_back(
           std::make_pair(integerPair.first + i, integerPair.second + j));
     }
