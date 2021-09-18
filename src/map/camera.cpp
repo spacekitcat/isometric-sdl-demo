@@ -1,7 +1,6 @@
 #include "camera.hpp"
 
-Camera::Camera(std::shared_ptr<SDLManager> sdlManager)
-    : _sdlManager(sdlManager) {
+Camera::Camera() {
   _targetPlayer = NULL;
   _zoom = .5;
 }
