@@ -15,6 +15,7 @@ Configuration::Configuration() {
   //   _sectorDimensions = std::make_pair(2304, 1152);
   _sectorDimensions = std::make_pair(768, 768);
   _tileDimensions = std::make_pair(256, 128);
+  _windowDimensions = std::make_pair(1024, 768);
 
   /*
   The sector sectorDimensions should be perfectly divisible by the
@@ -70,4 +71,12 @@ void Configuration::setTileDimensions(std::pair<float, float> tileDimensions) {
 
 std::pair<float, float> Configuration::getTileDimensions() {
   return _tileDimensions;
+}
+
+void Configuration::setWindowDimensions(std::pair<int, int> windowDimensions) {
+  _windowDimensions = windowDimensions;
+}
+
+std::pair<int, int> Configuration::getWindowDimensions() {
+  return _windowDimensions;
 }

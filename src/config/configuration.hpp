@@ -10,6 +10,7 @@ private:
   bool _isDebugMode;
   std::pair<float, float> _sectorDimensions;
   std::pair<float, float> _tileDimensions;
+  std::pair<int, int> _windowDimensions;
 
 public:
   Configuration();
@@ -24,4 +25,7 @@ public:
 
   void setTileDimensions(std::pair<float, float> tileDimensions);
   std::pair<float, float> getTileDimensions();
+
+  void setWindowDimensions(std::pair<int, int> windowDimensions);
+  std::pair<int, int> getWindowDimensions();
 };

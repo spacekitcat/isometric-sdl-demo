@@ -9,12 +9,12 @@
 
 class ScreenCoordinateMapper {
 private:
-  std::shared_ptr<SDLManager> _sdlManager;
+  std::shared_ptr<Configuration> _configuration;
   std::shared_ptr<Camera> _camera;
   std::pair<float, float> _playerSpriteDimensions;
 
 public:
-  ScreenCoordinateMapper(std::shared_ptr<SDLManager> sdlManager,
+  ScreenCoordinateMapper(std::shared_ptr<Configuration> configuration,
                          std::shared_ptr<Camera> camera);
 
   std::pair<float, float>
