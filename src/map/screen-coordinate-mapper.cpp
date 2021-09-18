@@ -17,15 +17,15 @@ std::pair<float, float> ScreenCoordinateMapper::centerInScreenSpace(
 }
 
 float ScreenCoordinateMapper::centerInScreenSpaceX(float screenPositionX) {
-  return -screenPositionX + ((_configuration->getWindowDimensions().first / 2) -
-                             (_playerSpriteDimensions.first / 2)) *
-                                1 / _camera->getZoom();
+  return -screenPositionX +
+         ((_configuration->getWindowDimensions().first / 2)) * 1 /
+             _camera->getZoom();
 }
 
 float ScreenCoordinateMapper::centerInScreenSpaceY(float screenPositionY) {
-  return screenPositionY + ((_configuration->getWindowDimensions().second / 2) -
-                            (_playerSpriteDimensions.second / 2)) *
-                               1 / _camera->getZoom();
+  return screenPositionY +
+         ((_configuration->getWindowDimensions().second / 2)) * 1 /
+             _camera->getZoom();
 }
 
 std::pair<float, float>
