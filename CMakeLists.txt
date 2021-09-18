@@ -65,6 +65,7 @@ add_executable(
   src/test/sector-spatial-utils/from-integer-pair-to-key.cpp
   src/test/sector-spatial-utils/from-key-to-integer-pair.cpp
   src/test/sector-spatial-utils/get-neighbours.cpp
+  src/test/screen-coordinate-mapper/center-in-screen-space.cpp
   src/map/sector-spatial-utils.cpp
   src/map/map-sector-database-hashmap-impl.cpp
   src/test/world-to-map-sector-index/get-map-index.cpp

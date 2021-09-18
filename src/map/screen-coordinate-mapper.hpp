@@ -22,6 +22,6 @@ public:
 
   std::pair<float, float> worldToScreen(std::pair<float, float> worldPosition);
 
-  float worldXToScreenX(float worldX);
-  float worldYToScreenY(float worldY);
+  float centerInScreenSpaceX(float worldX);
+  float centerInScreenSpaceY(float worldY);
 };

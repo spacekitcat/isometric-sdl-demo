@@ -2,8 +2,8 @@
 
 Player::Player(ScreenCoordinateMapper &screenCoordinateMapper)
     : _screenCoordinateMapper(screenCoordinateMapper) {
-  _position.first = 1240;
-  _position.second = 1240;
+  _position.first = 0;
+  _position.second = 0;
 }
 
 Player::~Player() {}
@@ -16,8 +16,8 @@ void Player::update(long int ticks) {
   _position = PairOperators::addPair(
       _position, PairOperators::multiplyPairBy(_velocity, f));
 
-  _renderPositioningRect.x = _screenCoordinateMapper.worldXToScreenX(0);
-  _renderPositioningRect.y = _screenCoordinateMapper.worldYToScreenY(0);
+  _renderPositioningRect.x = _screenCoordinateMapper.centerInScreenSpaceX(0);
+  _renderPositioningRect.y = _screenCoordinateMapper.centerInScreenSpaceY(0);
 
   // TODO: Move width heigh literal into config
   _renderPositioningRect.w = 256;

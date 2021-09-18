@@ -93,9 +93,13 @@ int main() {
     // handle error
   }
 
-  if (Mix_PlayChannel(-1, sample, 0) == -1) {
-    printf("Mix_PlayMusic: %s\n", Mix_GetError());
-    // well, there's no music, but most games don't break without music...
+  // TODO: Put this in config.
+  bool playMusic = true;
+  if (playMusic) {
+    if (Mix_PlayChannel(-1, sample, 0) == -1) {
+      printf("Mix_PlayMusic: %s\n", Mix_GetError());
+      // well, there's no music, but most games don't break without music...
+    }
   }
   // END: Audio Setup area
 
