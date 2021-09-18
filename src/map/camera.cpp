@@ -1,7 +1,7 @@
 #include "camera.hpp"
 
 Camera::Camera() {
-  _targetPlayer = NULL;
+  _targetGameObject = NULL;
   _zoom = .5;
 }
 
@@ -11,14 +11,14 @@ std::pair<float, float> Camera::getPosition() { return _position; }
 
 void Camera::setPosition(std::pair<float, float> position) {}
 
-void Camera::setTarget(CameraTarget *player) {
-  _targetPlayer = player;
-  _position = _targetPlayer->getPosition();
+void Camera::setTarget(GameObject *gameObject) {
+  _targetGameObject = gameObject;
+  _position = _targetGameObject->getPosition();
 }
 
 void Camera::update(long int ticks) {
-  if (_targetPlayer != NULL) {
-    _position = _targetPlayer->getPosition();
+  if (_targetGameObject != NULL) {
+    _position = _targetGameObject->getPosition();
   }
 }
 

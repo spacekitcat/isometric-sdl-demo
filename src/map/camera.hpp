@@ -2,15 +2,15 @@
 
 #include <iostream>
 
-#include "../map/camera-target.hpp"
 #include "../map/camera.hpp"
+#include "../player/game-object.hpp"
 #include "../util/pair-operators.hpp"
 
 class Camera {
 private:
   std::pair<float, float> _position;
   float _zoom;
-  CameraTarget *_targetPlayer;
+  GameObject *_targetGameObject;
 
 public:
   Camera();
@@ -25,7 +25,7 @@ public:
 
   void setZoom(float zoom);
 
-  void setTarget(CameraTarget *player);
+  void setTarget(GameObject *gameObject);
 
   void update(long int ticks);
 };
