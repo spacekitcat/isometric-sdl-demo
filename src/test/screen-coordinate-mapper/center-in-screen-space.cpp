@@ -13,6 +13,4 @@ TEST_CASE("Maps world 0,0 to screen index 50%,50%",
 
   auto sut =
       new ScreenCoordinateMapper(specifiedConfiguration, specifiedCamera);
-
-  sut.centerInScreenSpace(std::make_pair(0, 0));
 }
