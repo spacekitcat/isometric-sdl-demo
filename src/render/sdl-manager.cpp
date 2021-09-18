@@ -1,8 +1,11 @@
 #include "sdl-manager.hpp"
 
-SDLManager::SDLManager() {
+SDLManager::SDLManager(std::shared_ptr<Configuration> configuration)
+    : _configuration(configuration) {
   std::cout << "Constructing SDLManager" << std::endl;
-  _screenDimensions = std::make_pair<int, int>(1024, 768);
+  _screenDimensions =
+      std::make_pair<int, int>(configuration->getWindowDimensions().first,
+                               configuration->getWindowDimensions().second);
   _window = SDL_CreateWindow("Rover's Revenge", SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED, _screenDimensions.first,
                              _screenDimensions.second,
@@ -17,10 +20,6 @@ SDLManager::~SDLManager() {
   SDL_DestroyRenderer(_renderer);
   SDL_DestroyWindow(_window);
   SDL_Quit();
-}
-
-std::pair<int, int> SDLManager::getWindowDimensions() {
-  return _screenDimensions;
 }
 
 SDL_Window *SDLManager::getWindow() { return _window; }

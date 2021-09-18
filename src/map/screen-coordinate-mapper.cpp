@@ -1,8 +1,9 @@
 #include "screen-coordinate-mapper.hpp"
 
 ScreenCoordinateMapper::ScreenCoordinateMapper(
-    std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera) {
-  _sdlManager = sdlManager;
+    std::shared_ptr<Configuration> configuration,
+    std::shared_ptr<Camera> camera)
+    : _configuration(configuration) {
   _camera = camera;
   _playerSpriteDimensions = std::make_pair(128, 128);
 }
@@ -16,13 +17,13 @@ std::pair<float, float> ScreenCoordinateMapper::centerInScreenSpace(
 }
 
 float ScreenCoordinateMapper::centerInScreenSpaceX(float worldX) {
-  return -worldX + ((_sdlManager->getWindowDimensions().first / 2) -
+  return -worldX + ((_configuration->getWindowDimensions().first / 2) -
                     (_playerSpriteDimensions.first / 2)) *
                        1 / _camera->getZoom();
 }
 
 float ScreenCoordinateMapper::centerInScreenSpaceY(float worldY) {
-  return worldY + ((_sdlManager->getWindowDimensions().second / 2) -
+  return worldY + ((_configuration->getWindowDimensions().second / 2) -
                    (_playerSpriteDimensions.second / 2)) *
                       1 / _camera->getZoom();
 }

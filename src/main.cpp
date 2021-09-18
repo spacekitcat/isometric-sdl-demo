@@ -290,7 +290,7 @@ int main() {
 
       if (sector != nullptr) {
         if (sector->isVisible()) {
-          sector->render(sdlManager->getWindowDimensions());
+          sector->render(configuration->getWindowDimensions());
         }
       } else {
         auto sectorId = sectorSpatialUtils.fromIntegerPairToKey(*it);
