@@ -5,12 +5,12 @@
 #include <iomanip>
 #include <iostream>
 
-#include "../map/camera-target.hpp"
 #include "../map/screen-coordinate-mapper.hpp"
+#include "../player/game-object.hpp"
 #include "../sprites/sprite-selector.hpp"
 #include "../util/pair-operators.hpp"
 
-class Player : public CameraTarget {
+class Player : public GameObject {
 private:
   std::pair<float, float> _position;
   std::pair<float, float> _velocity;

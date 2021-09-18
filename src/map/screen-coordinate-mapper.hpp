@@ -20,8 +20,8 @@ public:
   std::pair<float, float>
   centerInScreenSpace(std::pair<float, float> worldPosition);
 
-  std::pair<float, float> worldToScreen(std::pair<float, float> worldPosition);
-
   float centerInScreenSpaceX(float worldX);
   float centerInScreenSpaceY(float worldY);
+
+  std::pair<float, float> worldToScreen(std::pair<float, float> worldPosition);
 };
