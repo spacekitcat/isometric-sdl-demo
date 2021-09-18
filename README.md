@@ -12,13 +12,25 @@ https://bluestickerclub.atlassian.net/jira/software/projects/ROV/boards/1
 
 ## Prerequisites
 
+On OSX the compiler is provided by AppleClang (LLVM distribution bundled with XCode), but `clang-tidy` isn't included. The brew distribution of LLVM includes `clang-tidy`. 
+
+*If `clang-tidy` is giving too much grief, just delete `set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)` from `CMakeLists.txt` and uninstall the brew distribution of `llvm`.*
+
 ```sh
-brew install boost
+brew install llvm
 brew install cmake
+brew install boost
 brew install sdl2
 brew install sdl2_mixer
 brew install sdl2_image
 brew install catch2
+```
+
+You may additionally have to add the following to your `.zshrc` or `.bashrc`, you should have gotten instructions from brew when llvm was installed.
+
+```sh
+echo 'export PATH="/opt/homebrew/opt/llvm/bin:$PATH"' >> ~/.zshrc
+`source ~/.zshrc`
 ```
 
 ## Build
