@@ -9,13 +9,20 @@ std::pair<long int, long int>
 WorldToMapSectorIndex::getMapIndex(std::pair<float, float> worldPosition) {
 
   long int xIndex = 0;
+  if (worldPosition.first < 0) {
+    --xIndex;
+  }
   if (worldPosition.first != 0) {
-    xIndex = worldPosition.first / _configuration.getSectorDimensions().first;
+    xIndex += worldPosition.first / _configuration.getSectorDimensions().first;
   }
 
   long int yIndex = 0;
+  if (worldPosition.second < 0) {
+    --yIndex;
+  }
   if (worldPosition.second != 0) {
-    yIndex = worldPosition.second / _configuration.getSectorDimensions().second;
+    yIndex +=
+        worldPosition.second / _configuration.getSectorDimensions().second;
   }
 
   return std::make_pair(xIndex, yIndex);

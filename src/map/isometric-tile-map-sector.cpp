@@ -52,38 +52,6 @@ IsometricTileMapSector::IsometricTileMapSector(
 
 IsometricTileMapSector::~IsometricTileMapSector() {}
 
-bool IsometricTileMapSector::pointIntersects(std::pair<float, float> point) {
-  float padding = _gameSaveState.getRenderVisibilityDistance();
-
-  return point.first >= _bottomLeft.first - padding &&
-         point.first <= _bottomLeft.first + _sectorDimensions.first + padding &&
-         point.second >= -(_bottomLeft.second + padding) &&
-         point.second <=
-             -_bottomLeft.second + _sectorDimensions.second + padding;
-}
-
-bool IsometricTileMapSector::squareIntersects(
-    std::pair<float, float> principlePoint,
-    std::pair<float, float> dimensions) {
-
-  std::pair<float, float> bottomLeftPoint =
-      std::make_pair(principlePoint.first, principlePoint.second);
-
-  std::pair<float, float> bottomRightPoint = std::make_pair(
-      principlePoint.first + dimensions.first, principlePoint.second);
-
-  std::pair<float, float> topLeftPoint = std::make_pair(
-      principlePoint.first, principlePoint.second + dimensions.second);
-
-  std::pair<float, float> topRightPoint =
-      std::make_pair(principlePoint.first + dimensions.first,
-                     principlePoint.second + dimensions.second);
-
-  return pointIntersects(bottomLeftPoint) ||
-         pointIntersects(bottomRightPoint) || pointIntersects(topLeftPoint) ||
-         pointIntersects(topRightPoint);
-}
-
 std::pair<float, float> IsometricTileMapSector::getBottomLeft() {
   return _bottomLeft;
 }
@@ -139,7 +107,7 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
         .x = bottomLeftPointScreenCoords.first,
         .y = bottomLeftPointScreenCoords.second,
         .w = getDimensions().first,
-        .h = -getDimensions().second,
+        .h = getDimensions().second,
     };
     if (_configuration->getIsDebugMode()) {
       SDL_SetRenderDrawColor(_sdlManager->getRenderer(), 0, 255, 0, 255);
@@ -151,8 +119,4 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
           _ScreenCoordinateMapper.worldToScreen(getBottomLeft()));
     }
   }
-}
-
-bool IsometricTileMapSector::isVisible() {
-  return this->pointIntersects(_camera->getPosition());
 }

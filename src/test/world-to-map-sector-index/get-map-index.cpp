@@ -55,7 +55,7 @@ TEST_CASE("Maps world 500,500 to sector index 1,1",
 
   auto sut = new WorldToMapSectorIndex(providedConfiguration);
   auto result = sut->getMapIndex(std::make_pair(500, 500));
-  std::cout << result.first << std::endl;
+
   REQUIRE(result.first == 1);
   REQUIRE(result.second == 1);
 }
@@ -69,9 +69,9 @@ TEST_CASE("Maps world -500,-500 to sector index -1,-1",
 
   auto sut = new WorldToMapSectorIndex(providedConfiguration);
   auto result = sut->getMapIndex(std::make_pair(-500, -500));
-  std::cout << result.first << std::endl;
-  REQUIRE(result.first == -1);
-  REQUIRE(result.second == -1);
+
+  REQUIRE(result.first == -2);
+  REQUIRE(result.second == -2);
 }
 
 TEST_CASE("Maps world 500,-500 to sector index 1,-1",
@@ -83,9 +83,9 @@ TEST_CASE("Maps world 500,-500 to sector index 1,-1",
 
   auto sut = new WorldToMapSectorIndex(providedConfiguration);
   auto result = sut->getMapIndex(std::make_pair(500, -500));
-  std::cout << result.first << std::endl;
+
   REQUIRE(result.first == 1);
-  REQUIRE(result.second == -1);
+  REQUIRE(result.second == -2);
 }
 
 TEST_CASE("Maps world -500,500 to sector index -1,1",
@@ -97,7 +97,7 @@ TEST_CASE("Maps world -500,500 to sector index -1,1",
 
   auto sut = new WorldToMapSectorIndex(providedConfiguration);
   auto result = sut->getMapIndex(std::make_pair(-500, 500));
-  std::cout << result.first << std::endl;
-  REQUIRE(result.first == -1);
+
+  REQUIRE(result.first == -2);
   REQUIRE(result.second == 1);
 }
