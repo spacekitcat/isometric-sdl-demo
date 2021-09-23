@@ -297,9 +297,7 @@ int main() {
       auto sector = mapSectorDatabase->get(sectorId);
 
       if (sector != nullptr) {
-        if (sector->isVisible()) {
-          sector->render(configuration->getWindowDimensions());
-        }
+        sector->render(configuration->getWindowDimensions());
       } else {
         auto sectorId = sectorSpatialUtils.fromIntegerPairToKey(*it);
         mapSectorDatabase->put(

@@ -17,13 +17,13 @@ bool listContains(std::list<std::pair<int, int>> list,
   return false;
 }
 
-TEST_CASE("Correctly gets the neighbours for 0,0",
+TEST_CASE("Correctly gets the neighbours for 0,0 (radius 1)",
           "[Map::SectorSpatialUtils::getNeighbours]") {
 
   std::pair<int, int> specifiedPair = std::make_pair(0, 0);
   auto sut = new SectorSpatialUtils();
 
-  auto result = sut->getNeighbours(specifiedPair);
+  auto result = sut->getNeighbours(specifiedPair, 1);
 
   REQUIRE(result.size() == 8);
   REQUIRE(listContains(result, std::make_pair<int, int>(-1, 0)));
@@ -34,6 +34,41 @@ TEST_CASE("Correctly gets the neighbours for 0,0",
   REQUIRE(listContains(result, std::make_pair<int, int>(1, -1)));
   REQUIRE(listContains(result, std::make_pair<int, int>(0, -1)));
   REQUIRE(listContains(result, std::make_pair<int, int>(-1, -1)));
+}
+
+TEST_CASE("Correctly gets the neighbours for 0,0 (radius 2)",
+          "[Map::SectorSpatialUtils::getNeighbours]") {
+
+  std::pair<int, int> specifiedPair = std::make_pair(0, 0);
+  auto sut = new SectorSpatialUtils();
+
+  auto result = sut->getNeighbours(specifiedPair, 2);
+
+  REQUIRE(result.size() == 24);
+  REQUIRE(listContains(result, std::make_pair<int, int>(-2, -2)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-2, -1)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-2, 0)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-2, 1)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-2, 2)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-1, -2)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-1, -1)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-1, 0)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-1, 1)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(-1, 2)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(0, -2)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(0, -1)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(0, 1)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(0, 2)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(1, -2)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(1, -1)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(1, 0)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(1, 1)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(1, 2)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(2, -2)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(2, -1)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(2, 0)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(2, 1)));
+  REQUIRE(listContains(result, std::make_pair<int, int>(2, 2)));
 }
 
 TEST_CASE("Correctly gets the neighbours for 100,100",

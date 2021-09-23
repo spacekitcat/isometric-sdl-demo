@@ -45,13 +45,6 @@ public:
 
   ~IsometricTileMapSector();
 
-  bool pointIntersects(std::pair<float, float> point);
-
-  bool squareIntersects(std::pair<float, float> point,
-                        std::pair<float, float> dimensions);
-
-  bool isVisible();
-
   std::pair<float, float> getBottomLeft();
 
   std::pair<float, float> getDimensions();
