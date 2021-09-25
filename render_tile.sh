@@ -39,7 +39,7 @@ else
     echo "Found montage (ImageMagick): '$(which montage)'"
 fi
 
-montage $temp_render_path/$output_filename_prefix*.png -tile 10x3 -geometry 256x128+0+0 -background transparent $output_sprite_sheet_path
+montage $temp_render_path/$output_filename_prefix*.png -tile 10x3 -geometry 64x32+0+0 -background transparent $output_sprite_sheet_path
 if [ $? -ne 0 ]; then
     echo "Failed to convert animation frames into sprite sheet"
     exit
