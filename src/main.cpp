@@ -32,7 +32,7 @@
 namespace di = boost::di;
 
 #define PI 3.14159265
-#define ISOMETRIC_ANGLE = 26.6
+#define ISOMETRIC_ANGLE = 29.9
 
 float degreesToRadians(float degrees) {
   const float radianUnit = 180.0;

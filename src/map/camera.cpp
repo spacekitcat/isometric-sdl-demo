@@ -25,5 +25,5 @@ void Camera::update(long int ticks) {
 float Camera::getZoom() const { return _zoom; }
 
 void Camera::setZoom(float zoom) {
-  _zoom = std::max(0.25f, std::min(zoom, 1.0f));
+  _zoom = std::max(0.5f, std::min(zoom, 1.0f));
 }
