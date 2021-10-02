@@ -169,7 +169,7 @@ int main() {
         NorthWest, spriteRegistry->getSprite("tank_idle_rot270"));
 
     player.setSpriteSelector(playerSpriteSelector);
-    struct SpriteMetadata tileSpriteMetadata = {.rows = 3, .columns = 10};
+    struct SpriteMetadata tileSpriteMetadata = {.rows = 1, .columns = 10};
 
     spriteRegistry->loadSprite("./assets/desert_tile_0_sheet.png", "0",
                                &tileSpriteMetadata);
