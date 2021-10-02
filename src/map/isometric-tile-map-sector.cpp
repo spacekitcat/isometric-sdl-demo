@@ -19,11 +19,12 @@ IsometricTileMapSector::IsometricTileMapSector(
   _sectorDimensions = _configuration->getSectorDimensions();
   _drawBoundingBox = true;
 
-  _tilesPerAxis =
-      std::make_pair(round(_sectorDimensions.first /
-                           _configuration->getTileDimensions().first),
-                     round(_sectorDimensions.second /
-                           (_configuration->getTileDimensions().second / 2)));
+  _tilesPerAxis = std::make_pair(
+      round(_sectorDimensions.first /
+            _configuration->getTileDimensions().first),
+      round(_sectorDimensions.second /
+                (_configuration->getTileDimensions().second / 2) +
+            1));
   _tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
 
   const double frequency = 1;
@@ -74,32 +75,28 @@ void IsometricTileMapSector::render(std::pair<int, int> screenDimensions) {
   std::pair<float, float> bottomLeftPointScreenCoords =
       _ScreenCoordinateMapper.worldToScreen(getBottomLeft());
 
-  SDL_FRect tilePositionRect = {
-      .x = 0,
-      .y = bottomLeftPointScreenCoords.second,
-      .w = _spriteRegistry->getSprite("1")->getFrameWidth(),
-      .h = _spriteRegistry->getSprite("1")->getFrameHeight()};
+  SDL_FRect tilePositionRect = {.x = 0,
+                                .y = 0,
+                                .w = _configuration->getTileDimensions().first,
+                                .h =
+                                    _configuration->getTileDimensions().second};
 
   for (int y = 0; y < getTilesPerAxis().second; ++y) {
+    int xOffset = 0;
+    if (y % 2 == 0) {
+      xOffset = _configuration->getTileDimensions().first / 2;
+    }
     for (int x = 0; x < getTilesPerAxis().first; ++x) {
-      if (y % 2 == 0) {
-        tilePositionRect.x =
-            bottomLeftPointScreenCoords.first +
-            (x * _spriteRegistry->getSprite("0")->getFrameWidth());
-      } else {
-        // Every other row has a negative offset of half the tile width.
-        tilePositionRect.x =
-            bottomLeftPointScreenCoords.first +
-            (x * _spriteRegistry->getSprite("0")->getFrameWidth()) +
-            (_spriteRegistry->getSprite("0")->getFrameWidth() / 2);
-      }
+      tilePositionRect.x = bottomLeftPointScreenCoords.first +
+                           (x * _configuration->getTileDimensions().first) +
+                           xOffset;
 
       // TODO: Check the tile id exists.
       _spriteRegistry->getSprite(std::to_string(getTile(x, y)))
           ->renderTick(&tilePositionRect);
     }
-    tilePositionRect.y -=
-        (_spriteRegistry->getSprite("0")->getFrameHeight() / 2);
+    tilePositionRect.y = bottomLeftPointScreenCoords.second -
+                         (y * (_configuration->getTileDimensions().second / 2));
   }
 
   if (_drawBoundingBox) {

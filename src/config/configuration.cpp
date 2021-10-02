@@ -13,7 +13,7 @@ Configuration::Configuration() {
   //   _sectorDimensions = std::make_pair(2048, 1024);
   //   _sectorDimensions = std::make_pair(2304, 1152);
   _sectorDimensions = std::make_pair(768, 768);
-  _tileDimensions = std::make_pair(64, 32);
+  _tileDimensions = std::make_pair(256, 128);
   _windowDimensions = std::make_pair(1024, 768);
 
   /*
