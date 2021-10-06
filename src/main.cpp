@@ -102,7 +102,7 @@ int main() {
   }
 
   // TODO: Put this in config.
-  bool playMusic = true;
+  bool playMusic = false;
   if (playMusic) {
     if (Mix_PlayChannel(-1, gameMusic, 0) == -1) {
       printf("Mix_PlayMusic: %s\n", Mix_GetError());
@@ -174,8 +174,16 @@ int main() {
     spriteRegistry->loadSprite("./assets/desert_tile_0_sheet.png", "0",
                                &tileSpriteMetadata);
     spriteRegistry->loadSprite("./assets/desert_tile_0_sheet.png", "1",
+
                                &tileSpriteMetadata);
     spriteRegistry->loadSprite("./assets/water_tile_0_sheet.png", "2",
+                               &tileSpriteMetadata);
+
+    spriteRegistry->loadSprite("./assets/water_tile_0_sheet.png", "3",
+                               &tileSpriteMetadata);
+    spriteRegistry->getSprite("3")->setFrameOffset(1);
+
+    spriteRegistry->loadSprite("./assets/rock_tile_0_sheet.png", "4",
                                &tileSpriteMetadata);
 
   } catch (const std::runtime_error &ex) {
@@ -303,7 +311,7 @@ int main() {
         mapSectorDatabase->put(
             sectorId,
             std::make_shared<IsometricTileMapSector>(
-                sdlManager, camera, spriteRegistry, screenCoordinateMapper,
+                *it, sdlManager, camera, spriteRegistry, screenCoordinateMapper,
                 textRenderer,
                 std::make_pair(
                     it->first * configuration->getSectorDimensions().first,

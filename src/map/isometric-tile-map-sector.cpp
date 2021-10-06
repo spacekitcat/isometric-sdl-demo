@@ -1,7 +1,8 @@
 #include "isometric-tile-map-sector.hpp"
 
 IsometricTileMapSector::IsometricTileMapSector(
-    std::shared_ptr<SDLManager> sdlManager, std::shared_ptr<Camera> camera,
+    std::pair<int, int> sectorIndex, std::shared_ptr<SDLManager> sdlManager,
+    std::shared_ptr<Camera> camera,
     std::shared_ptr<SpriteRegistry> spriteRegistry,
     ScreenCoordinateMapper &ScreenCoordinateMapper, TextRenderer &textRenderer,
     std::pair<float, float> bottomLeft, GameSaveState &gameSaveState,
@@ -12,6 +13,7 @@ IsometricTileMapSector::IsometricTileMapSector(
       _deterministicPrng(deterministicPrng), _configuration(configuration),
       _spriteRegistry(spriteRegistry) {
 
+  _sectorIndex = sectorIndex;
   _sdlManager = sdlManager;
   _camera = camera;
 
@@ -27,25 +29,37 @@ IsometricTileMapSector::IsometricTileMapSector(
             1));
   _tileMap = new int[_tilesPerAxis.first * _tilesPerAxis.second];
 
-  const double frequency = 1;
+  const double frequency = 0.4;
   const double fx = _tilesPerAxis.first / frequency;
   const double fy = _tilesPerAxis.second / frequency;
-  const double octaves = 16;
+  const double octaves = 2;
 
-  const siv::PerlinNoise perlin(
-      _deterministicPrng->generateNextRandomNumber(0, 49));
+  const siv::PerlinNoise perlin(_gameSaveState.getGameSeed());
   for (int y = 0; y < _tilesPerAxis.second; y++) {
     for (int x = 0; x < _tilesPerAxis.first; x++) {
       // TODO: Centralise this upper bound. I'm think about the best
       // architecture for making that info available
       // int rnd = _deterministicPrng->generateNextRandomNumber(0, 2);
       // _tileMap[y * _tilesPerAxis.first + x] = rnd;
-      double perlinSample =
-          perlin.accumulatedOctaveNoise2D_0_1(x / fx, y / fy, octaves);
-      if (perlinSample > 0.4) {
-        _tileMap[y * _tilesPerAxis.first + x] = 1;
-      } else {
+      double perlinSample = perlin.accumulatedOctaveNoise2D_0_1(
+          ((_sectorIndex.first * _tilesPerAxis.first) + x) / fx,
+          ((_sectorIndex.second * _tilesPerAxis.second) + y) / fy, octaves);
+
+      if (perlinSample < 0.2) {
+        // WATER 1.
         _tileMap[y * _tilesPerAxis.first + x] = 2;
+      } else if (perlinSample < 0.25) {
+        // WATER 2.
+        _tileMap[y * _tilesPerAxis.first + x] = 3;
+      } else if (perlinSample < 0.35) {
+        // WATER 3.
+        _tileMap[y * _tilesPerAxis.first + x] = 2;
+      } else if (perlinSample > 0.8) {
+        // DOLLA DOLLA DOLLA
+        _tileMap[y * _tilesPerAxis.first + x] = 4;
+      } else {
+        // DESERT.
+        _tileMap[y * _tilesPerAxis.first + x] = 1;
       }
     }
   }

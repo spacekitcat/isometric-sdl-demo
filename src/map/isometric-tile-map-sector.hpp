@@ -23,7 +23,7 @@ private:
   std::shared_ptr<Configuration> _configuration;
   ScreenCoordinateMapper &_ScreenCoordinateMapper;
   TextRenderer &_textRenderer;
-  std::pair<float, float> _position;
+  std::pair<int, int> _sectorIndex;
   std::pair<float, float> _bottomLeft;
   std::pair<float, float> _sectorDimensions;
   std::pair<int, int> _tilesPerAxis;
@@ -33,7 +33,8 @@ private:
   int *_tileMap;
 
 public:
-  IsometricTileMapSector(std::shared_ptr<SDLManager> sdlManager,
+  IsometricTileMapSector(std::pair<int, int> sectorIndex,
+                         std::shared_ptr<SDLManager> sdlManager,
                          std::shared_ptr<Camera> camera,
                          std::shared_ptr<SpriteRegistry> spriteRegistry,
                          ScreenCoordinateMapper &ScreenCoordinateMapper,
