@@ -7,13 +7,13 @@ Configuration::Configuration() {
   // _sectorDimensions = std::make_pair(512, 256);
   //   _sectorDimensions = std::make_pair(768, 384);
   //   _sectorDimensions = std::make_pair(1024, 512);
-  //   _sectorDimensions = std::make_pair(1280, 640);
+  _sectorDimensions = std::make_pair(640, 640);
   //   _sectorDimensions = std::make_pair(1536, 768);
   //   _sectorDimensions = std::make_pair(1792, 896);
   //   _sectorDimensions = std::make_pair(2048, 1024);
   //   _sectorDimensions = std::make_pair(2304, 1152);
-  _sectorDimensions = std::make_pair(768, 768);
-  _tileDimensions = std::make_pair(256, 128);
+  // _sectorDimensions = std::make_pair(768, 768);
+  _tileDimensions = std::make_pair(64, 32);
   _windowDimensions = std::make_pair(1024, 768);
 
   /*

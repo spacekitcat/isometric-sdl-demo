@@ -103,7 +103,8 @@ void Sprite::render(float xPosition, float yPosition, int frame) {
 
 void Sprite::renderTick(SDL_FRect *position) {
   this->_currentFrame =
-      (SDL_GetTicks() / this->_animationInterval) % this->getFrameCount();
+      ((SDL_GetTicks() / this->_animationInterval) + _offset) %
+      this->getFrameCount();
   this->render(position->x, position->y, this->_currentFrame);
 }
 
@@ -122,3 +123,5 @@ void Sprite::setRenderBoundingBox(bool render) { _drawBoundingBox = render; }
 std::pair<float, float> Sprite::getDimensions() {
   return std::make_pair(this->getFrameWidth(), this->getFrameHeight());
 }
+
+void Sprite::setFrameOffset(int offset) { _offset = offset; }

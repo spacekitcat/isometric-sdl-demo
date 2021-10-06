@@ -2,7 +2,7 @@
 
 GameSaveState::GameSaveState(std::shared_ptr<SpriteRegistry> spriteRegistry)
     : _spriteRegistry(spriteRegistry) {
-  _gameSeed = -7001912;
+  _gameSeed = -78910;
   _renderVisibilityDistance = 8000;
 }
 

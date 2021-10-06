@@ -19,6 +19,7 @@ private:
   SDL_Surface *_spritesheetSurface;
   SDL_Texture *_spritesheetTexture;
   bool _drawBoundingBox;
+  int _offset;
 
   void updateSpriteFrame(int index, SDL_Rect *clippingFrame);
 
@@ -47,6 +48,8 @@ public:
   float getFrameHeight();
 
   void setRenderBoundingBox(bool render);
+
+  void setFrameOffset(int offset);
 
   std::pair<float, float> getDimensions();
 };
