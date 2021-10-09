@@ -11,7 +11,7 @@ std::pair<float, float> Camera::getPosition() { return _position; }
 
 void Camera::setPosition(std::pair<float, float> position) {}
 
-void Camera::setTarget(GameObject *gameObject) {
+void Camera::setTarget(std::shared_ptr<GameObject> gameObject) {
   _targetGameObject = gameObject;
   _position = _targetGameObject->getPosition();
 }
@@ -25,5 +25,5 @@ void Camera::update(long int ticks) {
 float Camera::getZoom() const { return _zoom; }
 
 void Camera::setZoom(float zoom) {
-  _zoom = std::max(0.25f, std::min(zoom, 1.0f));
+  _zoom = std::max(0.4f, std::min(zoom, 1.0f));
 }

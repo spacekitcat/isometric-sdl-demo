@@ -10,7 +10,7 @@ class Camera {
 private:
   std::pair<float, float> _position;
   float _zoom;
-  GameObject *_targetGameObject;
+  std::shared_ptr<GameObject> _targetGameObject;
 
 public:
   Camera();
@@ -25,7 +25,7 @@ public:
 
   void setZoom(float zoom);
 
-  void setTarget(GameObject *gameObject);
+  void setTarget(std::shared_ptr<GameObject> gameObject);
 
   void update(long int ticks);
 };

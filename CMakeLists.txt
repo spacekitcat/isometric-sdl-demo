@@ -82,7 +82,7 @@ add_executable(
   src/state/game-save-state.cpp
   src/map-generator/deterministic-prng.cpp)
 
-target_link_libraries(RoversRevengeTests PRIVATE Catch2::Catch2 ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(RoversRevengeTests PRIVATE Catch2::Catch2 ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${Boost_LIBRARIES})
 
 include(CTest)
 include(Catch)
