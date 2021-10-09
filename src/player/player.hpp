@@ -8,6 +8,7 @@
 #include "../map/screen-coordinate-mapper.hpp"
 #include "../player/game-object.hpp"
 #include "../sprites/sprite-selector.hpp"
+#include "../sprites/sprite-state.hpp"
 #include "../util/pair-operators.hpp"
 
 class Player : public GameObject {
@@ -17,6 +18,7 @@ private:
   SDL_FRect _renderPositioningRect;
   SpriteSelector _spriteSelector;
   ScreenCoordinateMapper &_screenCoordinateMapper;
+  SpriteState _spriteState;
 
 public:
   Player(ScreenCoordinateMapper &screenCoordinateMapper);
@@ -26,9 +28,11 @@ public:
 
   void update(long int ticks);
 
-  void render(SpriteState &spriteState);
+  void render();
 
   void setVelocity(std::pair<float, float> velocity);
 
   void setSpriteSelector(SpriteSelector spriteSelector);
+
+  void setDirection(SpriteStateDirectionEnum direction);
 };

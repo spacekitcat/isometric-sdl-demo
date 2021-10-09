@@ -2,6 +2,8 @@
 
 #include "../config/configuration.hpp"
 #include <SDL.h>
+#include <SDL_mixer.h>
+#include <exception>
 #include <iostream>
 
 class SDLManager {

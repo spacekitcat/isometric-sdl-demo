@@ -2,6 +2,8 @@
 
 Configuration::Configuration() {
   _isDebugMode = true;
+  _isAudioEnabled = false;
+  _zoomStepIncrement = 0.25f;
 
   //   _sectorDimensions = std::make_pair(256, 128);
   // _sectorDimensions = std::make_pair(512, 256);
@@ -58,6 +60,12 @@ void Configuration::setSectorDimensions(
   _sectorDimensions = sectorDimensions;
 }
 
+bool Configuration::getIsAudioEnabled() const { return _isAudioEnabled; }
+
+void Configuration::setIsAudioEnabled(bool enabled) {
+  _isAudioEnabled = enabled;
+}
+
 std::pair<float, float> Configuration::getSectorDimensions() {
   return _sectorDimensions;
 }
@@ -77,3 +85,9 @@ void Configuration::setWindowDimensions(std::pair<int, int> windowDimensions) {
 std::pair<int, int> Configuration::getWindowDimensions() {
   return _windowDimensions;
 }
+
+void Configuration::setZoomStepIncrement(float zoomStepIncrement) {
+  _zoomStepIncrement = zoomStepIncrement;
+}
+
+float Configuration::getZoomStepIncrement() const { return _zoomStepIncrement; }

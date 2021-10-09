@@ -4,9 +4,10 @@ Player::Player(ScreenCoordinateMapper &screenCoordinateMapper)
     : _screenCoordinateMapper(screenCoordinateMapper) {
   _position.first = 0;
   _position.second = 0;
+  _spriteState.direction = North;
 }
 
-Player::~Player() {}
+Player::~Player() { std::cout << "Destroying Player" << std::endl; }
 
 std::pair<float, float> Player::getPosition() { return _position; }
 
@@ -24,9 +25,9 @@ void Player::update(long int ticks) {
   _renderPositioningRect.h = 256;
 }
 
-void Player::render(SpriteState &spriteState) {
+void Player::render() {
   std::shared_ptr<Sprite> playerSprite =
-      _spriteSelector.selectSprite(spriteState);
+      _spriteSelector.selectSprite(_spriteState);
   if (playerSprite != NULL) {
     playerSprite->renderTick(&_renderPositioningRect);
   }
@@ -38,4 +39,8 @@ void Player::setVelocity(std::pair<float, float> velocity) {
 
 void Player::setSpriteSelector(SpriteSelector spriteSelector) {
   _spriteSelector = spriteSelector;
+}
+
+void Player::setDirection(SpriteStateDirectionEnum direction) {
+  _spriteState.direction = direction;
 }
